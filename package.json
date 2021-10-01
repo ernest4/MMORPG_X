@@ -1,15 +1,15 @@
 {
   "name": "game_prototype_network",
   "version": "0.1.0",
-  "description": "pulse game server",
-  "main": "dist/server.js",
+  "description": "isomorphic game server",
+  "main": "dist/server/index.js",
   "scripts": {
     "test": "jest --config ./jest.config.js",
     "start": "yarn build_css && yarn build_game_dev",
-    "build": "yarn build_css && yarn build_game",
+    "build": "yarn build_css && yarn build_game_prod",
     "build_css": "postcss src/client/css/tailwind.css -o src/client/css/main.css",
-    "build_game": "webpack --config webpack.prod.js && tsc",
-    "build_game_dev": "webpack --config webpack.dev.js && tsc && node dist/server/index.js"
+    "build_game_dev": "webpack --config webpack.dev.js && tsc && node dist/server/index.js",
+    "build_game_prod": "webpack --config webpack.prod.js && tsc"
   },
   "author": "Ernestas Monkevicius",
   "license": "UNLICENSED",
@@ -55,6 +55,6 @@
     "webpack-merge": "^4.2.2"
   },
   "dependencies": {
-    "uWebSockets.js": "uNetworking/uWebSockets.js#v19.2.0"
+    "uWebSockets.js": "uNetworking/uWebSockets.js#v20.0.0"
   }
 }

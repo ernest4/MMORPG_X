@@ -5,7 +5,7 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
-  entry: { app: "./src/index.ts" },
+  entry: { app: "./src/client/index.ts" },
   module: {
     rules: [
       { test: /\.(js|jsx)$/, use: "babel-loader", exclude: /node_modules/ },
