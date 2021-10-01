@@ -1,21 +1,19 @@
-const path = require("path");
-const http = require("http");
-const url = require("url");
-const fs = require("fs");
-const { TickProvider } = require("./server/utils/TickProvider");
-const uWS = require("uWebSockets.js"); // TODO: move to using uws for max perf & efficiency !
-
-const { notFound, render } = require("./server/response");
-const { debugLog, log } = require("./server/debug");
+import path from "path";
+import http from "http";
+import url from "url";
+import fs from "fs";
+import uWS from "uWebSockets.js"; // TODO: move to using uws for max perf & efficiency!
+import TickProvider from "../shared/ecs/utils/TickProvider";
+import Game from "./Game";
 
 // const assets = process.env.NODE_ENV == "production" ? "build" : "public";
 const assets = "dist";
 const publicPath = path.join(__dirname, assets);
-const port = process.env.PORT || 3001;
+const port = (process.env.PORT && parseInt(process.env.PORT)) || 3001;
 
 // const frontEndRootFilePath = path.join(publicPath, "index.html");
 
-let cache: any = {};
+// let cache: any = {};
 
 // /play endpoint for game index.html
 
@@ -64,30 +62,26 @@ server.get("/play/", (response: any, request: any) => {
   response.end("testing");
 });
 
+// TODO: move this to network systems in ECS
 server.ws("/play", {
   /* Options */
   // compression: uWS.SHARED_COMPRESSOR,
   // maxPayloadLength: 16 * 1024 * 1024,
   // idleTimeout: 10,
   /* Handlers */
-  open: (ws: any) => {
+  open: (ws: uWS.WebSocket) => {
     console.log("A WebSocket connected!");
   },
-  message: (ws: any, message: any, isBinary: any) => {
+  message: (ws: uWS.WebSocket, message: ArrayBuffer, isBinary: boolean) => {
     /* Ok is false if backpressure was built up, wait for drain */
     let ok = ws.send(message, isBinary);
   },
-  drain: (ws: any) => {
+  drain: (ws: uWS.WebSocket) => {
     console.log("WebSocket backpressure: " + ws.getBufferedAmount());
   },
-  close: (ws: any, code: any, message: any) => {
+  close: (ws: uWS.WebSocket, code: number, message: ArrayBuffer) => {
     console.log("WebSocket closed");
   },
-});
-
-server.listen(port, (token: any) => {
-  if (token) log(`Listening to port ${port}`);
-  else log(`Failed to listen to port ${port}`);
 });
 
 // TODO: might strip this out and just use express.js ??
@@ -128,6 +122,10 @@ server.listen(port, (token: any) => {
 
 // TODO: set up web socket server
 
-// TODO: testing. game loop will be executed by this.
-const tickProvider = new TickProvider((deltaTime: number) => console.log(deltaTime));
-// tickProvider.start();
+const game = new Game(server);
+game.run();
+
+server.listen(port, (token: any) => {
+  if (token) console.log(`Listening to port ${port}`);
+  else console.log(`Failed to listen to port ${port}`);
+});

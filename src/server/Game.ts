@@ -3,13 +3,13 @@ import { DeltaTime } from "../shared/ecs/types";
 import TickProvider from "../shared/ecs/utils/TickProvider";
 import { DEVELOPMENT } from "../shared/utils/environment";
 import Manager from "./systems/Manager";
-import FpsCounter from "./utils/FpsCounter";
+// import FpsCounter from "./utils/FpsCounter";
 
 class Game {
   // dudeQuads!: any[];
   lastDeltaTime: any;
   lastFrame: any;
-  fpsCounter!: FpsCounter;
+  // fpsCounter!: FpsCounter;
   private _engine!: Engine;
 
   constructor() {

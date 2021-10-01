@@ -1,8 +1,8 @@
+import "./game/css/main.css"; // including here ensures it's in the project
+import { DEVELOPMENT } from "../shared/utils/environment";
 import Game from "./Game";
-import "./game/css/main.css";
-import { DEVELOPMENT } from "./game/utils/environment";
 
 const game = new Game();
-game.start();
+game.run();
 
 console.log(`Running in ${DEVELOPMENT ? "dev" : "prod"} mode`);

@@ -1,16 +1,16 @@
 import { Scene } from "phaser";
-import FpsCounter from "../utils/FpsCounter";
-import { Engine } from "../../shared/ecs";
-import Manager from "../systems/Manager";
-import Render from "../systems/Render";
-import Input from "../systems/Input";
-import Movement from "../systems/Movement";
-import MovementControl from "../systems/MovementControl";
-import { DEVELOPMENT } from "../utils/environment";
-import SceneEditor from "../systems/SceneEditor";
-import Interaction from "../systems/Interaction";
-import Dragging from "../systems/Dragging";
-import Serialization from "../systems/Serialization";
+import FpsCounter from "../../../utils/FpsCounter";
+import { Engine } from "../../../../shared/ecs";
+import Manager from "../../Manager";
+import Render from "../../Render";
+import Input from "../../Input";
+import Movement from "../../Movement";
+import MovementControl from "../../MovementControl";
+import { DEVELOPMENT } from "../../../../shared/utils/environment";
+import SceneEditor from "../../SceneEditor";
+import Interaction from "../../Interaction";
+import Dragging from "../../Dragging";
+import Serialization from "../../Serialization";
 
 export default class Main extends Scene {
   dudeQuads!: any[];
