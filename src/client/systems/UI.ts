@@ -18,7 +18,6 @@ import * as availableComponents from "../components";
 class UI extends System {
   start(): void {
     // initSceneEditor();
-
     // const permittedEditorComponents = Object.keys(availableComponents).filter(
     //   availableComponentName => {
     //     return !NON_EDITOR_COMPONENTS.some(
@@ -26,7 +25,6 @@ class UI extends System {
     //     );
     //   }
     // );
-
     // store.dispatch(sceneEditorActions.setAvailableComponentsList(permittedEditorComponents));
   }
 

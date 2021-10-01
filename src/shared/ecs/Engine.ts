@@ -152,9 +152,8 @@ class Engine {
     // NOTE: finding shortest component list
     let shortestComponentListIndex = 0;
 
-    let shortestComponentList = this._componentLists[
-      componentClasses[shortestComponentListIndex].name
-    ];
+    let shortestComponentList =
+      this._componentLists[componentClasses[shortestComponentListIndex].name];
 
     if (!shortestComponentList) return;
 

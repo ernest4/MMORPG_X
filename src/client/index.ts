@@ -1,4 +1,4 @@
-import "./game/css/main.css"; // including here ensures it's in the project
+import "./css/main.css"; // including here ensures it's in the project
 import { DEVELOPMENT } from "../shared/utils/environment";
 import Game from "./Game";
 

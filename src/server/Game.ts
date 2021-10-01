@@ -1,8 +1,9 @@
-import { Engine } from "../shared/ecs";
+import { Engine } from "../shared/ecs/index";
 import { DeltaTime } from "../shared/ecs/types";
 import TickProvider from "../shared/ecs/utils/TickProvider";
 import { DEVELOPMENT } from "../shared/utils/environment";
 import Manager from "./systems/Manager";
+import uWS from "uWebSockets";
 // import FpsCounter from "./utils/FpsCounter";
 
 class Game {
@@ -11,8 +12,10 @@ class Game {
   lastFrame: any;
   // fpsCounter!: FpsCounter;
   private _engine!: Engine;
+  private _server: uWS.TemplatedApp;
 
-  constructor() {
+  constructor(server: uWS.TemplatedApp) {
+    this._server = server;
     this.initECS();
   }
 

@@ -1,4 +1,4 @@
-wimport { Engine } from "../../shared/ecs";
+import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { QuerySet } from "../../shared/ecs/types";
 import PhysicsBody from "../components/PhysicsBody";

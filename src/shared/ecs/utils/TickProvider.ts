@@ -32,7 +32,6 @@ class TickProvider {
 
 export default TickProvider;
 
-
 // node.js TickProvider sample
 
 // type DeltaTime = number; // ms
