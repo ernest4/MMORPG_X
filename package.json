@@ -2,14 +2,15 @@
   "name": "game_prototype_network",
   "version": "0.1.0",
   "description": "isomorphic game server",
-  "main": "dist/server/index.js",
+  "main": "dist/src/server/index.js",
+  "type": "module",
   "scripts": {
     "test": "jest --config ./jest.config.js",
     "start": "yarn build_css && yarn build_game_dev",
     "build": "yarn build_css && yarn build_game_prod",
     "build_css": "postcss src/client/css/tailwind.css -o src/client/css/main.css",
-    "build_game_dev": "webpack --config webpack.dev.js && tsc && node dist/server/index.js",
-    "build_game_prod": "webpack --config webpack.prod.js && tsc"
+    "build_game_dev": "webpack --config webpack.dev.cjs && tsc && node dist/src/server/index.js",
+    "build_game_prod": "webpack --config webpack.prod.cjs && tsc"
   },
   "author": "Ernestas Monkevicius",
   "license": "UNLICENSED",

@@ -12,7 +12,7 @@
     "jsx": "react",
     "allowSyntheticDefaultImports": true
   },
-  "include": ["./src/**/*", "tests", "tailwind.config.js"],
+  "include": ["./src/**/*", "tests", "tailwind.config.cjs"],
   "typeRoots": ["./node_modules/phaser/types"],
   "types": ["Phaser"]
 }
