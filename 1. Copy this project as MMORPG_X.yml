@@ -1,4 +1,4 @@
-1. Copy this project as MMORPG_X
+1. Copy this project as MMORPG_X [DONE]
 2. organize the folders into:
   -src
     - client
@@ -15,6 +15,7 @@
       -components
       -systems
       -...
+  2.1 fix webpack to work with new project structure
 3. Try get uWS working.
 4. Data driven game server?
   4.1 have "ScriptsSystem", "ServerEditor" & "ClientEditor"

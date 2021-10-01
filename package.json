@@ -9,7 +9,7 @@
     "build": "yarn build_css && yarn build_game",
     "build_css": "postcss src/game/css/tailwind.css -o src/game/css/main.css",
     "build_game": "webpack --config webpack.prod.js && tsc",
-    "build_game_dev": "webpack --config webpack.dev.js && tsc && node dist/server.js"
+    "build_game_dev": "webpack --config webpack.dev.js && tsc && node dist/server/index.js"
   },
   "author": "Ernestas Monkevicius",
   "license": "UNLICENSED",
