@@ -1,0 +1,23 @@
+1. Copy this project as MMORPG_X
+2. organize the folders into:
+  -src
+    - client
+      -components
+      -systems
+      -...
+    - server
+      -components
+      -systems
+      -...
+    - shared
+      -ecs
+      -tools
+      -components
+      -systems
+      -...
+3. Try get uWS working.
+4. Data driven game server?
+  4.1 have "ScriptsSystem", "ServerEditor" & "ClientEditor"
+  4.1.1 be able to dynamically add and shape content and logic
+        live, without having to restart server. (Content Pipeline).
+  4.1.2 add test server for Alpha testing new content.

@@ -1,0 +1,42 @@
+[0] move out ECS into npm package and install it from github.
+[1] keep game react separate from rest of app view templates.
+    - play is the only endpoint that returns react game...
+    - rest of app is react + tailwind css
+
+[2] Authenticate user and let them create character model (auth after via websocket)
+[3] make the websocket connection package in JS to connect to Crystal Kemal Pulse
+    to execute game commands
+
+[4] make the basic movement rendered and playable.
+[4.5] fix joining, leaving and initialization.
+[5] add attacking.
+[6] add environment mod (pick up & place game blocks / bricks)
+[7] specify version info in the game to be shown to users!!
+[4.6] clean up front end a bit, put links to social stuff etc
+[4.7] clean up front end links (NO DEAD LINK!) everything thats present, must work!
+
+[5] i think there's a memory leak somewhere in back end. I had server up for days and computer
+got slow. Once i shut server down speed came back....
+
+[7] GUEST MODE: !!! where player just enters name and plays, but no state is loaded / saved for DB.
+Good for people jumping in and trying...
+
+[8] Add referal bonus system https://stackoverflow.com/questions/41311519/simple-referral-system-in-rails
+
+[9] When stress testing server and monitoring, don't just look at server FPS,
+look at time for actions to take.
+Can have a test object even that is instantiated every frame with a timing function before and after.
+If instantiation takes longer to run than usual, can send a warning / alarm etc. (to Rollbar?)
+
+[10] code sharing between front end and back end, especially for state management & validation.
+[11] Make sure to batch as many messages together and send them in big blobs for bandwidth efficiency
+[12] use https://www.prisma.io/ for DB access (nicer than TypeORM)
+
+note uWS has TCP_NODELAY enabled (i.e. NAGLE algorithm disabled) by default for max perf! so no
+so no need to worry about it.
+
+General JS perf:
+use FOR loops over MAP or FOREACH as map is x4 times slower, while foreach is x2 slower.
+
+[13] Server optimization: Use workers on separate cores. 1 for webapp, 1 for websocket.
+https://github.com/uNetworking/uWebSockets.js/blob/master/examples/WorkerThreads.js

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strict": true,
+    "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es2015",
+    "allowJs": true,
+    "jsx": "react",
+    "allowSyntheticDefaultImports": true
+  },
+  "include": ["./src/**/*", "tests", "tailwind.config.js", "server.ts", "./server/**/*"],
+  "typeRoots": ["./node_modules/phaser/types"],
+  "types": ["Phaser"]
+}

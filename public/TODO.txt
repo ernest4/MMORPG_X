@@ -1,0 +1,6 @@
+Move assets to S3.
+
+The main html and javascript may remain on node.js server as it should be fast enough to handle
+serving it once per user.
+
+Optionally JS and index.html may be moved to S3 too.
