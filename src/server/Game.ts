@@ -3,7 +3,7 @@ import { DeltaTime } from "../shared/ecs/types";
 import TickProvider from "../shared/ecs/utils/TickProvider";
 import { DEVELOPMENT } from "../shared/utils/environment";
 import Manager from "./systems/Manager";
-import uWS from "uWebSockets";
+import uWS from "uWebSockets.js";
 // import FpsCounter from "./utils/FpsCounter";
 
 class Game {

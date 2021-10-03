@@ -2,7 +2,7 @@ import path from "path";
 import http from "http";
 import url from "url";
 import fs from "fs";
-import uWS from "uWebSockets"; // TODO: move to using uws for max perf & efficiency!
+import uWS from "uWebSockets.js"; // TODO: move to using uws for max perf & efficiency!
 import Game from "./Game";
 
 // const assets = process.env.NODE_ENV == "production" ? "build" : "public";
