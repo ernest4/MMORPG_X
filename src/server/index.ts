@@ -50,7 +50,9 @@ const server = uWS.App({
 //     res.end("Nothing to see here!");
 //   });
 
-server.get("/", (response: uWS.HttpResponse, request: uWS.HttpRequest) => {});
+server.get("/", (response: uWS.HttpResponse, request: uWS.HttpRequest) => {
+  response.end("root");
+});
 
 // cant get it to work ??!?!?!?!?
 server.get("/server/stats/", (response: any, request: any) => {
