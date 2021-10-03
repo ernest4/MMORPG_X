@@ -4,11 +4,11 @@ import url from "url";
 import fs from "fs";
 import uWS from "uWebSockets.js"; // TODO: move to using uws for max perf & efficiency!
 import Game from "./Game";
+import { PORT } from "../shared/utils/environment";
 
 // const assets = process.env.NODE_ENV == "production" ? "build" : "public";
 const assets = "dist";
 const publicPath = path.join(__dirname, assets);
-const port = (process.env.PORT && parseInt(process.env.PORT)) || 3001;
 
 // const frontEndRootFilePath = path.join(publicPath, "index.html");
 
@@ -50,6 +50,8 @@ const server = uWS.App({
 //     res.end("Nothing to see here!");
 //   });
 
+server.get("/", (response: uWS.HttpResponse, request: uWS.HttpRequest) => {});
+
 // cant get it to work ??!?!?!?!?
 server.get("/server/stats/", (response: any, request: any) => {
   // response.write(request); // testing, inspecting request
@@ -57,7 +59,7 @@ server.get("/server/stats/", (response: any, request: any) => {
 });
 
 server.get("/play/", (response: any, request: any) => {
-  response.write(request); // testing, inspecting request
+  response.write(JSON.stringify(request)); // testing, inspecting request
   response.end("testing");
 });
 
@@ -124,7 +126,7 @@ server.ws("/play", {
 const game = new Game(server);
 game.run();
 
-server.listen(port, (token: any) => {
-  if (token) console.log(`Listening to port ${port}`);
-  else console.log(`Failed to listen to port ${port}`);
+server.listen(PORT, (listenSocket: any) => {
+  if (listenSocket) console.log(`Listening to port ${PORT}`);
+  else console.log(`Failed to listen to port ${PORT}`);
 });

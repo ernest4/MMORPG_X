@@ -5,7 +5,7 @@ import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
-import { DEVELOPMENT } from "./src/shared/utils/environment";
+import { DEVELOPMENT, PORT } from "./src/shared/utils/environment";
 
 const nodeModulesPath = path.resolve(__dirname, "node_modules");
 const targets = DEVELOPMENT ? { chrome: "79", firefox: "72" } : "> 0.25%, not dead";
@@ -70,12 +70,14 @@ const config: Configuration = {
       // },
     ],
   },
-  // devServer: {
-  //   port: WEBPACK_PORT,
-  //   overlay: DEVELOPMENT,
-  //   open: DEVELOPMENT,
-  //   openPage: `http://localhost:${SERVER_PORT}`,
-  // },
+  // @ts-ignore
+  devServer: {
+    port: 8085, //WEBPACK_PORT
+    overlay: DEVELOPMENT,
+    open: DEVELOPMENT,
+    contentBase: path.join(__dirname, "public"),
+    openPage: `http://localhost:${PORT}`,
+  },
   plugins: [
     new CleanWebpackPlugin(),
     new CopyWebpackPlugin([{ from: "public" }]),

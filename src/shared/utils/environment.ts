@@ -11,3 +11,5 @@
 export const DEVELOPMENT = process.env.NODE_ENV !== "production";
 // @ts-ignore
 export const SERVER = typeof window === "undefined";
+
+export const PORT = (process.env.PORT && parseInt(process.env.PORT)) || 3001;
