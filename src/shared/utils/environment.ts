@@ -9,3 +9,5 @@
 // export VERSION;
 
 export const DEVELOPMENT = process.env.NODE_ENV !== "production";
+// @ts-ignore
+export const SERVER = typeof window === "undefined";

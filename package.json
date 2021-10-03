@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest --config ./jest.config.js",
     "start": "node dist/server/index.js",
+    "build:start": "",
     "build": "yarn build-css && concurrently --prefix \"[{name}]\" --names \"SERVER,CLIENT\" -c \"bgYellow.bold,bgGreen.bold\" \"yarn build-server\" \"yarn build-client\"",
     "build-css": "postcss src/client/css/tailwind.css -o src/client/css/main.css",
     "build-server": "tsc -b src/server",
