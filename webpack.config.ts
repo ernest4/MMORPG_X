@@ -1,7 +1,6 @@
 import path from "path";
 import { Configuration } from "webpack";
 // import { WebpackManifestPlugin } from "webpack-manifest-plugin";
-import cssnano from "cssnano";
 import MiniCssExtractPlugin from "mini-css-extract-plugin";
 import { CleanWebpackPlugin } from "clean-webpack-plugin";
 import CopyWebpackPlugin from "copy-webpack-plugin";
@@ -58,20 +57,11 @@ const config: Configuration = {
         test: /\.css$/,
         use: [
           MiniCssExtractPlugin.loader,
-          { loader: "style-loader" },
           {
             loader: "css-loader",
-            options: {
-              importLoaders: 1,
-              modules: true,
-              localsConvention: "camelCase",
-              sourceMap: DEVELOPMENT,
-            },
+            options: { importLoaders: 1, modules: true, sourceMap: DEVELOPMENT },
           },
-          {
-            loader: "postcss-loader",
-            options: { sourceMap: DEVELOPMENT, plugins: DEVELOPMENT ? [cssnano()] : [] },
-          },
+          { loader: "postcss-loader", options: { sourceMap: DEVELOPMENT } },
         ],
       },
       // {
@@ -95,10 +85,7 @@ const config: Configuration = {
     }),
     new HtmlWebpackPlugin({ template: path.resolve(__dirname, "public/index.html") }),
   ],
-  externals: {
-    react: "React",
-    "react-dom": "ReactDOM",
-  },
+  externals: { react: "React", "react-dom": "ReactDOM" },
 };
 
 export default config;
