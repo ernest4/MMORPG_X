@@ -1,3 +1,4 @@
+// TODO: read / set version dynamically??
 // import path from "path";
 // import fs from "fs";
 
@@ -8,8 +9,10 @@
 
 // export VERSION;
 
-export const DEVELOPMENT = process.env.NODE_ENV !== "production";
 // @ts-ignore
 export const SERVER = typeof window === "undefined";
 
+// TODO: reduce console noise. process is not defined in the browser but this code is shared and
+// will run in the browser, producing error noise..
+export const DEVELOPMENT = process.env.NODE_ENV !== "production";
 export const PORT = (process.env.PORT && parseInt(process.env.PORT)) || 3001;
