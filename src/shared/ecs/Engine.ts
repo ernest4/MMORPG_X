@@ -8,7 +8,7 @@ import {
 } from "./types";
 import EntityIdPool from "./engine/EntityIdPool";
 import Component from "./Component";
-import SparseSet from "./utils/SparseSet";
+import SparseSet, { SparseSetItem } from "./utils/SparseSet";
 import System from "./System";
 import { isNumber } from "./utils/Number";
 
@@ -101,7 +101,7 @@ class Engine {
     if (isNumber(entityId)) this.reclaimEntityIdIfFree(entityId);
   };
 
-  getComponent = <T>(componentClass: ComponentClass, entityId: EntityId) => {
+  getComponent = <T extends Component>(componentClass: ComponentClass, entityId: EntityId) => {
     return this._componentLists[componentClass.name]?.get(entityId) as T | null;
   };
 

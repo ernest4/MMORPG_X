@@ -9,8 +9,10 @@ class TickProvider {
     this._tickCallback = tickCallback;
   }
 
+  // @ts-ignore
   start = () => (this._animationFrameRequest = requestAnimationFrame(this.tick));
 
+  // @ts-ignore
   stop = () => cancelAnimationFrame(this._animationFrameRequest as number);
 
   tick = (timestamp: DeltaTime) => {
@@ -26,6 +28,7 @@ class TickProvider {
     // TODO: node.js does not have requestAnimationFrame, so need to detect which
     // env im in (client or server) and use the right methods
     // use the TickProvider sample from node.js below
+    // @ts-ignore
     requestAnimationFrame(this.tick);
   };
 }

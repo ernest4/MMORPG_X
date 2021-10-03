@@ -8,15 +8,6 @@ import CopyWebpackPlugin from "copy-webpack-plugin";
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import { DEVELOPMENT } from "./src/shared/utils/environment";
 
-// import { SERVER_PORT, IS_DEV, WEBPACK_PORT } from "./src/server/config";
-
-// const IS_DEV = process.env.NODE_ENV !== "production";
-
-// const plugins = [new WebpackManifestPlugin()];
-
-// import { BundleAnalyzerPlugin } from 'webpack-bundle-analyzer';
-// plugins.push(new BundleAnalyzerPlugin());
-
 const nodeModulesPath = path.resolve(__dirname, "node_modules");
 const targets = DEVELOPMENT ? { chrome: "79", firefox: "72" } : "> 0.25%, not dead";
 
@@ -36,12 +27,6 @@ const config: Configuration = {
     splitChunks: {
       cacheGroups: {
         vendors: { test: /[\\/]node_modules[\\/]/, name: "vendors", chunks: "all", priority: 10 },
-        material: {
-          test: /[\\/]node_modules[\\/]@material-ui[\\/]/,
-          name: "material-ui",
-          chunks: "all",
-          priority: 20,
-        },
       },
     },
   },
