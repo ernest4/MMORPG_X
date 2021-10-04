@@ -76,7 +76,8 @@ const config: Configuration = {
     overlay: DEVELOPMENT,
     open: DEVELOPMENT,
     contentBase: path.join(__dirname, "public"),
-    openPage: `http://localhost:${PORT}`,
+    openPage: `http://localhost:${8085}/`,
+    publicPath: "/",
   },
   plugins: [
     new CleanWebpackPlugin(),
