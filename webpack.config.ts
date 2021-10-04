@@ -18,7 +18,7 @@ const config: Configuration = {
     path: path.join(__dirname, "dist", "statics"),
     filename: DEVELOPMENT ? "[name].bundle.js" : "[name].[contenthash].js",
     chunkFilename: DEVELOPMENT ? "[name].chunk.js" : "[name].[contenthash].chunk.js",
-    publicPath: "/statics/",
+    publicPath: DEVELOPMENT ? "/" : "/statics/",
   },
   resolve: { extensions: [".js", ".ts", ".tsx"] },
   optimization: {

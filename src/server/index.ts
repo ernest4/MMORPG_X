@@ -1,21 +1,13 @@
 import path from "path";
-import http from "http";
 import url from "url";
 import fs from "fs";
-import uWS from "uWebSockets.js"; // TODO: move to using uws for max perf & efficiency!
+import uWS from "uWebSockets.js";
 import Game from "./Game";
+import os from "os";
 import { PORT } from "../shared/utils/environment";
 
-// const assets = process.env.NODE_ENV == "production" ? "build" : "public";
-// const assets = "dist";
 const STATICS_PATH = path.join("dist", "statics");
 const ASSETS_PATH = path.join(STATICS_PATH, "assets");
-
-// const frontEndRootFilePath = path.join(publicPath, "index.html");
-
-let cache: any = {};
-
-// /play endpoint for game index.html
 
 // const app = uWS./*SSL*/App({
 //   key_file_name: 'misc/key.pem',
@@ -23,12 +15,7 @@ let cache: any = {};
 //   passphrase: '1234'
 // })
 
-// const server = uWS.SSLApp({
-const server = uWS.App({
-  // key_file_name: 'misc/key.pem',
-  // cert_file_name: 'misc/cert.pem',
-  // passphrase: '1234'
-});
+const server = uWS.App({});
 
 // server
 //   .any("/anything", (res, req) => {
@@ -150,10 +137,10 @@ server.get("/statics/*", (response: uWS.HttpResponse, request: uWS.HttpRequest) 
   pipeStreamOverResponse(response, readStream, totalSize);
 });
 
-// cant get it to work ??!?!?!?!?
+// TODO: hide it behind admin auth
 server.get("/server/stats/", (response: any, request: any) => {
   // response.write(request); // testing, inspecting request
-  response.end("testing");
+  response.end(`os CPUs: ${os.cpus().length}`);
 });
 
 // TODO: move this to network systems in ECS
@@ -177,44 +164,6 @@ server.ws("/play", {
     console.log("WebSocket closed");
   },
 });
-
-// TODO: might strip this out and just use express.js ??
-// const server = (req: any, res: any) => {
-//   const query = url.parse(req.url, false);
-
-//   if (query.pathname === "/") query.pathname = "index.html";
-//   debugLog(`requesting ${query.pathname}`);
-
-//   const fileLoc = path.join(publicPath, query.pathname);
-
-//   // TODOO: implement streaming rather than bulk sending of files https://stackabuse.com/node-http-servers-for-static-file-serving/
-//   // to create 'back pressure'. Serves files faster overall when clients are slow.
-
-//   // Check the cache first...
-//   if (cache[fileLoc] !== undefined) {
-//     debugLog(`returning cached ${fileLoc}`);
-//     return render({ data: cache[fileLoc], res });
-//   }
-
-//   // ...otherwise load the file, save to the cache and return
-// fs.readFile(fileLoc, (err: any, data: any) => {
-//   if (err) return notFound(res);
-
-//   debugLog(`caching ${fileLoc}`);
-//   cache[fileLoc] = data;
-
-//   return render({ data: cache[fileLoc], res });
-// });
-// };
-
-// const httpServer = http.createServer(server);
-
-// httpServer.listen(port, () => {
-//   log(`Server is up! port ${port}`);
-//   log(`Environment: ${process.env.NODE_ENV}`);
-// });
-
-// TODO: set up web socket server
 
 const game = new Game(server);
 game.run();
