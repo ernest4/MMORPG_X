@@ -16,7 +16,7 @@
       -systems
       -...
   2.1 fix webpack to work with new project structure  [DONE]
-3. Try get uWS working.
+3. Try get uWS working. [DONE]
 4. Data driven game server?
   4.1 have "ScriptsSystem", "ServerEditor" & "ClientEditor"
   4.1.1 be able to dynamically add and shape content and logic
