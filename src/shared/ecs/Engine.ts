@@ -169,9 +169,12 @@ class Engine {
     });
 
     // NOTE: cycling through the shortest component list
-    const componentsIterator = shortestComponentList.streamIterator();
 
-    for (const component of componentsIterator) {
+    // NOTE: pre-made function to avoid creating new one on each iteration
+    // NOTE: defined once per query to enclose the variables in the rest of this function, otherwise
+    // it could be defined outside. But still, defining function once per query [O(1)] is much
+    // better than defining it once per iteration [O(n)]
+    const processComponent = component => {
       const entityId = component.id;
 
       // TODO: optimize by caching querySet array ??
@@ -187,7 +190,9 @@ class Engine {
 
         if (i + 1 === componentClassesLength) callback(querySet);
       }
-    }
+    };
+
+    shortestComponentList.stream(processComponent);
   };
 
   get deltaTime() {

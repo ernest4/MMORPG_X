@@ -222,24 +222,4 @@ describe(SparseSet, () => {
       expect(items).toEqual([numberComponent1, numberComponent3]);
     });
   });
-
-  describe("#streamIterator", () => {
-    beforeEach(() => subject.add(numberComponent3));
-
-    it("streams all the items one by one", () => {
-      let items: any[] = [];
-      let iterator;
-
-      iterator = subject.streamIterator();
-      for (const item of iterator) items.push(item);
-      expect(items).toEqual([numberComponent1, numberComponent2, numberComponent3]);
-
-      subject.remove(numberComponent2);
-
-      items = [];
-      iterator = subject.streamIterator();
-      for (const item of iterator) items.push(item);
-      expect(items).toEqual([numberComponent1, numberComponent3]);
-    });
-  });
 });

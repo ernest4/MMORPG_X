@@ -108,10 +108,6 @@ class SparseSet {
   stream = (callback: Function) => {
     for (let i = 0; i < this._elementCount; i++) callback(this._denseList[i]);
   };
-
-  *streamIterator() {
-    for (let i = 0; i < this._elementCount; i++) yield this._denseList[i];
-  }
 }
 
 export default SparseSet;
