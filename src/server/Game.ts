@@ -4,6 +4,7 @@ import TickProvider from "../shared/ecs/utils/TickProvider";
 import { DEVELOPMENT } from "../shared/utils/environment";
 import Manager from "./systems/Manager";
 import uWS from "uWebSockets.js";
+import ConnectionListener from "./systems/ConnectionListener";
 // import FpsCounter from "./utils/FpsCounter";
 
 class Game {
@@ -28,6 +29,7 @@ class Game {
     this._engine = new Engine(DEVELOPMENT);
     // TODO: test all systems.
     this._engine.addSystem(new Manager(this._engine));
+    this._engine.addSystem(new ConnectionListener(this._engine, this._server));
     // this._engine.addSystem(new Serialization(this._engine, this));
     // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));
     // // this._engine.addSystem(new Network(this._engine, this)); // TODO: networking here ...
