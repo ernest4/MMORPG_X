@@ -58,7 +58,7 @@ server.get("/statics/*", (response: uWS.HttpResponse, request: uWS.HttpRequest) 
 });
 
 // TODO: hide it behind admin auth
-server.get("/server/stats/", (response: any, request: any) => {
+server.get("/server/stats/", (response: uWS.HttpResponse, request: uWS.HttpRequest) => {
   // response.write(request); // testing, inspecting request
   response.end(`os CPUs: ${os.cpus().length}`);
 });
