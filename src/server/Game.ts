@@ -6,6 +6,7 @@ import Manager from "./systems/Manager";
 import uWS from "uWebSockets.js";
 import ConnectionListener from "./systems/ConnectionListener";
 // import FpsCounter from "./utils/FpsCounter";
+import { upgrade, open } from "./systems/ConnectionListener";
 
 class Game {
   // dudeQuads!: any[];
@@ -17,6 +18,25 @@ class Game {
 
   constructor(server: uWS.TemplatedApp) {
     this._server = server;
+    this._server.ws("/", {
+      /* Options */
+      // compression: uWS.SHARED_COMPRESSOR,
+      // maxPayloadLength: 16 * 1024 * 1024,
+      // idleTimeout: 10,
+      /* Handlers */
+      upgrade,
+      open,
+      // message: (ws: uWS.WebSocket, message: ArrayBuffer, isBinary: boolean) => {
+      //   /* Ok is false if backpressure was built up, wait for drain */
+      //   let ok = ws.send(message, isBinary);
+      // },
+      // drain: (ws: uWS.WebSocket) => {
+      //   console.log("WebSocket backpressure: " + ws.getBufferedAmount());
+      // },
+      // close: (ws: uWS.WebSocket, code: number, message: ArrayBuffer) => {
+      //   console.log("WebSocket closed");
+      // },
+    });
     this.initECS();
   }
 
