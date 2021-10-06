@@ -1,4 +1,4 @@
-import Component from "../ecs/Component";
+import Component from "../../shared/ecs/Component";
 import { EntityId } from "../../shared/ecs/types";
 import uWS from "uWebSockets.js";
 

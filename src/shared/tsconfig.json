@@ -13,6 +13,6 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true
   },
-  "include": ["./**/*.ts"],
+  "include": ["./**/*.ts", "../server/components/WebSocket.ts"],
   "exclude": ["./**/*.test.ts"]
 }

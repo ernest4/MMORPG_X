@@ -2,18 +2,22 @@ import { Engine } from "../shared/ecs";
 import { DeltaTime } from "../shared/ecs/types";
 import TickProvider from "../shared/ecs/utils/TickProvider";
 import { DEVELOPMENT } from "../shared/utils/environment";
+import ConnectionListener from "./systems/ConnectionListener";
 import Manager from "./systems/Manager";
-import FpsCounter from "./utils/FpsCounter";
+// import FpsCounter from "./utils/FpsCounter";
 
 class Game {
   // dudeQuads!: any[];
   lastDeltaTime: any;
   lastFrame: any;
-  fpsCounter!: FpsCounter;
+  // fpsCounter!: FpsCounter;
   private _engine!: Engine;
+  private _webSocket: WebSocket;
 
   constructor() {
     this.initECS();
+    this._webSocket = new WebSocket(this.webSocketURL());
+    this._webSocket.binaryType = "arraybuffer"; // TODO: move this to MessageListener init?
   }
 
   run = () => {
@@ -25,6 +29,7 @@ class Game {
     this._engine = new Engine(DEVELOPMENT);
     // TODO: test all systems.
     this._engine.addSystem(new Manager(this._engine));
+    this._engine.addSystem(new ConnectionListener(this._engine, this._webSocket));
     // this._engine.addSystem(new Serialization(this._engine, this));
     // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));
     // // this._engine.addSystem(new Network(this._engine, this)); // TODO: networking here ...
@@ -48,6 +53,8 @@ class Game {
   };
 
   private updateEngine = (deltaTime: DeltaTime) => this._engine.update(deltaTime);
+
+  private webSocketURL = () => window.location.origin.replace("http", "ws");
 }
 
 export default Game;
