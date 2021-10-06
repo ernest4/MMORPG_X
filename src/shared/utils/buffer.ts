@@ -1,4 +1,3 @@
-
 // TODO: specs
 class Buffer<T> {
   private _buffer1: T[];
@@ -15,7 +14,7 @@ class Buffer<T> {
 
   push = (item: T) => this._activeBuffer.push(item);
 
-  process = (callback: (item: T) => {}) => {
+  process = (callback: (item: T) => void) => {
     this.swap();
     this.each(callback);
     this.flush();
@@ -35,7 +34,7 @@ class Buffer<T> {
     this._secondaryBuffer = [];
   };
 
-  each = (callback: (item: T) => {}) => this._secondaryBuffer.forEach(callback);
+  each = (callback: (item: T) => void) => this._secondaryBuffer.forEach(callback);
 }
 
 export default Buffer;

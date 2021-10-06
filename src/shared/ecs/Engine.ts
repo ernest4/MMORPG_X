@@ -73,9 +73,11 @@ class Engine {
     }
 
     componentList.add(component);
-
     return component;
   };
+
+  // TODO: specs
+  addComponents = (...components: Component[]) => components.forEach(this.addComponent);
 
   removeComponent = (component: Component) => {
     // NOTE: indexing using component class name
