@@ -10,12 +10,6 @@ import { pipeStreamOverResponse } from "./utils/uwsHelpers";
 const STATICS_PATH = path.join("dist", "statics");
 const ASSETS_PATH = path.join(STATICS_PATH, "assets");
 
-// const app = uWS./*SSL*/App({
-//   key_file_name: 'misc/key.pem',
-//   cert_file_name: 'misc/cert.pem',
-//   passphrase: '1234'
-// })
-
 const server = uWS.App({});
 
 // server
@@ -61,42 +55,6 @@ server.get("/statics/*", (response: uWS.HttpResponse, request: uWS.HttpRequest) 
 server.get("/server/stats/", (response: uWS.HttpResponse, request: uWS.HttpRequest) => {
   // response.write(request); // testing, inspecting request
   response.end(`os CPUs: ${os.cpus().length}`);
-});
-
-// TODO: move this to network systems in ECS
-server.ws("/play", {
-  /* Options */
-  // compression: uWS.SHARED_COMPRESSOR,
-  // maxPayloadLength: 16 * 1024 * 1024,
-  // idleTimeout: 10,
-  /* Handlers */
-  // upgrade: (res, req, context) => {
-  //   try {
-  //     req.user = decodeJwtCookie(req, "cookieName");
-  //   } catch {
-  //     return res.writeStatus("401").end();
-  //   }
-  //   res.upgrade(
-  //     { uid: req.user._id },
-  //     req.getHeader("sec-websocket-key"),
-  //     req.getHeader("sec-websocket-protocol"),
-  //     req.getHeader("sec-websocket-extensions"),
-  //     context
-  //   );
-  // },
-  open: (ws: uWS.WebSocket) => {
-    console.log("A WebSocket connected!");
-  },
-  message: (ws: uWS.WebSocket, message: ArrayBuffer, isBinary: boolean) => {
-    /* Ok is false if backpressure was built up, wait for drain */
-    let ok = ws.send(message, isBinary);
-  },
-  drain: (ws: uWS.WebSocket) => {
-    console.log("WebSocket backpressure: " + ws.getBufferedAmount());
-  },
-  close: (ws: uWS.WebSocket, code: number, message: ArrayBuffer) => {
-    console.log("WebSocket closed");
-  },
 });
 
 const game = new Game(server);

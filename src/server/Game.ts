@@ -28,7 +28,7 @@ class Game {
   private initECS = () => {
     this._engine = new Engine(DEVELOPMENT);
     // TODO: test all systems.
-    this._engine.addSystem(new Manager(this._engine));
+    this._engine.addSystem(new Manager(this._engine, this._server));
     this._engine.addSystem(new ConnectionListener(this._engine, this._server));
     // this._engine.addSystem(new Serialization(this._engine, this));
     // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));

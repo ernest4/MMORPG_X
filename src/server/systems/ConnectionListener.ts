@@ -17,8 +17,44 @@ class ConnectionListener extends System {
   }
 
   start(): void {
-    // TODO: ...
-    // this._server.ws();
+    // NOTE: wish I could separate this out into its own system per event like in the other server,
+    // but the way uWS handles these, can't be done cleanly.
+
+    // TODO: NO, find a way to split them out!
+    this._server.ws("/play", {
+      /* Options */
+      // compression: uWS.SHARED_COMPRESSOR,
+      // maxPayloadLength: 16 * 1024 * 1024,
+      // idleTimeout: 10,
+      /* Handlers */
+      // upgrade: (res, req, context) => {
+      //   try {
+      //     req.user = decodeJwtCookie(req, "cookieName");
+      //   } catch {
+      //     return res.writeStatus("401").end();
+      //   }
+      //   res.upgrade(
+      //     { uid: req.user._id },
+      //     req.getHeader("sec-websocket-key"),
+      //     req.getHeader("sec-websocket-protocol"),
+      //     req.getHeader("sec-websocket-extensions"),
+      //     context
+      //   );
+      // },
+      open: (ws: uWS.WebSocket) => {
+        console.log("A WebSocket connected!");
+      },
+      message: (ws: uWS.WebSocket, message: ArrayBuffer, isBinary: boolean) => {
+        /* Ok is false if backpressure was built up, wait for drain */
+        let ok = ws.send(message, isBinary);
+      },
+      drain: (ws: uWS.WebSocket) => {
+        console.log("WebSocket backpressure: " + ws.getBufferedAmount());
+      },
+      close: (ws: uWS.WebSocket, code: number, message: ArrayBuffer) => {
+        console.log("WebSocket closed");
+      },
+    });
   }
 
   update(): void {}
