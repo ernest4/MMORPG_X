@@ -1,8 +1,7 @@
 import { Engine } from "../../shared/ecs";
 import Buffer from "../../shared/utils/buffer";
 import System from "../../shared/ecs/System";
-import { QuerySet } from "../../shared/ecs/types";
-import ServerMessageEvent from "../components/ServerMessageEvent";
+import MessageEvent from "../components/MessageEvent";
 
 class MessageListener extends System {
   private _webSocket: WebSocket;
@@ -19,7 +18,7 @@ class MessageListener extends System {
   }
 
   update(): void {
-    this.engine.removeComponentsOfClass(ServerMessageEvent);
+    this.engine.removeComponentsOfClass(MessageEvent);
     this.createClientMessageEvents();
   }
 
@@ -27,14 +26,9 @@ class MessageListener extends System {
 
   private registerMessageListener = () => {
     this._webSocket.onmessage = ({ data: binaryMessage }) => {
-      // To combat Nagle algorithm
+      // To combat Nagle algorithm, send back empty message right away
       // https://stackoverflow.com/a/19581883
       this._webSocket.send(""); // empty, but still includes headers
-
-      // cruft from other project
-      // const parsedMessage = parse(event.data);
-      // pushMessageToPhaserRegistry(scene, parsedMessage);
-
       this._messages_buffer.push(binaryMessage);
     };
   };
@@ -42,7 +36,7 @@ class MessageListener extends System {
   private createClientMessageEvents = () => {
     this._messages_buffer.process(binaryMessage => {
       const entityId = this.engine.generateEntityId();
-      const clientMessageEvent = new ServerMessageEvent(entityId, binaryMessage);
+      const clientMessageEvent = new MessageEvent(entityId, binaryMessage);
       this.engine.addComponents(clientMessageEvent);
     });
   };

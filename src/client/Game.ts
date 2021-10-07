@@ -33,6 +33,7 @@ class Game {
     this._engine.addSystem(new Manager(this._engine));
     this._engine.addSystem(new ConnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new MessageListener(this._engine, this._webSocket));
+    this._engine.addSystem(new MessageDeserializer(this._engine)); // TODO: ...
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
     // this._engine.addSystem(new Serialization(this._engine, this));
     // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));
