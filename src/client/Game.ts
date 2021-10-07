@@ -4,6 +4,7 @@ import TickProvider from "../shared/ecs/utils/TickProvider";
 import { DEVELOPMENT } from "../shared/utils/environment";
 import ConnectionListener from "./systems/ConnectionListener";
 import Manager from "./systems/Manager";
+import MessageListener from "./systems/MessageListener";
 // import FpsCounter from "./utils/FpsCounter";
 
 class Game {
@@ -30,6 +31,8 @@ class Game {
     // TODO: test all systems.
     this._engine.addSystem(new Manager(this._engine));
     this._engine.addSystem(new ConnectionListener(this._engine, this._webSocket));
+    this._engine.addSystem(new MessageListener(this._engine, this._webSocket));
+    this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket)); // TODO
     // this._engine.addSystem(new Serialization(this._engine, this));
     // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));
     // // this._engine.addSystem(new Network(this._engine, this)); // TODO: networking here ...
