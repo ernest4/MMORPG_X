@@ -3,14 +3,16 @@ import WebSocketComponent from "../../client/components/WebSocket";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { QuerySet } from "../../shared/ecs/types";
+import Buffer from "../../shared/utils/buffer";
 
 class ConnectionListener extends System {
   private _webSocket: WebSocket;
-  private _connection_buffer: boolean = false;
+  private _connections_buffer: Buffer<boolean>;
 
   constructor(engine: Engine, webSocket: WebSocket) {
     super(engine);
     this._webSocket = webSocket;
+    this._connections_buffer = new Buffer<boolean>();
   }
 
   start(): void {
@@ -24,7 +26,7 @@ class ConnectionListener extends System {
 
   destroy(): void {}
 
-  private onOpen = (event: Event) => (this._connection_buffer = true);
+  private onOpen = (event: Event) => this._connections_buffer.push(true);
 
   private removeConnectionEvents = (querySet: QuerySet) => {
     const [connectionEvent] = querySet as [ConnectionEvent];
@@ -32,12 +34,12 @@ class ConnectionListener extends System {
   };
 
   private createConnectionEvents = () => {
-    const entityId = this.engine.generateEntityId();
-    const connectionEvent = new ConnectionEvent(entityId);
-    const webSocket = new WebSocketComponent(entityId, this._webSocket);
-    this.engine.addComponents(connectionEvent, webSocket);
-
-    this._connection_buffer = false;
+    this._connections_buffer.process(isConnected => {
+      const entityId = this.engine.generateEntityId();
+      const connectionEvent = new ConnectionEvent(entityId);
+      const webSocket = new WebSocketComponent(entityId, this._webSocket);
+      this.engine.addComponents(connectionEvent, webSocket);
+    });
   };
 }
 
