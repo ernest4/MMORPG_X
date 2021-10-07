@@ -7,6 +7,11 @@ import { EntityId } from "../../shared/ecs/types";
 import WebSocketInitEvent from "../components/WebSocketInitEvent";
 import MessageEvent from "../components/MessageEvent";
 
+const MESSAGE_COMPONENT_CLASSES = {};
+
+// MESSAGE_COMPONENT_CLASSES = {
+//   Pulse::Messages::Move.to_s => Component::ClientMoveMessage,
+// }
 class MessageDeserializer extends System {
   constructor(engine: Engine) {
     super(engine);
@@ -15,19 +20,26 @@ class MessageDeserializer extends System {
   start(): void {}
 
   update(): void {
-    // this.engine.removeComponentsOfClass(MessageEvent);
-    // this.createClientMessageEvents();
+    this.engine.removeComponentsOfClasses(...Object.values(MESSAGE_COMPONENT_CLASSES));
+    this.engine.query(this.createMessageComponents, MessageEvent)
   }
 
   destroy(): void {}
 
-  // private createClientMessageEvents = () => {
-  //   this._messages_buffer.process(({ fromEntityId, binaryMessage }) => {
-  //     const entityId = this.engine.generateEntityId();
-  //     const clientMessageEvent = new MessageEvent(entityId, fromEntityId, binaryMessage);
-  //     this.engine.addComponents(clientMessageEvent);
-  //   });
-  // };
+  private createMessageComponents = (querySet) => {
+    const [MessageEvent] = querySet as [MessageEvent]
+
+    // TODO: ...
+          
+    // message = Pulse::Messages::Resolver.resolve(client_message_event.binary_message)
+    // # TODO: move out into helper class ? resolver ?
+    // message_component = MESSAGE_COMPONENT_CLASSES[message.class.to_s].new(
+    //   entity_id: engine.generate_entity_id,
+    //   from_entity_id: client_message_event.from_entity_id,
+    //   message: message
+    // )
+    // engine.add_component(message_component)
+  }
 }
 
 export default MessageDeserializer;
@@ -69,16 +81,16 @@ module Pulse
 
         private def create_message_components
           engine.query(Component::ClientMessageEvent) do |query_set|
-            client_message_event = query_set.first.as Component::ClientMessageEvent
+            // client_message_event = query_set.first.as Component::ClientMessageEvent
             
-            message = Pulse::Messages::Resolver.resolve(client_message_event.binary_message)
-            # TODO: move out into helper class ? resolver ?
-            message_component = MESSAGE_COMPONENT_CLASSES[message.class.to_s].new(
-              entity_id: engine.generate_entity_id,
-              from_entity_id: client_message_event.from_entity_id,
-              message: message
-            )
-            engine.add_component(message_component)
+            // message = Pulse::Messages::Resolver.resolve(client_message_event.binary_message)
+            // # TODO: move out into helper class ? resolver ?
+            // message_component = MESSAGE_COMPONENT_CLASSES[message.class.to_s].new(
+            //   entity_id: engine.generate_entity_id,
+            //   from_entity_id: client_message_event.from_entity_id,
+            //   message: message
+            // )
+            // engine.add_component(message_component)
           end
         end
       end

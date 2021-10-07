@@ -19,7 +19,7 @@ class MessageListener extends System {
 
   update(): void {
     this.engine.removeComponentsOfClass(MessageEvent);
-    this.createClientMessageEvents();
+    this.createMessageEvents();
   }
 
   destroy(): void {}
@@ -33,7 +33,7 @@ class MessageListener extends System {
     };
   };
 
-  private createClientMessageEvents = () => {
+  private createMessageEvents = () => {
     this._messages_buffer.process(binaryMessage => {
       const entityId = this.engine.generateEntityId();
       const clientMessageEvent = new MessageEvent(entityId, binaryMessage);
