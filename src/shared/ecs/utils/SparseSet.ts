@@ -106,7 +106,9 @@ class SparseSet {
   }
 
   stream = (callback: Function) => {
-    for (let i = 0; i < this._elementCount; i++) callback(this._denseList[i]);
+    // Caching this to prevent add / remove from messing with the stream
+    const elementCount = this._elementCount;
+    for (let i = 0; i < elementCount; i++) callback(this._denseList[i]);
   };
 }
 

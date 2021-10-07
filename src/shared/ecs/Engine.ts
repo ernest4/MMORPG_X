@@ -76,7 +76,6 @@ class Engine {
     return component;
   };
 
-  // TODO: specs
   addComponents = (...components: Component[]) => components.forEach(this.addComponent);
 
   removeComponent = (component: Component) => {
@@ -90,10 +89,7 @@ class Engine {
     if (isNumber(oldEntityId)) this.reclaimEntityIdIfFree(oldEntityId);
   };
 
-  // TODO: testing !!!
-  removeComponents = (components: Component[]) => {
-    components.forEach((component: Component) => this.removeComponent(component));
-  };
+  removeComponents = (...components: Component[]) => components.forEach(this.removeComponent);
 
   removeComponentById = (componentClass: ComponentClass, entityId: EntityId) => {
     const componentList = this._componentLists[componentClass.name];
@@ -101,6 +97,14 @@ class Engine {
 
     componentList.remove(entityId);
     if (isNumber(entityId)) this.reclaimEntityIdIfFree(entityId);
+  };
+
+  removeComponentsOfClass = (componentClass: ComponentClass) => {
+    this._componentLists[componentClass.name]?.stream(this.removeComponent);
+  };
+
+  removeComponentsOfClasses = (...componentClasses: ComponentClass[]) => {
+    componentClasses.forEach(this.removeComponentsOfClass);
   };
 
   getComponent = <T extends Component>(componentClass: ComponentClass, entityId: EntityId) => {

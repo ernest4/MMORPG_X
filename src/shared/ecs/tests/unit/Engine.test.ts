@@ -43,9 +43,11 @@ describe(Engine, () => {
   let entityId3 = 2;
 
   let queryCallBackFunction: jest.Mock<any, any>;
+  let queryCallBackFunction2: jest.Mock<any, any>;
 
   let component: Component;
   let component2: Component;
+  let component3: Component;
 
   beforeEach(() => {
     engine = new Engine();
@@ -63,6 +65,7 @@ describe(Engine, () => {
     testySystem3.update = jest.fn();
 
     queryCallBackFunction = jest.fn();
+    queryCallBackFunction2 = jest.fn();
   });
 
   describe("#addSystem", () => {
@@ -101,6 +104,46 @@ describe(Engine, () => {
       beforeEach(() => {
         engine.addComponent(component);
         engine.addComponent(component);
+        engine.query(queryCallBackFunction, NumberComponent);
+      });
+
+      it("adds the component once", () => {
+        expect(queryCallBackFunction).toBeCalledTimes(1);
+        expect(queryCallBackFunction).toBeCalledWith([component]);
+      });
+    });
+  });
+
+  describe("#addComponents", () => {
+    beforeEach(() => {
+      component = new NumberComponent(entityId);
+      component2 = new NumberComponent(entityId2);
+      component3 = new StringComponent(entityId3);
+    });
+
+    context("when components dont exist", () => {
+      beforeEach(() => {
+        engine.addComponents(component, component2, component3);
+        engine.query(queryCallBackFunction, NumberComponent);
+        engine.query(queryCallBackFunction2, StringComponent);
+      });
+
+      it("adds the component", () => {
+        expect(queryCallBackFunction).toBeCalledTimes(2);
+        // NOTE: format: array of array of args (where in case of query arg is also an array!)
+        // expect(mockFn.mock.calls).toEqual([
+        //   [arg1, arg2, ...], // First call
+        //   [arg1, arg2, ...]  // Second call
+        // ]);
+        expect(queryCallBackFunction.mock.calls).toEqual([[[component]], [[component2]]]);
+        expect(queryCallBackFunction2).toBeCalledTimes(1);
+        expect(queryCallBackFunction2).toBeCalledWith([component3]);
+      });
+    });
+
+    context("when component does exist", () => {
+      beforeEach(() => {
+        engine.addComponents(component, component);
         engine.query(queryCallBackFunction, NumberComponent);
       });
 
@@ -160,6 +203,111 @@ describe(Engine, () => {
         it("does not reclaim the id", () => {
           expect(engine.generateEntityId()).not.toEqual(component.id);
         });
+      });
+    });
+  });
+
+  describe("#removeComponents", () => {
+    beforeEach(() => {
+      component = new NumberComponent(entityId);
+      component2 = new NumberComponent(entityId2);
+      component3 = new StringComponent(entityId3);
+    });
+
+    context("when components dont exist", () => {
+      beforeEach(() => {
+        engine.removeComponents(component, component2, component3);
+
+        engine.query(queryCallBackFunction, NumberComponent);
+        engine.query(queryCallBackFunction2, StringComponent);
+      });
+
+      it("does nothing", () => {
+        expect(queryCallBackFunction).not.toBeCalled();
+        expect(queryCallBackFunction2).not.toBeCalled();
+      });
+    });
+
+    context("when components exist", () => {
+      beforeEach(() => {
+        engine.addComponent(component);
+        engine.addComponent(component2);
+        engine.addComponent(component3);
+
+        engine.removeComponentsOfClasses(NumberComponent, StringComponent);
+
+        engine.query(queryCallBackFunction, NumberComponent);
+        engine.query(queryCallBackFunction2, StringComponent);
+      });
+
+      it("removes the components", () => {
+        expect(queryCallBackFunction).not.toBeCalled();
+        expect(queryCallBackFunction2).not.toBeCalled();
+      });
+    });
+  });
+
+  describe("#removeComponentsOfClass", () => {
+    context("when components dont exist", () => {
+      beforeEach(() => {
+        engine.removeComponentsOfClass(NumberComponent);
+        engine.query(queryCallBackFunction, NumberComponent);
+      });
+
+      it("does nothing", () => {
+        expect(queryCallBackFunction).not.toBeCalled();
+      });
+    });
+
+    context("when components exist", () => {
+      beforeEach(() => {
+        component = new NumberComponent(entityId);
+        engine.addComponent(component);
+        component2 = new NumberComponent(entityId2);
+        engine.addComponent(component2);
+        engine.removeComponentsOfClass(NumberComponent);
+        engine.query(queryCallBackFunction, NumberComponent);
+      });
+
+      it("removes the components", () => {
+        expect(queryCallBackFunction).not.toBeCalled();
+      });
+    });
+  });
+
+  describe("#removeComponentsOfClasses", () => {
+    context("when components dont exist", () => {
+      beforeEach(() => {
+        engine.removeComponentsOfClasses(NumberComponent, StringComponent);
+
+        engine.query(queryCallBackFunction, NumberComponent);
+        engine.query(queryCallBackFunction2, StringComponent);
+      });
+
+      it("does nothing", () => {
+        expect(queryCallBackFunction).not.toBeCalled();
+        expect(queryCallBackFunction2).not.toBeCalled();
+      });
+    });
+
+    context("when components exist", () => {
+      beforeEach(() => {
+        component = new NumberComponent(entityId);
+        engine.addComponent(component);
+        component2 = new NumberComponent(entityId2);
+        engine.addComponent(component2);
+        component3 = new StringComponent(entityId3);
+        engine.addComponent(component3);
+
+        engine.removeComponentsOfClasses(NumberComponent, StringComponent);
+
+        engine.query(queryCallBackFunction, NumberComponent);
+        engine.query(queryCallBackFunction2, StringComponent);
+      });
+
+      it("removes the components", () => {
+        expect(queryCallBackFunction).not.toBeCalled();
+        expect(queryCallBackFunction2).not.toBeCalled();
       });
     });
   });

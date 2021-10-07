@@ -14,6 +14,7 @@ class WebSocketInitializer extends System {
   start(): void {
     const entityId = this.engine.generateEntityId();
     this.engine.addComponent(new WebSocketInitEvent(entityId));
+    // this.engine.generateComponent(WebSocketInitEvent)
   }
 
   update(): void {
