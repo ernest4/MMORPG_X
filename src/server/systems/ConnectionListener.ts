@@ -4,26 +4,41 @@ import System from "../../shared/ecs/System";
 import WebSocket from "../components/WebSocket";
 import ConnectionEvent from "../../shared/components/ConnectionEvent";
 import uWS from "uWebSockets.js";
+import WebSocketInitEvent from "../components/WebSocketInitEvent";
+import { EntityId } from "../../shared/ecs/types";
 
-let upgrade;
-let open;
 class ConnectionListener extends System {
-  private _server: uWS.TemplatedApp;
   // private _connections_buffer: Buffer<{ socket: uWS.WebSocket; context: uWS.us_socket_context_t }>;
-  private _connections_buffer: Buffer<uWS.WebSocket>;
+  private _connections_buffer: Buffer<{ entityId: EntityId; webSocket: uWS.WebSocket }>;
 
-  constructor(engine: Engine, server: uWS.TemplatedApp) {
+  constructor(engine: Engine) {
     super(engine);
-    this._server = server;
     // this._connections_buffer = new Buffer<{
     //   webSocket: uWS.WebSocket;
     //   context: uWS.us_socket_context_t;
     // }>();
-    this._connections_buffer = new Buffer<uWS.WebSocket>();
+    this._connections_buffer = new Buffer<{ entityId: EntityId; webSocket: uWS.WebSocket }>();
   }
 
-  start(): void {
-    upgrade = (res, req, context) => {
+  start(): void {}
+
+  update(): void {
+    this.engine.query(this.registerConnectionListener, WebSocketInitEvent);
+    // this.engine.removeAllComponents(ConnectionEvent); // TODO: add this helper?
+    this.engine.query(this.removeConnectionEvents, ConnectionEvent);
+    this.createConnectionEvents();
+  }
+
+  destroy(): void {}
+
+  private registerConnectionListener = querySet => {
+    const [webSocketInitEvent] = querySet as [WebSocketInitEvent];
+    webSocketInitEvent.behaviour.upgrade = this.onUpgrade(webSocketInitEvent.id);
+    webSocketInitEvent.behaviour.open = this.onOpen(webSocketInitEvent.id);
+  };
+
+  private onUpgrade = entityId => {
+    return (res, req, context) => {
       // try {
       //   req.user = decodeJwtCookie(req, "cookieName");
       // } catch {
@@ -43,8 +58,9 @@ class ConnectionListener extends System {
       //   return res.writeStatus("401").end();
       // }
 
+      // NOTE: uid will be for auth / DB lookup. Guest / google_id
       res.upgrade(
-        { uid: `guest-${this.engine.generateEntityId}` },
+        { uid: `guest-${entityId}` },
         req.getHeader("sec-websocket-key"),
         req.getHeader("sec-websocket-protocol"),
         req.getHeader("sec-websocket-extensions"),
@@ -52,19 +68,14 @@ class ConnectionListener extends System {
       );
       console.log("A WebSocket upgraded!"); // TODO: remove
     };
+  };
 
-    open = (webSocket: uWS.WebSocket) => {
-      this._connections_buffer.push(webSocket);
-      console.log("A WebSocket connected!"); // TODO: remove
+  private onOpen = entityId => {
+    return (webSocket: uWS.WebSocket) => {
+      this._connections_buffer.push({ entityId, webSocket });
+      console.log(`A WebSocket connected! ws.uid:${webSocket.uid}`); // TODO: remove
     };
-  }
-
-  update(): void {
-    this.engine.query(this.removeConnectionEvents, ConnectionEvent);
-    this.createConnectionEvents();
-  }
-
-  destroy(): void {}
+  };
 
   private removeConnectionEvents = querySet => {
     const [connectionEvent] = querySet as [ConnectionEvent];
@@ -72,8 +83,7 @@ class ConnectionListener extends System {
   };
 
   private createConnectionEvents = () => {
-    this._connections_buffer.process(bufferedWebSocket => {
-      const entityId = this.engine.generateEntityId();
+    this._connections_buffer.process(({ entityId, webSocket: bufferedWebSocket }) => {
       const connectionEvent = new ConnectionEvent(entityId);
       const webSocket = new WebSocket(entityId, bufferedWebSocket);
       this.engine.addComponents(connectionEvent, webSocket);
@@ -82,4 +92,3 @@ class ConnectionListener extends System {
 }
 
 export default ConnectionListener;
-export { upgrade, open };

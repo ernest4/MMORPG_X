@@ -18,7 +18,7 @@ type QueryCallback = (querySet: QuerySet) => void;
 type ComponentClass = {
   name: string;
   prototype: Component;
-  new (entityId: EntityId): Component;
+  new (entityId: EntityId, ...arguments: any[]): Component;
 };
 
 // NOTE: using string enums over number enums as number enums are not enforceable in the type check!

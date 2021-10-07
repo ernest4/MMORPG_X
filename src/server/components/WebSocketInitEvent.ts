@@ -3,13 +3,13 @@ import { EntityId } from "../../shared/ecs/types";
 import uWS from "uWebSockets.js";
 
 // TODO: optimize with ArrayBuffers ??
-class WebSocket extends Component {
-  websocket: uWS.WebSocket;
+class WebSocketInitEvent extends Component {
+  behaviour: uWS.WebSocketBehavior;
 
-  constructor(entityId: EntityId, websocket: uWS.WebSocket) {
+  constructor(entityId: EntityId) {
     super(entityId);
-    this.websocket = websocket;
+    this.behaviour = {};
   }
 }
 
-export default WebSocket;
+export default WebSocketInitEvent;
