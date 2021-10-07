@@ -18,7 +18,7 @@ class DisconnectionListener extends System {
 
   update(): void {
     this.engine.query(this.registerDisconnectionListener, WebSocketInitEvent);
-    this.engine.query(this.removeDisconnectionEvents, DisconnectionEvent);
+    this.engine.removeComponentsOfClass(DisconnectionEvent);
     this.createDisconnectionEvents();
   }
 
@@ -34,11 +34,6 @@ class DisconnectionListener extends System {
       this._disconnections_buffer.push(entityId);
       console.log("WebSocket closed"); // TODO: remove
     };
-  };
-
-  private removeDisconnectionEvents = querySet => {
-    const [disconnectionEvent] = querySet as [DisconnectionEvent];
-    this.engine.removeComponent(disconnectionEvent);
   };
 
   private createDisconnectionEvents = () => {

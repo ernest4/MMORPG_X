@@ -19,18 +19,13 @@ class DisconnectionListener extends System {
   }
 
   update(): void {
-    this.engine.query(this.removeDisconnectionEvents, DisconnectionEvent);
+    this.engine.removeComponentsOfClass(DisconnectionEvent);
     this.createDisconnectionEvents();
   }
 
   destroy(): void {}
 
   private onClose = (event: Event) => this._disconnections_buffer.push(true);
-
-  private removeDisconnectionEvents = (querySet: QuerySet) => {
-    const [disconnectionEvent] = querySet as [DisconnectionEvent];
-    this.engine.removeComponent(disconnectionEvent);
-  };
 
   private createDisconnectionEvents = () => {
     this._disconnections_buffer.process(isDisconnected => {

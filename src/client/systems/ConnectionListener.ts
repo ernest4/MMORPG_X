@@ -2,7 +2,6 @@ import ConnectionEvent from "../../shared/components/ConnectionEvent";
 import WebSocketComponent from "../../client/components/WebSocket";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import { QuerySet } from "../../shared/ecs/types";
 import Buffer from "../../shared/utils/buffer";
 
 class ConnectionListener extends System {
@@ -20,18 +19,13 @@ class ConnectionListener extends System {
   }
 
   update(): void {
-    this.engine.query(this.removeConnectionEvents, ConnectionEvent);
+    this.engine.removeComponentsOfClass(ConnectionEvent);
     this.createConnectionEvents();
   }
 
   destroy(): void {}
 
   private onOpen = (event: Event) => this._connections_buffer.push(true);
-
-  private removeConnectionEvents = (querySet: QuerySet) => {
-    const [connectionEvent] = querySet as [ConnectionEvent];
-    this.engine.removeComponent(connectionEvent);
-  };
 
   private createConnectionEvents = () => {
     this._connections_buffer.process(isConnected => {

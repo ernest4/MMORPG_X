@@ -19,7 +19,7 @@ class MessageListener extends System {
 
   update(): void {
     this.engine.query(this.registerMessageListener, WebSocketInitEvent);
-    this.engine.query(this.removeClientMessageEvents, ClientMessageEvent);
+    this.engine.removeComponentsOfClass(ClientMessageEvent);
     this.createClientMessageEvents();
   }
 
@@ -43,11 +43,6 @@ class MessageListener extends System {
 
       this._messages_buffer.push({ fromEntityId: entityId, binaryMessage: binaryMessage });
     };
-  };
-
-  private removeClientMessageEvents = querySet => {
-    const [clientMessageEvent] = querySet as [ClientMessageEvent];
-    this.engine.removeComponent(clientMessageEvent);
   };
 
   private createClientMessageEvents = () => {

@@ -24,8 +24,7 @@ class ConnectionListener extends System {
 
   update(): void {
     this.engine.query(this.registerConnectionListener, WebSocketInitEvent);
-    // this.engine.removeAllComponents(ConnectionEvent); // TODO: add this helper?
-    this.engine.query(this.removeConnectionEvents, ConnectionEvent);
+    this.engine.removeComponentsOfClass(ConnectionEvent);
     this.createConnectionEvents();
   }
 
@@ -75,11 +74,6 @@ class ConnectionListener extends System {
       this._connections_buffer.push({ entityId, webSocket });
       console.log(`A WebSocket connected! ws.uid:${webSocket.uid}`); // TODO: remove
     };
-  };
-
-  private removeConnectionEvents = querySet => {
-    const [connectionEvent] = querySet as [ConnectionEvent];
-    this.engine.removeComponent(connectionEvent);
   };
 
   private createConnectionEvents = () => {
