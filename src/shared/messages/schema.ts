@@ -48,7 +48,7 @@ const SCHEMA = {
     component: Enter,
   },
   [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
-    binary: ["characterId", FIELD_TYPES.STRING],
+    binary: [["characterId", FIELD_TYPES.STRING]],
     component: Exit,
   },
   [MESSAGE_TYPES.MAP_INIT]: {
