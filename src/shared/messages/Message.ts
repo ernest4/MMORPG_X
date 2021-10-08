@@ -1,6 +1,5 @@
-// const buffer = new ArrayBuffer(4);
-// const view = new DataView(buffer);
-
+import { Buffer } from "buffer";
+import { SERVER } from "../utils/environment";
 import SCHEMA, { TYPES } from "./schema";
 
 // view.setUint16(0, 5, true);
@@ -26,6 +25,7 @@ class Message {
     this._decoders = {
       [TYPES.INT_32]: this.parseInt32,
       [TYPES.FLOAT_32]: this.parseFloat32,
+      [TYPES.STRING]: this.parseString,
       // TODO: ...rest
     };
   }
@@ -39,7 +39,7 @@ class Message {
     let currentOffset = 1;
 
     const messageObject = {};
-    SCHEMA[messageType].forEeach(([fieldName, fieldType]) => {
+    SCHEMA[messageType].forEach(([fieldName, fieldType]) => {
       const [data, nextOffset] = this._decoders[fieldType](currentOffset, binaryMessageView);
       messageObject[fieldName] = data;
       currentOffset = nextOffset;
@@ -67,24 +67,30 @@ class Message {
     const data = binaryMessageView.getFloat32(currentOffset, LITTLE_ENDIAN);
     return [data, currentOffset + 4];
   };
+
+  private parseString = (currentOffset: number, binaryMessageView: DataView) => {
+    if (SERVER) return this.serverParseString(currentOffset, binaryMessageView);
+    return this.clientParseString(currentOffset, binaryMessageView);
+  };
+
+  private serverParseString = (currentOffset: number, { buffer: arrayBuffer }) => {
+    const textSlice = arrayBuffer.slice(currentOffset, arrayBuffer.byteLength);
+    const data = Buffer.from(textSlice).toString("utf-8");
+
+    // NOTE: next offset not super useful here as strings will be the last component in any message
+    // since they're final size is unknown.
+    return [data, currentOffset + textSlice.byteLength];
+  };
+
+  private clientParseString = (currentOffset: number, { buffer: arrayBuffer }) => {
+    const textSlice = arrayBuffer.slice(currentOffset, arrayBuffer.byteLength);
+    // @ts-ignore
+    const data = new TextDecoder("utf-8").decode(textSlice);
+
+    // NOTE: next offset not super useful here as strings will be the last component in any message
+    // since they're final size is unknown.
+    return [data, currentOffset + textSlice.byteLength];
+  };
 }
 
 export default Message;
-
-
-case MESSAGE_TYPE.PING: {
-  // [type,string]
-
-  const decoder = new TextDecoder("utf-8");
-  const textSlice = data.slice(1, data.byteLength);
-  const ping = decoder.decode(textSlice);
-
-  // TODO: add the image / texture info for character appearance (send key)
-  const message_object = { messageType, ping };
-
-  console.log(message_object);
-
-  return message_object;
-}
-case: {
-}
