@@ -1,45 +1,38 @@
 import { Buffer } from "buffer";
-import Move from "../components/message/Move";
-import Ping from "../components/message/Ping";
 import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
 import { SERVER } from "../utils/environment";
-import SCHEMA, { MESSAGE_TYPE, MESSAGE_TYPES, TYPES } from "./schema";
+import SCHEMA, { LITTLE_ENDIAN, MESSAGE_TYPE, FIELD_TYPES } from "./schema";
 
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
 // NOTE: 'Buffer' from Node.js will be used to do utf-8 encoding/decoding
 
-export const MESSAGE_COMPONENT_CLASSES = {
-  [MESSAGE_TYPES.PING]: Ping,
-  [MESSAGE_TYPES.MOVE]: Move,
-  // TODO: the rest...
-};
-
-const LITTLE_ENDIAN = true;
 // TODO: jests
 class Message {
-  private _decoders: {
+  private _fieldDecoders: {
     [key: string]: (currentOffset: number, binaryMessageView: DataView) => any[];
   };
 
   constructor() {
-    this._decoders = {
-      [TYPES.INT_32]: this.parseInt32,
-      [TYPES.FLOAT_32]: this.parseFloat32,
-      [TYPES.STRING]: this.parseString,
-      // TODO: ...rest
+    this._fieldDecoders = {
+      [FIELD_TYPES.UINT_8]: this.parseUInt8,
+      [FIELD_TYPES.UINT_16]: this.parseUInt16,
+      [FIELD_TYPES.INT_32]: this.parseInt32,
+      [FIELD_TYPES.FLOAT_32]: this.parseFloat32,
+      [FIELD_TYPES.STRING]: this.parseString,
+      [FIELD_TYPES.UINT_16_ARRAY]: this.parseUInt16Array,
+      // TODO: ...more?
     };
   }
 
   parseBinary = (binaryMessage: ArrayBuffer) => {
     const binaryMessageView = new DataView(binaryMessage);
-    const messageType = binaryMessageView.getUint8(MESSAGE_TYPE);
-    let currentOffset = 1;
+    let [messageType, currentOffset] = this.parseUInt8(MESSAGE_TYPE, binaryMessageView);
 
     const messageObject = { messageType };
-    SCHEMA[messageType].forEach(([fieldName, fieldType]) => {
-      const [data, nextOffset] = this._decoders[fieldType](currentOffset, binaryMessageView);
+    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]) => {
+      const [data, nextOffset] = this._fieldDecoders[fieldType](currentOffset, binaryMessageView);
       messageObject[fieldName] = data;
       currentOffset = nextOffset;
     });
@@ -52,7 +45,7 @@ class Message {
     binaryMessage: ArrayBuffer
   ): Component => {
     const parsedMessage = this.parseBinary(binaryMessage);
-    const messageComponent = new MESSAGE_COMPONENT_CLASSES[parsedMessage.messageType](
+    const messageComponent = new SCHEMA[parsedMessage.messageType].component(
       messageComponentEntityId,
       fromEntityId,
       parsedMessage
@@ -63,6 +56,16 @@ class Message {
   // TODO:
   // toBinary = (parsedMessage) => {};
   // componentToBinary = (messageComponent) => {};
+
+  private parseUInt8 = (currentOffset: number, binaryMessageView: DataView) => {
+    const data = binaryMessageView.getUint8(currentOffset);
+    return [data, currentOffset + 1];
+  };
+
+  private parseUInt16 = (currentOffset: number, binaryMessageView: DataView) => {
+    const data = binaryMessageView.getUint16(currentOffset, LITTLE_ENDIAN);
+    return [data, currentOffset + 2];
+  };
 
   private parseInt32 = (currentOffset: number, binaryMessageView: DataView) => {
     const data = binaryMessageView.getInt32(currentOffset, LITTLE_ENDIAN);
@@ -96,6 +99,24 @@ class Message {
     // NOTE: next offset not super useful here as strings will be the last component in any message
     // since they're final size is unknown.
     return [data, currentOffset + textSlice.byteLength];
+  };
+
+  private parseUInt16Array = (currentOffset: number, { buffer: arrayBuffer }) => {
+    // NOTE: not using Uint16Array because it only uses platform default byte order, while I want to
+    // force little endian for consistency!
+    const arrayBinaryView = new DataView(arrayBuffer, currentOffset);
+    let data: number[] = [];
+    let currentArrayOffset = 0;
+
+    while (currentArrayOffset < arrayBinaryView.byteLength) {
+      const [datum, nextArrayOffset] = this.parseUInt16(currentArrayOffset, arrayBinaryView);
+      data.push(datum);
+      currentArrayOffset = nextArrayOffset;
+    }
+
+    // NOTE: next offset not super useful here as array will be the last component in any message
+    // since its final size is unknown.
+    return [data, currentOffset + arrayBinaryView.byteLength];
   };
 }
 
