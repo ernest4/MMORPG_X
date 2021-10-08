@@ -56,9 +56,18 @@ class Message {
     return messageComponent;
   };
 
-  // TODO:
-  // toBinary = (parsedMessage) => {};
-  // componentToBinary = (messageComponent) => {};
+  // // TODO:
+  // toBinary = (parsedMessage): ArrayBuffer => {
+  //   // TODO: validate against schema
+  //   // if (isInvalid(parsedMessage)) throw Error("Invalid Message Format");
+  //   // TODO: serialize
+  // };
+
+  // // componentToBinary = (messageComponent) => {};
+
+  // private isInvalid = (parsedMessage): boolean => {
+  //   // TODO: ...
+  // };
 
   private parseUInt8 = (currentByteOffset: number, binaryMessageView: DataView) => {
     const data = binaryMessageView.getUint8(currentByteOffset);
