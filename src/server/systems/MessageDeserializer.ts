@@ -1,14 +1,7 @@
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import MessageEvent from "../components/MessageEvent";
-import { MESSAGE_TYPES } from "../../shared/messages/schema";
-import Message from "../../shared/messages/Message";
-
-const MESSAGE_COMPONENT_CLASSES = {
-  [MESSAGE_TYPES.PING]: PingMessage,
-  [MESSAGE_TYPES.MOVE]: MoveMessage,
-  // TODO: the rest...
-};
+import Message, { MESSAGE_COMPONENT_CLASSES } from "../../shared/messages/Message";
 
 const MESSAGE_COMPONENT_CLASSES_ARRAY = Object.values(MESSAGE_COMPONENT_CLASSES);
 

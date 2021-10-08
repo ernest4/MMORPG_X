@@ -1,4 +1,6 @@
 import { Buffer } from "buffer";
+import Move from "../components/message/Move";
+import Ping from "../components/message/Ping";
 import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
 import { SERVER } from "../utils/environment";
@@ -8,8 +10,9 @@ import SCHEMA, { MESSAGE_TYPE, MESSAGE_TYPES, TYPES } from "./schema";
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
 // NOTE: 'Buffer' from Node.js will be used to do utf-8 encoding/decoding
 
-const MESSAGE_COMPONENT_CLASSES = {
-  [MESSAGE_TYPES.PING]: PingMessage,
+export const MESSAGE_COMPONENT_CLASSES = {
+  [MESSAGE_TYPES.PING]: Ping,
+  [MESSAGE_TYPES.MOVE]: Move,
   // TODO: the rest...
 };
 
@@ -45,7 +48,7 @@ class Message {
 
   binaryToComponent = (
     messageComponentEntityId: EntityId,
-    fromEntityId: EntityId,
+    fromEntityId: EntityId | null,
     binaryMessage: ArrayBuffer
   ): Component => {
     const parsedMessage = this.parseBinary(binaryMessage);
@@ -57,7 +60,9 @@ class Message {
     return messageComponent;
   };
 
-  // TODO: write / serialize
+  // TODO:
+  // toBinary = (parsedMessage) => {};
+  // componentToBinary = (messageComponent) => {};
 
   private parseInt32 = (currentOffset: number, binaryMessageView: DataView) => {
     const data = binaryMessageView.getInt32(currentOffset, LITTLE_ENDIAN);
