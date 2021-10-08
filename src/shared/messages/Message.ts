@@ -1,18 +1,17 @@
 import { Buffer } from "buffer";
+import Component from "../ecs/Component";
+import { EntityId } from "../ecs/types";
 import { SERVER } from "../utils/environment";
-import SCHEMA, { TYPES } from "./schema";
-
-// view.setUint16(0, 5, true);
-// console.log(view);
-// console.log(view.getUint16(0, true));
+import SCHEMA, { MESSAGE_TYPE, MESSAGE_TYPES, TYPES } from "./schema";
 
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
 // NOTE: 'Buffer' from Node.js will be used to do utf-8 encoding/decoding
 
-// const ENCODERS = {
-//   // TODO: ...
-// }
+const MESSAGE_COMPONENT_CLASSES = {
+  [MESSAGE_TYPES.PING]: PingMessage,
+  // TODO: the rest...
+};
 
 const LITTLE_ENDIAN = true;
 // TODO: jests
@@ -30,15 +29,12 @@ class Message {
     };
   }
 
-  // TODO: accepts either binary or MessageEvent
-  // parse = () => {};
-
   parseBinary = (binaryMessage: ArrayBuffer) => {
     const binaryMessageView = new DataView(binaryMessage);
-    const messageType = binaryMessageView.getUint8(0);
+    const messageType = binaryMessageView.getUint8(MESSAGE_TYPE);
     let currentOffset = 1;
 
-    const messageObject = {};
+    const messageObject = { messageType };
     SCHEMA[messageType].forEach(([fieldName, fieldType]) => {
       const [data, nextOffset] = this._decoders[fieldType](currentOffset, binaryMessageView);
       messageObject[fieldName] = data;
@@ -47,14 +43,19 @@ class Message {
     return messageObject;
   };
 
-  // TODO: ...
-  // parseMessageEvent = () => {};
-
-  // TODO: ...
-  // binaryToComponent = () => {};
-
-  // TODO: ...
-  // messageEventToComponent = () => {};
+  binaryToComponent = (
+    messageComponentEntityId: EntityId,
+    fromEntityId: EntityId,
+    binaryMessage: ArrayBuffer
+  ): Component => {
+    const parsedMessage = this.parseBinary(binaryMessage);
+    const messageComponent = new MESSAGE_COMPONENT_CLASSES[parsedMessage.messageType](
+      messageComponentEntityId,
+      fromEntityId,
+      parsedMessage
+    );
+    return messageComponent;
+  };
 
   // TODO: write / serialize
 
