@@ -15,13 +15,18 @@ import SCHEMA, { TYPES } from "./schema";
 //   // TODO: ...
 // }
 
+const LITTLE_ENDIAN = true;
+// TODO: jests
 class Message {
+  private _decoders: {
+    [key: string]: (currentOffset: number, binaryMessageView: DataView) => any[];
+  };
+
   constructor() {
-    // TODO: ...
     this._decoders = {
-      // TODO: ...point to internal functions of Message
       [TYPES.INT_32]: this.parseInt32,
       [TYPES.FLOAT_32]: this.parseFloat32,
+      // TODO: ...rest
     };
   }
 
@@ -39,7 +44,6 @@ class Message {
       messageObject[fieldName] = data;
       currentOffset = nextOffset;
     });
-
     return messageObject;
   };
 
@@ -54,13 +58,33 @@ class Message {
 
   // TODO: write / serialize
 
-  private parseInt32 = (currentOffset, binaryMessageView) => {
-    const data = binaryMessageView.getInt32(currentOffset, true);
+  private parseInt32 = (currentOffset: number, binaryMessageView: DataView) => {
+    const data = binaryMessageView.getInt32(currentOffset, LITTLE_ENDIAN);
     return [data, currentOffset + 4];
   };
 
-  // TODO: ...
-  // private parseFloat32 = () => {};
+  private parseFloat32 = (currentOffset: number, binaryMessageView: DataView) => {
+    const data = binaryMessageView.getFloat32(currentOffset, LITTLE_ENDIAN);
+    return [data, currentOffset + 4];
+  };
 }
 
 export default Message;
+
+
+case MESSAGE_TYPE.PING: {
+  // [type,string]
+
+  const decoder = new TextDecoder("utf-8");
+  const textSlice = data.slice(1, data.byteLength);
+  const ping = decoder.decode(textSlice);
+
+  // TODO: add the image / texture info for character appearance (send key)
+  const message_object = { messageType, ping };
+
+  console.log(message_object);
+
+  return message_object;
+}
+case: {
+}
