@@ -162,6 +162,33 @@ class Message {
     return currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_8];
   };
 
+  private writeUInt16 = (currentByteOffset: number, dataView: DataView, data: number): number => {
+    dataView.setUint16(currentByteOffset, data, LITTLE_ENDIAN);
+    return currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16];
+  };
+
+  private writeInt32 = (currentByteOffset: number, dataView: DataView, data: number): number => {
+    dataView.setInt32(currentByteOffset, data, LITTLE_ENDIAN);
+    return currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.INT_32];
+  };
+
+  private writeFloat32 = (currentByteOffset: number, dataView: DataView, data: number): number => {
+    dataView.setFloat32(currentByteOffset, data, LITTLE_ENDIAN);
+    return currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.FLOAT_32];
+  };
+
+  private writeString = (currentByteOffset: number, dataView: DataView, data: string): number => {
+    // TODO: ...
+  };
+
+  private writeUInt16Array = (
+    currentByteOffset: number,
+    dataView: DataView,
+    data: number[]
+  ): number => {
+    // TODO: ...
+  };
+
   private parseUInt8 = (currentByteOffset: number, dataView: DataView) => {
     const data = dataView.getUint8(currentByteOffset);
     return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_8]];
