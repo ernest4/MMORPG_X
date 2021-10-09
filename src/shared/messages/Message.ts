@@ -2,6 +2,7 @@ import { Buffer } from "buffer";
 import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
 import { SERVER } from "../utils/environment";
+import { prettyPrintArray } from "../utils/logging";
 import SCHEMA, { LITTLE_ENDIAN, MESSAGE_TYPE, FIELD_TYPES } from "./schema";
 
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
@@ -57,17 +58,32 @@ class Message {
   };
 
   // // TODO:
-  // toBinary = (parsedMessage): ArrayBuffer => {
-  //   // TODO: validate against schema
-  //   // if (isInvalid(parsedMessage)) throw Error("Invalid Message Format");
-  //   // TODO: serialize
-  // };
+  toBinary = (parsedMessage): ArrayBuffer => {
+    const errors = this.validate(parsedMessage);
+    if (0 < errors.length) throw Error(`Invalid Message Format: ${prettyPrintArray(errors)}`);
+
+    const byteCount = this.getByteCount(parsedMessage);
+    const binaryMessage = new ArrayBuffer(byteCount);
+    this.populateBinaryMessage(binaryMessage, parsedMessage);
+    return binaryMessage;
+  };
 
   // // componentToBinary = (messageComponent) => {};
 
-  // private isInvalid = (parsedMessage): boolean => {
-  //   // TODO: ...
-  // };
+  private validate = (parsedMessage): any[] => {
+    // TODO: validate against schema
+    return [];
+  };
+
+  private getByteCount = (parsedMessage): number => {
+    // TODO: ..
+  };
+
+  private populateBinaryMessage = (arrayBuffer: ArrayBuffer, parsedMessage) => {
+    const binaryMessageView = new DataView(arrayBuffer);
+    // TODO: ...
+    // 4: loop over schema fields and populate DataView
+  };
 
   private parseUInt8 = (currentByteOffset: number, binaryMessageView: DataView) => {
     const data = binaryMessageView.getUint8(currentByteOffset);

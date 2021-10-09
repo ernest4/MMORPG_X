@@ -1,7 +1,7 @@
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { QuerySet } from "../../shared/ecs/types";
-import Buffer from "../../shared/utils/buffer";
+import Buffer from "../../shared/utils/Buffer";
 import DisconnectionEvent from "../components/DisconnectionEvent";
 
 class DisconnectionListener extends System {

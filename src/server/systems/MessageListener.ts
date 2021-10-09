@@ -1,5 +1,5 @@
 import { Engine } from "../../shared/ecs";
-import Buffer from "../../shared/utils/buffer";
+import Buffer from "../../shared/utils/Buffer";
 import System from "../../shared/ecs/System";
 import WebSocket from "../components/WebSocket";
 import uWS from "uWebSockets.js";
