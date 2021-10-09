@@ -13,7 +13,10 @@ import SCHEMA, { LITTLE_ENDIAN, MESSAGE_TYPE, FIELD_TYPES, FIELD_TYPE_BYTES } fr
 // TODO: jests
 class Message {
   private _fieldDecoders: {
-    [key: string]: (currentByteOffset: number, binaryMessageView: DataView) => any[];
+    [key: string]: (currentByteOffset: number, messageDataView: DataView) => any[];
+  };
+  private _fieldEncoders: {
+    [key: string]: (currentByteOffset: number, messageDataView: DataView, data: any) => number;
   };
 
   constructor() {
@@ -26,17 +29,27 @@ class Message {
       [FIELD_TYPES.UINT_16_ARRAY]: this.parseUInt16Array,
       // TODO: ...more?
     };
+
+    this._fieldEncoders = {
+      [FIELD_TYPES.UINT_8]: this.writeUInt8,
+      [FIELD_TYPES.UINT_16]: this.writeUInt16,
+      [FIELD_TYPES.INT_32]: this.writeInt32,
+      [FIELD_TYPES.FLOAT_32]: this.writeFloat32,
+      [FIELD_TYPES.STRING]: this.writeString,
+      [FIELD_TYPES.UINT_16_ARRAY]: this.writeUInt16Array,
+      // TODO: ...more?
+    };
   }
 
   parseBinary = (binaryMessage: ArrayBuffer) => {
-    const binaryMessageView = new DataView(binaryMessage);
-    let [messageType, currentByteOffset] = this.parseUInt8(MESSAGE_TYPE, binaryMessageView);
+    const messageDataView = new DataView(binaryMessage);
+    let [messageType, currentByteOffset] = this.parseUInt8(MESSAGE_TYPE, messageDataView);
 
     const messageObject = { messageType };
     SCHEMA[messageType].binary.forEach(([fieldName, fieldType]) => {
       const [data, nextByteOffset] = this._fieldDecoders[fieldType](
         currentByteOffset,
-        binaryMessageView
+        messageDataView
       );
       messageObject[fieldName] = data;
       currentByteOffset = nextByteOffset;
@@ -127,29 +140,51 @@ class Message {
     Make sure getByteCount is updated!`;
   };
 
-  private parseUInt8 = (currentByteOffset: number, binaryMessageView: DataView) => {
-    const data = binaryMessageView.getUint8(currentByteOffset);
+  // TODO: ...
+  private populateBinaryMessage = (binaryMessage: ArrayBuffer, parsedMessage) => {
+    const messageDataView = new DataView(binaryMessage);
+    const { messageType } = parsedMessage;
+    let currentByteOffset = this.writeUInt8(MESSAGE_TYPE, messageDataView, messageType);
+
+    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]) => {
+      const data = parsedMessage[fieldName];
+      const nextByteOffset = this._fieldEncoders[fieldType](
+        currentByteOffset,
+        messageDataView,
+        data
+      );
+      currentByteOffset = nextByteOffset;
+    });
+  };
+
+  private writeUInt8 = (currentByteOffset: number, dataView: DataView, data: number): number => {
+    dataView.setUint8(currentByteOffset, data);
+    return currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_8];
+  };
+
+  private parseUInt8 = (currentByteOffset: number, dataView: DataView) => {
+    const data = dataView.getUint8(currentByteOffset);
     return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_8]];
   };
 
-  private parseUInt16 = (currentByteOffset: number, binaryMessageView: DataView) => {
-    const data = binaryMessageView.getUint16(currentByteOffset, LITTLE_ENDIAN);
+  private parseUInt16 = (currentByteOffset: number, dataView: DataView) => {
+    const data = dataView.getUint16(currentByteOffset, LITTLE_ENDIAN);
     return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]];
   };
 
-  private parseInt32 = (currentByteOffset: number, binaryMessageView: DataView) => {
-    const data = binaryMessageView.getInt32(currentByteOffset, LITTLE_ENDIAN);
+  private parseInt32 = (currentByteOffset: number, dataView: DataView) => {
+    const data = dataView.getInt32(currentByteOffset, LITTLE_ENDIAN);
     return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.INT_32]];
   };
 
-  private parseFloat32 = (currentByteOffset: number, binaryMessageView: DataView) => {
-    const data = binaryMessageView.getFloat32(currentByteOffset, LITTLE_ENDIAN);
+  private parseFloat32 = (currentByteOffset: number, dataView: DataView) => {
+    const data = dataView.getFloat32(currentByteOffset, LITTLE_ENDIAN);
     return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.FLOAT_32]];
   };
 
-  private parseString = (currentByteOffset: number, binaryMessageView: DataView) => {
-    if (SERVER) return this.serverParseString(currentByteOffset, binaryMessageView);
-    return this.clientParseString(currentByteOffset, binaryMessageView);
+  private parseString = (currentByteOffset: number, dataView: DataView) => {
+    if (SERVER) return this.serverParseString(currentByteOffset, dataView);
+    return this.clientParseString(currentByteOffset, dataView);
   };
 
   private serverParseString = (currentByteOffset: number, { buffer: arrayBuffer }) => {
