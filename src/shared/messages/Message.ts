@@ -1,9 +1,10 @@
 import { Buffer } from "buffer";
 import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
+import { isNumber } from "../ecs/utils/Number";
 import { SERVER } from "../utils/environment";
 import { prettyPrintArray } from "../utils/logging";
-import SCHEMA, { LITTLE_ENDIAN, MESSAGE_TYPE, FIELD_TYPES } from "./schema";
+import SCHEMA, { LITTLE_ENDIAN, MESSAGE_TYPE, FIELD_TYPES, FIELD_TYPE_BYTES } from "./schema";
 
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
@@ -75,34 +76,75 @@ class Message {
     return [];
   };
 
+  // TODO: ..
   private getByteCount = (parsedMessage): number => {
-    // TODO: ..
+    let byteCount = 1; // message type
+
+    SCHEMA[parsedMessage.messageType].binary.forEach(([fieldName, fieldType]) => {
+      let fieldTypeBytes = FIELD_TYPE_BYTES[fieldType]; // try access available
+      if (!isNumber(fieldTypeBytes)) {
+        // must be one of the unknown in advance types...
+        switch (fieldType) {
+          case FIELD_TYPES.STRING:
+            byteCount = this.getStringByteCount(parsedMessage[fieldName]);
+            break;
+          case FIELD_TYPES.UINT_16_ARRAY:
+            byteCount = this.getNumberArrayByteCount(
+              parsedMessage[fieldName],
+              FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]
+            );
+            break;
+          default:
+            throw Error(this.getByteCountErrorMessage(fieldType));
+        }
+      }
+      byteCount += fieldTypeBytes;
+    });
+    return byteCount;
   };
 
-  private populateBinaryMessage = (arrayBuffer: ArrayBuffer, parsedMessage) => {
-    const binaryMessageView = new DataView(arrayBuffer);
-    // TODO: ...
-    // 4: loop over schema fields and populate DataView
+  private getStringByteCount = (string: string): number => {
+    if (SERVER) return this.serverGetStringByteCount(string);
+    return this.clientGetStringByteCount(string);
+  };
+
+  private serverGetStringByteCount = (string: string): number => {
+    return Buffer.from(string, "utf8").byteLength;
+  };
+
+  private clientGetStringByteCount = (string: string): number => {
+    // @ts-ignore
+    return new TextEncoder("utf-8").encode(string).byteLength;
+  };
+
+  private getNumberArrayByteCount = (array: number[], byteCountPerNumber: number): number => {
+    return array.length * byteCountPerNumber;
+  };
+
+  private getByteCountErrorMessage = (fieldType: string) => {
+    return `getByteCount encountered unrecognized FIELD_TYPE: ${fieldType}.
+    Is it a newly added field type of size unknown in advance?
+    Make sure getByteCount is updated!`;
   };
 
   private parseUInt8 = (currentByteOffset: number, binaryMessageView: DataView) => {
     const data = binaryMessageView.getUint8(currentByteOffset);
-    return [data, currentByteOffset + 1];
+    return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_8]];
   };
 
   private parseUInt16 = (currentByteOffset: number, binaryMessageView: DataView) => {
     const data = binaryMessageView.getUint16(currentByteOffset, LITTLE_ENDIAN);
-    return [data, currentByteOffset + 2];
+    return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]];
   };
 
   private parseInt32 = (currentByteOffset: number, binaryMessageView: DataView) => {
     const data = binaryMessageView.getInt32(currentByteOffset, LITTLE_ENDIAN);
-    return [data, currentByteOffset + 4];
+    return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.INT_32]];
   };
 
   private parseFloat32 = (currentByteOffset: number, binaryMessageView: DataView) => {
     const data = binaryMessageView.getFloat32(currentByteOffset, LITTLE_ENDIAN);
-    return [data, currentByteOffset + 4];
+    return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.FLOAT_32]];
   };
 
   private parseString = (currentByteOffset: number, binaryMessageView: DataView) => {

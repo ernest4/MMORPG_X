@@ -30,6 +30,15 @@ export const FIELD_TYPES = {
   UINT_16_ARRAY: "UInt16Array",
 };
 
+export const FIELD_TYPE_BYTES = {
+  [FIELD_TYPES.UINT_8]: 1,
+  [FIELD_TYPES.UINT_16]: 2,
+  [FIELD_TYPES.INT_32]: 4,
+  [FIELD_TYPES.FLOAT_32]: 4,
+  // [FIELD_TYPES.STRING] // unknown in advance
+  // [FIELD_TYPES.UINT_16_ARRAY] // unknown in advance
+};
+
 // NOTE: order of fields in each message here matter!!
 const SCHEMA = {
   [MESSAGE_TYPES.PING]: {
