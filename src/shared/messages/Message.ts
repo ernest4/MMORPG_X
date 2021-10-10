@@ -218,12 +218,24 @@ class Message {
     return currentByteOffset + uint8array.byteLength;
   };
 
+  // TODO: comments like this everywhere?? code should be self documenting though...
+  /**
+   * Stores an array of Uint16 values at the specified byte offset in the given DataView.
+   * @param currentByteOffset The place in the buffer at which the values should be set from.
+   * @param dataView The DataView to set numbers in.
+   * @param data The array of numbers to set.
+   */
   private writeUInt16Array = (
     currentByteOffset: number,
     dataView: DataView,
     data: number[]
   ): number => {
-    // TODO: ...
+    data.forEach(number => {
+      const nextByteOffset = this.writeUInt16(currentByteOffset, dataView, number);
+      currentByteOffset = nextByteOffset;
+    });
+
+    return currentByteOffset;
   };
 
   private parseUInt8 = (currentByteOffset: number, dataView: DataView) => {
