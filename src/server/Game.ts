@@ -11,6 +11,7 @@ import MessageListener from "./systems/MessageListener";
 import DisconnectionListener from "./systems/DisconnectionListener";
 import MessageDeserializer from "../shared/systems/MessageDeserializer";
 import CharacterDeserializer from "./systems/CharacterDeserializer";
+import MovementControl from "./systems/MovementControl";
 
 class Game {
   // dudeQuads!: any[];
@@ -40,7 +41,18 @@ class Game {
     this._engine.addSystem(new MessageDeserializer(this._engine));
     this._engine.addSystem(new DisconnectionListener(this._engine));
     this._engine.addSystem(new CharacterDeserializer(this._engine));
+    this._engine.addSystem(new MovementControl(this._engine));
 
+    this._engine.addSystem(new Movement(this._engine)); // TODO: ...
+
+    // @engine.add_system(Pulse::Ecs::Systems::Collision.new) # TODO: takes in transform and checks it against map. Might be useful to store 'previous' values on Transform (that get auto updated) so in case of collision Transform could be reverted to that?
+    // @engine.add_system(Pulse::Ecs::Systems::SpatialPartitioning.new(@state))
+    // @engine.add_system(Pulse::Ecs::Systems::CharacterEnter.new(@state))
+    // @engine.add_system(Pulse::Ecs::Systems::CharacterMove.new)
+    // # TODO: any other systems here
+    // # @engine.add_system(Pulse::Ecs::Systems::Serializer.new) # gonna invoke sidekiq workers
+    // # @engine.add_system(AI.new)
+    // @engine.add_system(Pulse::Ecs::Systems::Broadcast.new) # NOTE: always last
     // this._engine.addSystem(new Serialization(this._engine, this));
     // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));
     // // this._engine.addSystem(new Network(this._engine, this)); // TODO: networking here ...

@@ -40,6 +40,12 @@ class Vector3BufferView {
     this._values[Z_INDEX] = value;
   }
 
+  set xyz({ x, y, z }: VectorHash) {
+    this._values[X_INDEX] = x;
+    this._values[Y_INDEX] = y;
+    this._values[Z_INDEX] = z;
+  }
+
   private initialize = (initialValues: VectorHash) => {
     this.x = initialValues.x;
     this.y = initialValues.y;
