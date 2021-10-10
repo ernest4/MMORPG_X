@@ -47,10 +47,10 @@ class Message {
 
     const messageObject = { messageType };
     SCHEMA[messageType].binary.forEach(([fieldName, fieldType]) => {
-      const [data, nextByteOffset] = this._fieldDecoders[fieldType](
-        currentByteOffset,
-        messageDataView
-      );
+      const fieldDecoder = this._fieldDecoders[fieldType];
+      if (!fieldDecoder) throw Error(this.parseBinaryErrorMessage(fieldType));
+
+      const [data, nextByteOffset] = fieldDecoder(currentByteOffset, messageDataView);
       messageObject[fieldName] = data;
       currentByteOffset = nextByteOffset;
     });
@@ -137,7 +137,13 @@ class Message {
   private getByteCountErrorMessage = (fieldType: string) => {
     return `getByteCount encountered unrecognized FIELD_TYPE: ${fieldType}.
     Is it a newly added field type of size unknown in advance?
-    Make sure getByteCount is updated!`;
+    Make sure all methods are updated!`;
+  };
+
+  private parseBinaryErrorMessage = (fieldType: string) => {
+    return `parseBinary could not find field decoder for FIELD_TYPE: ${fieldType}.
+    Is it a newly added field type?
+    Make sure all methods are updated!`;
   };
 
   // TODO: ...
@@ -148,13 +154,18 @@ class Message {
 
     SCHEMA[messageType].binary.forEach(([fieldName, fieldType]) => {
       const data = parsedMessage[fieldName];
-      const nextByteOffset = this._fieldEncoders[fieldType](
-        currentByteOffset,
-        messageDataView,
-        data
-      );
+      const fieldEncoder = this._fieldEncoders[fieldType];
+      if (!fieldEncoder) throw Error(this.populateBinaryMessageErrorMessage(fieldType));
+
+      const nextByteOffset = fieldEncoder(currentByteOffset, messageDataView, data);
       currentByteOffset = nextByteOffset;
     });
+  };
+
+  private populateBinaryMessageErrorMessage = (fieldType: string) => {
+    return `populateBinaryMessage could not find field encoder for FIELD_TYPE: ${fieldType}.
+    Is it a newly added field type?
+    Make sure all methods are updated!`;
   };
 
   private writeUInt8 = (currentByteOffset: number, dataView: DataView, data: number): number => {
