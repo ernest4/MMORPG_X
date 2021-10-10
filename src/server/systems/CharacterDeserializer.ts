@@ -5,12 +5,12 @@ import ConnectionEvent from "../../shared/components/ConnectionEvent";
 import { EntityId, QuerySet } from "../../shared/ecs/types";
 import Component from "../../shared/ecs/Component";
 import Character from "../components/Character";
-import Transform from "../../shared/components/Transform";
 import Name from "../components/Name";
 import HitPoints from "../components/HitPoints";
 import Location from "../components/Location";
 import Speed from "../components/Speed";
 import PhysicsBody from "../components/PhysicsBody";
+import Transform from "../../shared/components/Transform";
 
 class CharacterDeserializer extends System {
   constructor(engine: Engine) {
