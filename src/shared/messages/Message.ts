@@ -17,16 +17,20 @@ import SCHEMA, {
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
 // NOTE: 'Buffer' from Node.js will be used to do utf-8 encoding/decoding
 
+type validationError = { [fieldName: string]: string };
+
 // TODO: jests
 class Message {
   private _fieldDecoders: {
-    [key: string]: (currentByteOffset: number, messageDataView: DataView) => any[];
+    [K in FIELD_TYPE]: (currentByteOffset: number, messageDataView: DataView) => any[];
   };
   private _fieldEncoders: {
-    [key: string]: (currentByteOffset: number, messageDataView: DataView, data: any) => number;
+    [K in FIELD_TYPE]: (currentByteOffset: number, messageDataView: DataView, data: any) => number;
   };
 
   constructor() {
+    // NOTE: the [K in FIELD_TYPE]: ... above enforces that ALL field types are present in the hash
+    // and thus will have a decoder function !!
     this._fieldDecoders = {
       [FIELD_TYPES.UINT_8]: this.parseUInt8,
       [FIELD_TYPES.UINT_16]: this.parseUInt16,
@@ -63,10 +67,8 @@ class Message {
     let [messageType, currentByteOffset] = this.parseUInt8(MESSAGE_TYPE, messageDataView);
 
     const messageObject = { messageType };
-    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]) => {
+    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
       const fieldDecoder = this._fieldDecoders[fieldType];
-      if (!fieldDecoder) throw Error(this.parseBinaryErrorMessage(fieldType));
-
       const [data, nextByteOffset] = fieldDecoder(currentByteOffset, messageDataView);
       messageObject[fieldName] = data;
       currentByteOffset = nextByteOffset;
@@ -103,16 +105,15 @@ class Message {
   };
 
   // TODO: validate against schema
-  private validate = (parsedMessage): any[] => {
+  private validate = (parsedMessage): validationError[] => {
     const { messageType } = parsedMessage;
     const messageTypeErrors = this.validateMessageType(messageType);
     // Return early since you can't access SCHEMA without proper messageType
     if (0 < messageTypeErrors.length) return messageTypeErrors;
 
-    let errors = [];
-    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]) => {
+    let errors: validationError[] = [];
+    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
       const fieldValidator = this._fieldValidators[fieldType];
-      if (!fieldValidator) throw Error(this.validateErrorMessage(fieldType));
 
       // TODO: presence validator, type validator
       const presenceErrors = this.validatePresence(fieldName, parsedMessage);
@@ -133,14 +134,11 @@ class Message {
     return errors;
   };
 
-  private validatePresence = (
-    fieldName: string,
-    parsedMessage: any
-  ): { [fieldName: string]: string }[] => {
+  private validatePresence = (fieldName: string, parsedMessage: any): validationError[] => {
     return parsedMessage.hasOwnProperty(fieldName) ? [] : [{ [fieldName]: "Blank" }];
   };
 
-  private validateUInt8 = (fieldName: string, data: any): { [fieldName: string]: string }[] => {
+  private validateUInt8 = (fieldName: string, data: any): validationError[] => {
     let errors = [];
 
     let numberErrors = this.validateNumber(FIELD_TYPES.UINT_8, fieldName, data);
@@ -149,11 +147,7 @@ class Message {
     return [];
   };
 
-  private validateNumber = (
-    type: FIELD_TYPE,
-    fieldName: string,
-    data: any
-  ): { [fieldName: string]: string }[] => {
+  private validateNumber = (type: FIELD_TYPE, fieldName: string, data: any): validationError[] => {
     let errors = [];
 
     if (!isNumber(data)) errors.push({ [fieldName]: "Not a number" });
@@ -174,43 +168,45 @@ class Message {
     return [];
   };
 
-  private validateNumberRange = (fieldType: string, data: number): 1 | -1 | 0 => {
+  private validateNumberRange = (fieldType: FIELD_TYPE, data: number): 1 | -1 | 0 => {
     if (FIELD_TYPE_RANGES[fieldType].max < data) return 1;
     if (data < FIELD_TYPE_RANGES[fieldType].min) return -1;
     return 0;
   };
 
   private invalidNumberRangeErrorMessage = (
-    fieldType: string,
+    fieldType: FIELD_TYPE,
     range: "min" | "max",
     data: number
-  ) => {
+  ): string => {
     return `Number ${data} while ${range} for ${fieldType} is ${FIELD_TYPE_RANGES[fieldType][range]}`;
   };
 
   private getByteCount = (parsedMessage): number => {
     let byteCount = 1; // message type
 
-    SCHEMA[parsedMessage.messageType].binary.forEach(([fieldName, fieldType]) => {
-      let fieldTypeBytes = FIELD_TYPE_BYTES[fieldType]; // try access available
-      if (!isNumber(fieldTypeBytes)) {
-        // must be one of the unknown in advance types...
-        switch (fieldType) {
-          case FIELD_TYPES.STRING:
-            byteCount = this.getStringByteCount(parsedMessage[fieldName]);
-            break;
-          case FIELD_TYPES.UINT_16_ARRAY:
-            byteCount = this.getNumberArrayByteCount(
-              parsedMessage[fieldName],
-              FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]
-            );
-            break;
-          default:
-            throw Error(this.getByteCountErrorMessage(fieldType));
+    SCHEMA[parsedMessage.messageType].binary.forEach(
+      ([fieldName, fieldType]: [string, FIELD_TYPE]) => {
+        let fieldTypeBytes = FIELD_TYPE_BYTES[fieldType]; // try access available
+        if (!isNumber(fieldTypeBytes)) {
+          // must be one of the unknown in advance types...
+          switch (fieldType) {
+            case FIELD_TYPES.STRING:
+              byteCount = this.getStringByteCount(parsedMessage[fieldName]);
+              break;
+            case FIELD_TYPES.UINT_16_ARRAY:
+              byteCount = this.getNumberArrayByteCount(
+                parsedMessage[fieldName],
+                FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]
+              );
+              break;
+            default:
+              throw Error(this.getByteCountErrorMessage(fieldType));
+          }
         }
+        byteCount += fieldTypeBytes;
       }
-      byteCount += fieldTypeBytes;
-    });
+    );
     return byteCount;
   };
 
@@ -232,21 +228,9 @@ class Message {
     return array.length * byteCountPerNumber;
   };
 
-  private getByteCountErrorMessage = (fieldType: string) => {
+  private getByteCountErrorMessage = (fieldType: FIELD_TYPE) => {
     return `getByteCount encountered unrecognized FIELD_TYPE: ${fieldType}.
     Is it a newly added field type of size unknown in advance?
-    Make sure all methods are updated!`;
-  };
-
-  private parseBinaryErrorMessage = (fieldType: string) => {
-    return `parseBinary could not find field decoder for FIELD_TYPE: ${fieldType}.
-    Is it a newly added field type?
-    Make sure all methods are updated!`;
-  };
-
-  private validateErrorMessage = (fieldType: string) => {
-    return `validate could not find field validator for FIELD_TYPE: ${fieldType}.
-    Is it a newly added field type?
     Make sure all methods are updated!`;
   };
 
@@ -255,20 +239,12 @@ class Message {
     const { messageType } = parsedMessage;
     let currentByteOffset = this.writeUInt8(MESSAGE_TYPE, messageDataView, messageType);
 
-    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]) => {
+    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
       const data = parsedMessage[fieldName];
       const fieldEncoder = this._fieldEncoders[fieldType];
-      if (!fieldEncoder) throw Error(this.populateBinaryMessageErrorMessage(fieldType));
-
       const nextByteOffset = fieldEncoder(currentByteOffset, messageDataView, data);
       currentByteOffset = nextByteOffset;
     });
-  };
-
-  private populateBinaryMessageErrorMessage = (fieldType: string) => {
-    return `populateBinaryMessage could not find field encoder for FIELD_TYPE: ${fieldType}.
-    Is it a newly added field type?
-    Make sure all methods are updated!`;
   };
 
   private writeUInt8 = (currentByteOffset: number, dataView: DataView, data: number): number => {
