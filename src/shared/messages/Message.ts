@@ -4,6 +4,7 @@ import { EntityId } from "../ecs/types";
 import { isNumber } from "../ecs/utils/Number";
 import { SERVER } from "../utils/environment";
 import { prettyPrintArray } from "../utils/logging";
+import Validator from "./message/Validator";
 import SCHEMA, {
   LITTLE_ENDIAN,
   MESSAGE_TYPE,
@@ -16,8 +17,6 @@ import SCHEMA, {
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
 // NOTE: 'Buffer' from Node.js will be used to do utf-8 encoding/decoding
-
-type validationError = { [fieldName: string]: string };
 
 // TODO: jests
 class Message {
@@ -48,16 +47,6 @@ class Message {
       [FIELD_TYPES.FLOAT_32]: this.writeFloat32,
       [FIELD_TYPES.STRING]: this.writeString,
       [FIELD_TYPES.UINT_16_ARRAY]: this.writeUInt16Array,
-      // TODO: ...more?
-    };
-
-    this._fieldValidators = {
-      [FIELD_TYPES.UINT_8]: this.validateUInt8,
-      // [FIELD_TYPES.UINT_16]: this.validateUInt16,
-      // [FIELD_TYPES.INT_32]: this.validateInt32,
-      // [FIELD_TYPES.FLOAT_32]: this.validateFloat32,
-      // [FIELD_TYPES.STRING]: this.validateString,
-      // [FIELD_TYPES.UINT_16_ARRAY]: this.validateUInt16Array,
       // TODO: ...more?
     };
   }
@@ -91,7 +80,7 @@ class Message {
   };
 
   toBinary = (parsedMessage): ArrayBuffer => {
-    const errors = this.validate(parsedMessage);
+    const errors = new Validator().validate(parsedMessage);
     if (0 < errors.length) throw Error(`Invalid Message Format: ${prettyPrintArray(errors)}`);
 
     const byteCount = this.getByteCount(parsedMessage);
@@ -102,84 +91,6 @@ class Message {
 
   messageComponentToBinary = (messageComponent: MessageComponent): ArrayBuffer => {
     return this.toBinary(messageComponent.parsedMessage);
-  };
-
-  // TODO: validate against schema
-  private validate = (parsedMessage): validationError[] => {
-    const { messageType } = parsedMessage;
-    const messageTypeErrors = this.validateMessageType(messageType);
-    // Return early since you can't access SCHEMA without proper messageType
-    if (0 < messageTypeErrors.length) return messageTypeErrors;
-
-    let errors: validationError[] = [];
-    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
-      const fieldValidator = this._fieldValidators[fieldType];
-
-      // TODO: presence validator, type validator
-      const presenceErrors = this.validatePresence(fieldName, parsedMessage);
-      errors = [...errors, ...presenceErrors];
-      if (0 < presenceErrors.length) return; // Next iteration, no point checking type for this...
-
-      const fieldValidatorErrors = fieldValidator(fieldName, parsedMessage[fieldName]);
-      errors = [...errors, ...fieldValidatorErrors];
-    });
-    return [];
-  };
-
-  private validateMessageType = (messageType: any): any[] => {
-    let errors = [];
-
-    // TODO: ...
-
-    return errors;
-  };
-
-  private validatePresence = (fieldName: string, parsedMessage: any): validationError[] => {
-    return parsedMessage.hasOwnProperty(fieldName) ? [] : [{ [fieldName]: "Blank" }];
-  };
-
-  private validateUInt8 = (fieldName: string, data: any): validationError[] => {
-    let errors = [];
-
-    let numberErrors = this.validateNumber(FIELD_TYPES.UINT_8, fieldName, data);
-    errors = [...errors, ...numberErrors];
-
-    return [];
-  };
-
-  private validateNumber = (type: FIELD_TYPE, fieldName: string, data: any): validationError[] => {
-    let errors = [];
-
-    if (!isNumber(data)) errors.push({ [fieldName]: "Not a number" });
-
-    switch (this.validateNumberRange(FIELD_TYPES[type], data)) {
-      case 1:
-        errors.push({
-          [fieldName]: this.invalidNumberRangeErrorMessage(FIELD_TYPES[type], "max", data),
-        });
-      case -1:
-        errors.push({
-          [fieldName]: this.invalidNumberRangeErrorMessage(FIELD_TYPES[type], "min", data),
-        });
-      case 0:
-      // valid
-    }
-
-    return [];
-  };
-
-  private validateNumberRange = (fieldType: FIELD_TYPE, data: number): 1 | -1 | 0 => {
-    if (FIELD_TYPE_RANGES[fieldType].max < data) return 1;
-    if (data < FIELD_TYPE_RANGES[fieldType].min) return -1;
-    return 0;
-  };
-
-  private invalidNumberRangeErrorMessage = (
-    fieldType: FIELD_TYPE,
-    range: "min" | "max",
-    data: number
-  ): string => {
-    return `Number ${data} while ${range} for ${fieldType} is ${FIELD_TYPE_RANGES[fieldType][range]}`;
   };
 
   private getByteCount = (parsedMessage): number => {

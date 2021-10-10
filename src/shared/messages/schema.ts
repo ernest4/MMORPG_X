@@ -9,7 +9,7 @@ import Position from "../components/message/Position";
 export const MESSAGE_TYPE = 0;
 export const LITTLE_ENDIAN = true;
 
-const MESSAGE_TYPES = {
+export const MESSAGE_TYPES = {
   PING: 0,
   PONG: 1,
   POSITION: 2,
@@ -20,6 +20,8 @@ const MESSAGE_TYPES = {
   // TODO: use this potentially more optimal way to batch initialize all characters
   // CHARACTERS_INIT: 6, // kinda like ENTER + POSITION but for all present characters
 } as const;
+
+export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
 
 export const FIELD_TYPES = {
   UINT_8: "UInt8",
