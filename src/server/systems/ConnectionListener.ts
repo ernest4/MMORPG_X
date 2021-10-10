@@ -1,7 +1,7 @@
 import { Engine } from "../../shared/ecs";
 import Buffer from "../../shared/utils/Buffer";
 import System from "../../shared/ecs/System";
-import WebSocket from "../components/WebSocket";
+import WebSocket, { GUEST_UID_PREFIX } from "../components/WebSocket";
 import ConnectionEvent from "../../shared/components/ConnectionEvent";
 import uWS from "uWebSockets.js";
 import WebSocketInitEvent from "../components/WebSocketInitEvent";
@@ -59,7 +59,7 @@ class ConnectionListener extends System {
 
       // NOTE: uid will be for auth / DB lookup. Guest / google_id
       res.upgrade(
-        { uid: `guest-${entityId}` },
+        { uid: `${GUEST_UID_PREFIX}${entityId}` },
         req.getHeader("sec-websocket-key"),
         req.getHeader("sec-websocket-protocol"),
         req.getHeader("sec-websocket-extensions"),

@@ -10,6 +10,7 @@ import WebSocketInitializer from "./systems/WebSocketInitializer";
 import MessageListener from "./systems/MessageListener";
 import DisconnectionListener from "./systems/DisconnectionListener";
 import MessageDeserializer from "../shared/systems/MessageDeserializer";
+import CharacterDeserializer from "./systems/CharacterDeserializer";
 
 class Game {
   // dudeQuads!: any[];
@@ -36,8 +37,10 @@ class Game {
     this._engine.addSystem(new WebSocketInitializer(this._engine, this._server));
     this._engine.addSystem(new ConnectionListener(this._engine));
     this._engine.addSystem(new MessageListener(this._engine));
-    this._engine.addSystem(new MessageDeserializer(this._engine)); // TODO: ...
+    this._engine.addSystem(new MessageDeserializer(this._engine));
     this._engine.addSystem(new DisconnectionListener(this._engine));
+    this._engine.addSystem(new CharacterDeserializer(this._engine));
+
     // this._engine.addSystem(new Serialization(this._engine, this));
     // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));
     // // this._engine.addSystem(new Network(this._engine, this)); // TODO: networking here ...
