@@ -1,8 +1,8 @@
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import MessageEvent from "../components/MessageEvent";
-import Message from "../../shared/messages/Message";
 import { MESSAGE_COMPONENT_CLASSES } from "../../shared/messages/schema";
+import Reader from "../../shared/messages/message/Reader";
 
 class MessageDeserializer extends System {
   constructor(engine: Engine) {
@@ -21,11 +21,7 @@ class MessageDeserializer extends System {
   private createMessageComponents = querySet => {
     const [{ fromEntityId, binaryMessage }] = querySet as [MessageEvent];
     const entityId = this.engine.generateEntityId();
-    const messageComponent = new Message().binaryToMessageComponent(
-      entityId,
-      fromEntityId,
-      binaryMessage
-    );
+    const messageComponent = Reader.binaryToMessageComponent(entityId, fromEntityId, binaryMessage);
     this.engine.addComponent(messageComponent);
   };
 }

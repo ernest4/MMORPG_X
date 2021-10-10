@@ -1,11 +1,5 @@
-import { Buffer } from "buffer";
-import MessageComponent from "../../components/Message";
-import { EntityId } from "../../ecs/types";
 import { isNumber } from "../../ecs/utils/Number";
-import { SERVER } from "../../utils/environment";
-import { prettyPrintArray } from "../../utils/logging";
 import SCHEMA, {
-  LITTLE_ENDIAN,
   MESSAGE_TYPE,
   FIELD_TYPES,
   FIELD_TYPE_BYTES,
@@ -130,4 +124,4 @@ class Validator {
   };
 }
 
-export default Validator;
+export default new Validator();
