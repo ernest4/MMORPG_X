@@ -50,14 +50,14 @@ class Reader {
 
   binaryToMessageComponent = (
     messageComponentEntityId: EntityId,
-    fromEntityId: EntityId | null,
-    binaryMessage: ArrayBuffer
+    binaryMessage: ArrayBuffer,
+    fromEntityId?: EntityId
   ): MessageComponent => {
     const parsedMessage = this.parseBinary(binaryMessage);
     const messageComponent = new SCHEMA[parsedMessage.messageType].component(
       messageComponentEntityId,
-      fromEntityId,
-      parsedMessage
+      parsedMessage,
+      fromEntityId
     );
     return messageComponent;
   };

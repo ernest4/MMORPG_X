@@ -9,7 +9,7 @@ import ConnectionListener from "./systems/ConnectionListener";
 import WebSocketInitializer from "./systems/WebSocketInitializer";
 import MessageListener from "./systems/MessageListener";
 import DisconnectionListener from "./systems/DisconnectionListener";
-import MessageDeserializer from "./systems/MessageDeserializer";
+import MessageDeserializer from "../shared/systems/MessageDeserializer";
 
 class Game {
   // dudeQuads!: any[];

@@ -18,7 +18,7 @@
     "types": ["node"],
     "incremental": true
   },
-  "include": ["**/*.ts"],
+  "include": ["**/*.ts", "../shared/systems/MessageDeserializer.ts"],
   "exclude": ["**/*.test.ts"],
   "references": [{ "path": "../shared" }]
 }

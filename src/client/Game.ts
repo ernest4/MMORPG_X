@@ -1,6 +1,7 @@
 import { Engine } from "../shared/ecs";
 import { DeltaTime } from "../shared/ecs/types";
 import TickProvider from "../shared/ecs/utils/TickProvider";
+import MessageDeserializer from "../shared/systems/MessageDeserializer";
 import { DEVELOPMENT } from "../shared/utils/environment";
 import ConnectionListener from "./systems/ConnectionListener";
 import DisconnectionListener from "./systems/DisconnectionListener";

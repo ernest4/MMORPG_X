@@ -1,7 +1,7 @@
 import { Engine } from "../../shared/ecs";
 import Buffer from "../../shared/utils/Buffer";
 import System from "../../shared/ecs/System";
-import MessageEvent from "../components/MessageEvent";
+import MessageEvent from "../../shared/components/MessageEvent";
 
 class MessageListener extends System {
   private _webSocket: WebSocket;

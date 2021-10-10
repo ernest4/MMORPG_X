@@ -5,7 +5,7 @@ import WebSocket from "../components/WebSocket";
 import uWS from "uWebSockets.js";
 import { EntityId } from "../../shared/ecs/types";
 import WebSocketInitEvent from "../components/WebSocketInitEvent";
-import MessageEvent from "../components/MessageEvent";
+import MessageEvent from "../../shared/components/MessageEvent";
 
 class MessageListener extends System {
   private _messages_buffer: Buffer<{ fromEntityId: EntityId; binaryMessage: ArrayBuffer }>;
@@ -48,7 +48,7 @@ class MessageListener extends System {
   private createMessageEvents = () => {
     this._messages_buffer.process(({ fromEntityId, binaryMessage }) => {
       const entityId = this.engine.generateEntityId();
-      const clientMessageEvent = new MessageEvent(entityId, fromEntityId, binaryMessage);
+      const clientMessageEvent = new MessageEvent(entityId, binaryMessage, fromEntityId);
       this.engine.addComponents(clientMessageEvent);
     });
   };
