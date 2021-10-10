@@ -100,6 +100,34 @@ class Validator {
   ): string => {
     return `Number ${data} while ${range} for ${fieldType} is ${FIELD_TYPE_RANGES[fieldType][range]}`;
   };
+
+  private validateString = (fieldName: string, data: string): validationError[] => {
+    let errors: validationError[] = [];
+
+    if (!(typeof data === "string")) errors.push({ [fieldName]: "Not a string" });
+
+    return [];
+  };
+
+  private validateUInt16Array = (fieldName: string, data: Uint16Array): validationError[] => {
+    let errors: validationError[] = [];
+
+    if (data.BYTES_PER_ELEMENT !== FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]) {
+      errors.push({
+        [fieldName]: `Expected BYTES_PER_ELEMENT: ${FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]}, got: ${
+          data.BYTES_PER_ELEMENT
+        }`,
+      });
+    }
+
+    const numberValidator = this._fieldValidators[FIELD_TYPES.UINT_16];
+    data.forEach((number: number, index: number) => {
+      const numberValidatorErrors = numberValidator(`${fieldName}_${index}`, number);
+      errors = [...errors, ...numberValidatorErrors];
+    });
+
+    return [];
+  };
 }
 
 export default Validator;
