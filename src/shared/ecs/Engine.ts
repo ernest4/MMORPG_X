@@ -62,7 +62,7 @@ class Engine {
 
   // removeAllSystems
 
-  addComponent = (component: Component) => {
+  addComponent = <T extends Component>(component: T) => {
     // NOTE: indexing using component class name
     const componentClassName = component.constructor.name;
     let componentList = this._componentLists[componentClassName];

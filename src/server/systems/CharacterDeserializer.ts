@@ -7,10 +7,11 @@ import Component from "../../shared/ecs/Component";
 import Character from "../components/Character";
 import Name from "../components/Name";
 import HitPoints from "../components/HitPoints";
-import Location from "../components/Location";
+import Room from "../components/Room";
 import Speed from "../components/Speed";
 import PhysicsBody from "../components/PhysicsBody";
 import Transform from "../../shared/components/Transform";
+import { DEFAULT_ROOM_NAME } from "../game/State";
 
 class CharacterDeserializer extends System {
   constructor(engine: Engine) {
@@ -45,7 +46,7 @@ class CharacterDeserializer extends System {
       new Character(entityId),
       new Name(entityId, `Name_${entityId}`),
       new HitPoints(entityId, 100),
-      new Location(entityId, "hub_0"),
+      new Room(entityId, DEFAULT_ROOM_NAME),
       new Speed(entityId, 20),
       new PhysicsBody(entityId),
       new Transform(entityId, { x: 0, y: 0 }),

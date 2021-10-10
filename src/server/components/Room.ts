@@ -2,13 +2,13 @@ import Component from "../../shared/ecs/Component";
 import { EntityId } from "../../shared/ecs/types";
 
 // TODO: optimize with ArrayBuffers ??
-class Location extends Component {
-  locations: string;
+class Room extends Component {
+  roomName: string;
 
-  constructor(entityId: EntityId, locations: string) {
+  constructor(entityId: EntityId, roomName: string) {
     super(entityId);
-    this.locations = locations;
+    this.roomName = roomName;
   }
 }
 
-export default Location;
+export default Room;
