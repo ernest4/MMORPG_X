@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import Component from "../ecs/Component";
+import MessageComponent from "../components/Message";
 import { EntityId } from "../ecs/types";
 import { isNumber } from "../ecs/utils/Number";
 import { SERVER } from "../utils/environment";
@@ -57,11 +57,11 @@ class Message {
     return messageObject;
   };
 
-  binaryToComponent = (
+  binaryToMessageComponent = (
     messageComponentEntityId: EntityId,
     fromEntityId: EntityId | null,
     binaryMessage: ArrayBuffer
-  ): Component => {
+  ): MessageComponent => {
     const parsedMessage = this.parseBinary(binaryMessage);
     const messageComponent = new SCHEMA[parsedMessage.messageType].component(
       messageComponentEntityId,
@@ -71,19 +71,21 @@ class Message {
     return messageComponent;
   };
 
-  // // TODO:
   toBinary = (parsedMessage): ArrayBuffer => {
     const errors = this.validate(parsedMessage);
     if (0 < errors.length) throw Error(`Invalid Message Format: ${prettyPrintArray(errors)}`);
-
+    
     const byteCount = this.getByteCount(parsedMessage);
     const binaryMessage = new ArrayBuffer(byteCount);
     this.populateBinaryMessage(binaryMessage, parsedMessage);
     return binaryMessage;
   };
-
-  // // componentToBinary = (messageComponent) => {};
-
+  
+  messageComponentToBinary = (messageComponent: MessageComponent): ArrayBuffer => {
+    return this.toBinary(messageComponent.parsedMessage);
+  };
+  
+  // // TODO:
   private validate = (parsedMessage): any[] => {
     // TODO: validate against schema
     return [];
@@ -267,7 +269,7 @@ class Message {
     const textSlice = arrayBuffer.slice(currentByteOffset, arrayBuffer.byteLength);
     const data = Buffer.from(textSlice).toString("utf-8");
 
-    // NOTE: next offset not super useful here as strings will be the last component in any message
+    // NOTE: next offset not super useful here as strings will be the last item in any message
     // since they're final size is unknown.
     return [data, currentByteOffset + textSlice.byteLength];
   };
@@ -277,7 +279,7 @@ class Message {
     // @ts-ignore
     const data = new TextDecoder("utf-8").decode(textSlice);
 
-    // NOTE: next offset not super useful here as strings will be the last component in any message
+    // NOTE: next offset not super useful here as strings will be the last item in any message
     // since they're final size is unknown.
     return [data, currentByteOffset + textSlice.byteLength];
   };
@@ -295,7 +297,7 @@ class Message {
       currentArrayOffset = nextArrayOffset;
     }
 
-    // NOTE: next offset not super useful here as array will be the last component in any message
+    // NOTE: next offset not super useful here as array will be the last item in any message
     // since its final size is unknown.
     return [data, currentByteOffset + arrayBinaryView.byteLength];
   };

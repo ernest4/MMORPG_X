@@ -21,7 +21,11 @@ class MessageDeserializer extends System {
   private createMessageComponents = querySet => {
     const [{ fromEntityId, binaryMessage }] = querySet as [MessageEvent];
     const entityId = this.engine.generateEntityId();
-    const messageComponent = new Message().binaryToComponent(entityId, fromEntityId, binaryMessage);
+    const messageComponent = new Message().binaryToMessageComponent(
+      entityId,
+      fromEntityId,
+      binaryMessage
+    );
     this.engine.addComponent(messageComponent);
   };
 }
