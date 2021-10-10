@@ -19,7 +19,7 @@ const MESSAGE_TYPES = {
   MOVE: 6,
   // TODO: use this potentially more optimal way to batch initialize all characters
   // CHARACTERS_INIT: 6, // kinda like ENTER + POSITION but for all present characters
-};
+} as const;
 
 export const FIELD_TYPES = {
   UINT_8: "UInt8",
@@ -28,7 +28,9 @@ export const FIELD_TYPES = {
   FLOAT_32: "Float32",
   STRING: "String",
   UINT_16_ARRAY: "UInt16Array",
-};
+} as const;
+
+export type FIELD_TYPE = typeof FIELD_TYPES[keyof typeof FIELD_TYPES];
 
 export const FIELD_TYPE_BYTES = {
   [FIELD_TYPES.UINT_8]: 1,
@@ -37,7 +39,16 @@ export const FIELD_TYPE_BYTES = {
   [FIELD_TYPES.FLOAT_32]: 4,
   // [FIELD_TYPES.STRING] // unknown in advance
   // [FIELD_TYPES.UINT_16_ARRAY] // unknown in advance
-};
+} as const;
+
+export const FIELD_TYPE_RANGES = {
+  [FIELD_TYPES.UINT_8]: { min: 0, max: 255 },
+  [FIELD_TYPES.UINT_16]: { min: 0, max: 65535 },
+  [FIELD_TYPES.INT_32]: { min: -2147483648, max: 2147483647 },
+  [FIELD_TYPES.FLOAT_32]: { min: -3.40282347e38, max: 3.40282347e38 },
+  // [FIELD_TYPES.STRING] // unknown in advance
+  // [FIELD_TYPES.UINT_16_ARRAY] // unknown in advance
+} as const;
 
 // NOTE: order of fields in each message here matter!!
 const SCHEMA = {
@@ -81,7 +92,7 @@ const SCHEMA = {
     ],
     component: Position,
   },
-};
+} as const;
 
 export default SCHEMA;
 
