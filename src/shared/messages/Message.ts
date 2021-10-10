@@ -178,7 +178,33 @@ class Message {
   };
 
   private writeString = (currentByteOffset: number, dataView: DataView, data: string): number => {
-    // TODO: ...
+    if (SERVER) return this.serverWriteString(currentByteOffset, dataView, data);
+    return this.clientWriteString(currentByteOffset, dataView, data);
+  };
+
+  private serverWriteString = (
+    currentByteOffset: number,
+    dataView: DataView,
+    data: string
+  ): number => {
+    const uint8array = Buffer.from(data, "utf8");
+    for (let i = 0; i < uint8array.byteLength + 1; i++) {
+      dataView.setUint8(currentByteOffset + i, uint8array[i]);
+    }
+    return currentByteOffset + uint8array.byteLength;
+  };
+
+  private clientWriteString = (
+    currentByteOffset: number,
+    dataView: DataView,
+    data: string
+  ): number => {
+    // @ts-ignore
+    const uint8array = new TextEncoder("utf-8").encode(data);
+    for (let i = 0; i < uint8array.byteLength + 1; i++) {
+      dataView.setUint8(currentByteOffset + i, uint8array[i]);
+    }
+    return currentByteOffset + uint8array.byteLength;
   };
 
   private writeUInt16Array = (
