@@ -26,8 +26,7 @@ class SpatialPartitioning extends System {
 
   destroy(): void {}
 
-  private updateRoomAndCharacters = (querySet: QuerySet) => {
-    const [{ roomName }, transform] = querySet as [RoomComponent, Transform];
+  private updateRoomAndCharacters = ([{ roomName }, transform]: [RoomComponent, Transform]) => {
     const currentRoom = this._state.rooms[roomName];
     currentRoom.update(transform);
     this.updateNearbyCharacters(currentRoom, transform);

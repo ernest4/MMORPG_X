@@ -24,9 +24,8 @@ class DisconnectionListener extends System {
 
   destroy(): void {}
 
-  private registerDisconnectionListener = querySet => {
-    const [webSocketInitEvent] = querySet as [WebSocketInitEvent];
-    webSocketInitEvent.behaviour.close = this.onClose(webSocketInitEvent.id);
+  private registerDisconnectionListener = ([{ behaviour, id }]: [WebSocketInitEvent]) => {
+    behaviour.close = this.onClose(id);
   };
 
   private onClose = (entityId: EntityId) => {

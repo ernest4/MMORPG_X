@@ -15,7 +15,7 @@ export const MESSAGE_TYPES = {
   POSITION: 2,
   CHARACTER_CONNECTED: 3,
   CHARACTER_DISCONNECTED: 4,
-  MAP_INIT: 5,
+  ROOM_INIT: 5,
   MOVE: 6,
   // TODO: use this potentially more optimal way to batch initialize all characters
   // CHARACTERS_INIT: 6, // kinda like ENTER + POSITION but for all present characters
@@ -73,11 +73,11 @@ const SCHEMA = {
     binary: [["characterId", FIELD_TYPES.STRING]],
     component: Exit,
   },
-  [MESSAGE_TYPES.MAP_INIT]: {
+  [MESSAGE_TYPES.ROOM_INIT]: {
     binary: [
-      ["tileSize", FIELD_TYPES.UINT_8],
-      ["mapWidth", FIELD_TYPES.UINT_16],
-      ["mapHeight", FIELD_TYPES.UINT_16],
+      ["tileSizeInPx", FIELD_TYPES.UINT_8],
+      ["widthInTiles", FIELD_TYPES.UINT_16],
+      ["heightInTiles", FIELD_TYPES.UINT_16],
       ["tiles", FIELD_TYPES.UINT_16_ARRAY],
     ],
     component: MapInit,

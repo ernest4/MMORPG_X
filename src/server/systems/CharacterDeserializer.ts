@@ -26,9 +26,7 @@ class CharacterDeserializer extends System {
 
   destroy(): void {}
 
-  private createCharacterComponents = (querySet: QuerySet) => {
-    const [connectionEvent, webSocket] = querySet as [ConnectionEvent, WebSocket];
-
+  private createCharacterComponents = ([_, webSocket]: [ConnectionEvent, WebSocket]) => {
     let characterComponents: Component[] = [];
     if (this.isGuest(webSocket.websocket.uid)) {
       characterComponents = this.createGuestCharacterComponents(webSocket.id);

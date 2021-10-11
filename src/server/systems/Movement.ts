@@ -1,7 +1,6 @@
 import Transform from "../../shared/components/Transform";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import { QuerySet } from "../../shared/ecs/types";
 import PhysicsBody from "../components/PhysicsBody";
 
 class Movement extends System {
@@ -17,9 +16,7 @@ class Movement extends System {
 
   destroy(): void {}
 
-  private updateTransforms = (querySet: QuerySet) => {
-    const [transform, physicsBody] = querySet as [Transform, PhysicsBody];
-
+  private updateTransforms = ([transform, physicsBody]: [Transform, PhysicsBody]) => {
     const seconds = this.deltaTime / 1000;
 
     transform.position.x += physicsBody.linearVelocity.x * seconds;

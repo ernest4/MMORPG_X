@@ -25,9 +25,8 @@ class MessageListener extends System {
 
   destroy(): void {}
 
-  private registerMessageListener = querySet => {
-    const [webSocketInitEvent] = querySet as [WebSocketInitEvent];
-    webSocketInitEvent.behaviour.message = this.onMessage(webSocketInitEvent.id);
+  private registerMessageListener = ([{ behaviour, id }]: [WebSocketInitEvent]) => {
+    behaviour.message = this.onMessage(id);
   };
 
   private onMessage = entityId => {

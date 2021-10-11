@@ -14,7 +14,7 @@ class WebSocketInitializer extends System {
   start(): void {
     const entityId = this.engine.generateEntityId();
     this.engine.addComponent(new WebSocketInitEvent(entityId));
-    // this.engine.generateComponent(WebSocketInitEvent)
+    // this.engine.generateComponent(WebSocketInitEvent) // TODO: engine helper
   }
 
   update(): void {
@@ -23,9 +23,7 @@ class WebSocketInitializer extends System {
 
   destroy(): void {}
 
-  private initWebSocket = querySet => {
-    const [webSocketInitEvent] = querySet as [WebSocketInitEvent];
-
+  private initWebSocket = ([webSocketInitEvent]: [WebSocketInitEvent]) => {
     this._server.ws("/", {
       /* Options */
       // compression: uWS.SHARED_COMPRESSOR,
@@ -37,7 +35,6 @@ class WebSocketInitializer extends System {
       //   console.log("WebSocket backpressure: " + ws.getBufferedAmount());
       // },
     });
-
     this.engine.removeComponent(webSocketInitEvent);
   };
 }

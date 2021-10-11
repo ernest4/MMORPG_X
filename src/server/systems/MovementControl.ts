@@ -30,14 +30,11 @@ class MovementControl extends System {
 
   destroy(): void {}
 
-  private stopMovement = (querySet: QuerySet) => {
-    const [character, physicsBody] = querySet as [Character, PhysicsBody];
+  private stopMovement = ([_, physicsBody]: [Character, PhysicsBody]) => {
     physicsBody.linearVelocity.xyz = { x: 0, y: 0 };
   };
 
-  private applyMoveMessage = (querySet: QuerySet) => {
-    const [{ fromEntityId, parsedMessage }] = querySet as [Move];
-
+  private applyMoveMessage = ([{ fromEntityId, parsedMessage }]: [Move]) => {
     // TODO: future 'Entity' API sample: ...
     // const entity = this.engine.getEntity(move.fromEntityId);
     // const [physicsBody, speed] = entity.getComponents(PhysicsBody, Speed) as [PhysicsBody, Speed];

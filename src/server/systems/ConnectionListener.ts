@@ -30,10 +30,9 @@ class ConnectionListener extends System {
 
   destroy(): void {}
 
-  private registerConnectionListener = querySet => {
-    const [webSocketInitEvent] = querySet as [WebSocketInitEvent];
-    webSocketInitEvent.behaviour.upgrade = this.onUpgrade(webSocketInitEvent.id);
-    webSocketInitEvent.behaviour.open = this.onOpen(webSocketInitEvent.id);
+  private registerConnectionListener = ([{ behaviour, id }]: [WebSocketInitEvent]) => {
+    behaviour.upgrade = this.onUpgrade(id);
+    behaviour.open = this.onOpen(id);
   };
 
   private onUpgrade = entityId => {

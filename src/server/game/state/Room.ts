@@ -2,21 +2,26 @@ import Transform from "../../../shared/components/Transform";
 import { DEFAULT_ROOM_NAME } from "../State";
 import Cell from "./room/Cell";
 
-const TILE_SIZE_IN_PX = 32; // 32 px
-const MAX_WORLD_SIZE_IN_TILES = 60;
-const MAX_WORLD_SIZE_IN_PX = TILE_SIZE_IN_PX * MAX_WORLD_SIZE_IN_TILES; // square worlds
-const CELL_SIZE_IN_PX = TILE_SIZE_IN_PX * 60;
-const MAX_WORLD_SIZE_IN_CELLS = MAX_WORLD_SIZE_IN_PX; // CELL_SIZE_IN_PX
-
 // TODO: specs
 class Room {
   private _cells: Cell[][];
+  tileSizeInPx: number;
+  maxWorldSizeInTiles: number;
+  maxWorldSizeInPx: number;
+  cellSizeInPx: number;
+  maxWorldSizeInCells: number;
   name: string;
-  width: number;
-  height: number;
+  widthInTiles: number;
+  heightInTiles: number;
   tiles: number[][];
 
   constructor() {
+    this.tileSizeInPx = 32; // 32 px
+    this.maxWorldSizeInTiles = 60;
+    this.maxWorldSizeInPx = this.tileSizeInPx * this.maxWorldSizeInTiles; // square worlds
+    this.cellSizeInPx = this.tileSizeInPx * 60;
+    this.maxWorldSizeInCells = this.maxWorldSizeInPx; // cellSizeInPx
+
     // TODO: testing... will load from config files later...
     this.tiles = [
       [1, 1, 1, 1, 1, 1],
@@ -28,8 +33,8 @@ class Room {
     ];
 
     this.name = DEFAULT_ROOM_NAME;
-    this.width = 6;
-    this.height = 6;
+    this.widthInTiles = 6;
+    this.heightInTiles = 6;
     this._cells = this.generateEmptyCells();
   }
 
@@ -53,8 +58,8 @@ class Room {
   };
 
   private generateEmptyCells = (): Cell[][] => {
-    return new Array(MAX_WORLD_SIZE_IN_CELLS).fill(
-      new Array(MAX_WORLD_SIZE_IN_CELLS).fill(new Cell())
+    return new Array(this.maxWorldSizeInCells).fill(
+      new Array(this.maxWorldSizeInCells).fill(new Cell())
     );
   };
 
@@ -83,13 +88,13 @@ class Room {
   };
 
   private worldToCellCoordinates = (x: number, y: number) => {
-    return [Math.trunc(x / CELL_SIZE_IN_PX), Math.trunc(y / CELL_SIZE_IN_PX)];
+    return [Math.trunc(x / this.cellSizeInPx), Math.trunc(y / this.cellSizeInPx)];
   };
 
   private getCell = (x: number, y: number) => {
-    if (MAX_WORLD_SIZE_IN_CELLS < x) return null;
+    if (this.maxWorldSizeInCells < x) return null;
     if (x < 0) return null;
-    if (MAX_WORLD_SIZE_IN_CELLS < y) return null;
+    if (this.maxWorldSizeInCells < y) return null;
     if (y < 0) return null;
 
     return this._cells[x][y];
