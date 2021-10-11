@@ -16,6 +16,7 @@ import Movement from "./systems/Movement";
 import State from "./game/State";
 import SpatialPartitioning from "./systems/SpatialPartitioning";
 import CharacterConnected from "./systems/CharacterConnected";
+import CharacterMove from "./systems/CharacterMove";
 
 class Game {
   lastDeltaTime: any;
@@ -50,8 +51,8 @@ class Game {
     this._engine.addSystem(new Movement(this._engine));
     // this._engine.addSystem(new Collision(this._engine)); // TODO: takes in transform and checks it against map. Might be useful to store 'previous' values on Transform (that get auto updated) so in case of collision Transform could be reverted to that?
     this._engine.addSystem(new SpatialPartitioning(this._engine, this._state));
-    this._engine.addSystem(new CharacterConnected(this._engine, this._state)); // TODO
-    this._engine.addSystem(new CharacterMove(this._engine)); // TODO:
+    this._engine.addSystem(new CharacterConnected(this._engine, this._state));
+    this._engine.addSystem(new CharacterMove(this._engine));
     // TODO: any other systems here
     // this._engine.addSystem(new Serializer(this._engine)); # gonna invoke sidekiq workers
     // this._engine.addSystem(new AI(this._engine));
