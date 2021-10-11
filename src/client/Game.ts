@@ -11,6 +11,7 @@ import MessageListener from "./systems/MessageListener";
 import SpriteRender from "./systems/SpriteRender";
 import Broadcast from "./systems/Broadcast";
 import Scene from "./systems/Scene";
+import MovementControl from "./systems/MovementControl";
 // import FpsCounter from "./utils/FpsCounter";
 
 const PHASER_GAME_CONFIG = {
@@ -57,6 +58,8 @@ class Game {
     this._engine.addSystem(new MessageDeserializer(this._engine));
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new InputListener(this._engine));
+    this._engine.addSystem(new MovementControl(this._engine)); // TODO: generate move messages from inputs
+    // this._engine.addSystem(new SpriteLoader(this._engine)); // TODO:
     this._engine.addSystem(new SpriteRender(this._engine));
     this._engine.addSystem(new Broadcast(this._engine, this._webSocket)); // NOTE: always last
 

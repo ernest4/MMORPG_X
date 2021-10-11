@@ -1,20 +1,23 @@
 import Move from "../../shared/components/message/Move";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import { QuerySet } from "../../shared/ecs/types";
 import { VectorHash } from "../../shared/ecs/utils/Vector3BufferView";
 import Character from "../components/Character";
 import PhysicsBody from "../components/PhysicsBody";
 import Speed from "../components/Speed";
 
-const LEFT = 1;
-const LEFT_TOP = 2;
-const TOP = 3;
-const RIGHT_TOP = 4;
-const RIGHT = 5;
-const RIGHT_BOTTOM = 6;
-const BOTTOM = 7;
-const LEFT_BOTTOM = 8;
+export const DIRECTIONS = {
+  LEFT: 1,
+  LEFT_UP: 2,
+  UP: 3,
+  RIGHT_UP: 4,
+  RIGHT: 5,
+  RIGHT_DOWN: 6,
+  DOWN: 7,
+  LEFT_DOWN: 8,
+} as const;
+
+export type DIRECTION = typeof DIRECTIONS[keyof typeof DIRECTIONS];
 
 class MovementControl extends System {
   constructor(engine: Engine) {
@@ -50,28 +53,28 @@ class MovementControl extends System {
     let newLinearVelocity: VectorHash = { x: 0, y: 0 };
 
     switch (direction) {
-      case LEFT:
+      case DIRECTIONS.LEFT:
         newLinearVelocity = { x: -speed, y: 0 };
         break;
-      case LEFT_TOP:
+      case DIRECTIONS.LEFT_UP:
         newLinearVelocity = { x: -speed, y: -speed };
         break;
-      case TOP:
+      case DIRECTIONS.UP:
         newLinearVelocity = { x: 0, y: -speed };
         break;
-      case RIGHT_TOP:
+      case DIRECTIONS.RIGHT_UP:
         newLinearVelocity = { x: speed, y: -speed };
         break;
-      case RIGHT:
+      case DIRECTIONS.RIGHT:
         newLinearVelocity = { x: speed, y: 0 };
         break;
-      case RIGHT_BOTTOM:
+      case DIRECTIONS.RIGHT_DOWN:
         newLinearVelocity = { x: speed, y: speed };
         break;
-      case BOTTOM:
+      case DIRECTIONS.DOWN:
         newLinearVelocity = { x: 0, y: speed };
         break;
-      case LEFT_BOTTOM:
+      case DIRECTIONS.LEFT_DOWN:
         newLinearVelocity = { x: -speed, y: speed };
         break;
     }

@@ -5,7 +5,7 @@ import Buffer from "../../shared/utils/Buffer";
 import InputEvent from "../components/InputEvent";
 import Scene from "../components/Scene";
 
-const INPUT_KEYS = {
+export const INPUT_KEYS = {
   UP: "UP",
   DOWN: "DOWN",
   LEFT: "LEFT",
@@ -18,7 +18,7 @@ const INPUT_KEYS = {
 
 export type INPUT_KEY = typeof INPUT_KEYS[keyof typeof INPUT_KEYS];
 
-const INPUT_EVENT_TYPES = {
+export const INPUT_EVENT_TYPES = {
   KEYDOWN: "keydown",
   KEYUP: "keyup",
 } as const;

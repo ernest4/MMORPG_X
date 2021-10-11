@@ -6,11 +6,9 @@ import { INPUT_EVENT_TYPE, INPUT_KEY } from "../systems/InputListener";
 class InputEvent extends Component {
   type: INPUT_EVENT_TYPE;
   key: INPUT_KEY;
-  processed: boolean;
 
   constructor(entityId: EntityId, type: INPUT_EVENT_TYPE, key: INPUT_KEY) {
     super(entityId);
-    this.processed = false;
     this.type = type;
     this.key = key;
   }
