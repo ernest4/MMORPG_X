@@ -6,12 +6,12 @@ import DisconnectionEvent from "../components/DisconnectionEvent";
 
 class DisconnectionListener extends System {
   private _webSocket: WebSocket;
-  private _disconnections_buffer: Buffer<boolean>;
+  private _disconnectionsBuffer: Buffer<boolean>;
 
   constructor(engine: Engine, webSocket: WebSocket) {
     super(engine);
     this._webSocket = webSocket;
-    this._disconnections_buffer = new Buffer<boolean>();
+    this._disconnectionsBuffer = new Buffer<boolean>();
   }
 
   start(): void {
@@ -25,10 +25,10 @@ class DisconnectionListener extends System {
 
   destroy(): void {}
 
-  private onClose = (event: Event) => this._disconnections_buffer.push(true);
+  private onClose = (event: Event) => this._disconnectionsBuffer.push(true);
 
   private createDisconnectionEvents = () => {
-    this._disconnections_buffer.process(isDisconnected => {
+    this._disconnectionsBuffer.process(isDisconnected => {
       const entityId = this.engine.generateEntityId();
       const disconnectionEvent = new DisconnectionEvent(entityId);
       this.engine.addComponent(disconnectionEvent);

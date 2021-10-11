@@ -8,16 +8,16 @@ import WebSocketInitEvent from "../components/WebSocketInitEvent";
 import { EntityId } from "../../shared/ecs/types";
 
 class ConnectionListener extends System {
-  // private _connections_buffer: Buffer<{ socket: uWS.WebSocket; context: uWS.us_socket_context_t }>;
-  private _connections_buffer: Buffer<{ entityId: EntityId; webSocket: uWS.WebSocket }>;
+  // private _connectionsBuffer: Buffer<{ socket: uWS.WebSocket; context: uWS.us_socket_context_t }>;
+  private _connectionsBuffer: Buffer<{ entityId: EntityId; webSocket: uWS.WebSocket }>;
 
   constructor(engine: Engine) {
     super(engine);
-    // this._connections_buffer = new Buffer<{
+    // this._connectionsBuffer = new Buffer<{
     //   webSocket: uWS.WebSocket;
     //   context: uWS.us_socket_context_t;
     // }>();
-    this._connections_buffer = new Buffer<{ entityId: EntityId; webSocket: uWS.WebSocket }>();
+    this._connectionsBuffer = new Buffer<{ entityId: EntityId; webSocket: uWS.WebSocket }>();
   }
 
   start(): void {}
@@ -70,13 +70,13 @@ class ConnectionListener extends System {
 
   private onOpen = entityId => {
     return (webSocket: uWS.WebSocket) => {
-      this._connections_buffer.push({ entityId, webSocket });
+      this._connectionsBuffer.push({ entityId, webSocket });
       console.log(`A WebSocket connected! ws.uid:${webSocket.uid}`); // TODO: remove
     };
   };
 
   private createConnectionEvents = () => {
-    this._connections_buffer.process(({ entityId, webSocket: bufferedWebSocket }) => {
+    this._connectionsBuffer.process(({ entityId, webSocket: bufferedWebSocket }) => {
       const connectionEvent = new ConnectionEvent(entityId);
       const webSocket = new WebSocket(entityId, bufferedWebSocket);
       this.engine.addComponents(connectionEvent, webSocket);

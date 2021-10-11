@@ -3,7 +3,7 @@ import FpsCounter from "../../../utils/FpsCounter";
 import { Engine } from "../../../../shared/ecs";
 import Manager from "../../Manager";
 import Render from "../../Render";
-import Input from "../../Input";
+import InputListener from "../../InputListener";
 import Movement from "../../Movement";
 import MovementControl from "../../MovementControl";
 import { DEVELOPMENT } from "../../../../shared/utils/environment";
@@ -31,7 +31,7 @@ export default class Main extends Scene {
     this._engine.addSystem(new Serialization(this._engine, this));
     if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));
     // this._engine.addSystem(new Network(this._engine, this)); // TODO: networking here ...
-    this._engine.addSystem(new Input(this._engine, this));
+    this._engine.addSystem(new InputListener(this._engine, this));
     this._engine.addSystem(new Interaction(this._engine, this));
     this._engine.addSystem(new MovementControl(this._engine));
     // this._engine.addSystem(new AI(this._engine));

@@ -1,15 +1,18 @@
 import Component from "../../shared/ecs/Component";
-import { EntityId, InputEventType } from "../../shared/ecs/types";
+import { EntityId } from "../../shared/ecs/types";
+import { INPUT_EVENT_TYPE, INPUT_KEY } from "../systems/InputListener";
 
 // TODO: optimize with ArrayBuffers ??
 class InputEvent extends Component {
-  type!: InputEventType;
-  key!: string;
+  type: INPUT_EVENT_TYPE;
+  key: INPUT_KEY;
   processed: boolean;
 
-  constructor(entityId: EntityId) {
+  constructor(entityId: EntityId, type: INPUT_EVENT_TYPE, key: INPUT_KEY) {
     super(entityId);
     this.processed = false;
+    this.type = type;
+    this.key = key;
   }
 }
 

@@ -5,12 +5,12 @@ import MessageEvent from "../../shared/components/MessageEvent";
 
 class MessageListener extends System {
   private _webSocket: WebSocket;
-  private _messages_buffer: Buffer<ArrayBuffer>;
+  private _messagesBuffer: Buffer<ArrayBuffer>;
 
   constructor(engine: Engine, webSocket: WebSocket) {
     super(engine);
     this._webSocket = webSocket;
-    this._messages_buffer = new Buffer<ArrayBuffer>();
+    this._messagesBuffer = new Buffer<ArrayBuffer>();
   }
 
   start(): void {
@@ -29,12 +29,12 @@ class MessageListener extends System {
       // To combat Nagle algorithm, send back empty message right away
       // https://stackoverflow.com/a/19581883
       this._webSocket.send(""); // empty, but still includes headers
-      this._messages_buffer.push(binaryMessage);
+      this._messagesBuffer.push(binaryMessage);
     };
   };
 
   private createMessageEvents = () => {
-    this._messages_buffer.process(binaryMessage => {
+    this._messagesBuffer.process(binaryMessage => {
       const entityId = this.engine.generateEntityId();
       const clientMessageEvent = new MessageEvent(entityId, binaryMessage);
       this.engine.addComponents(clientMessageEvent);

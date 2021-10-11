@@ -42,14 +42,6 @@ declare const enum ColliderValueIndexes {
   BOX_SIZE_Z = 4,
 }
 
-// String enums are enforceable by typescript :), unlike numeric enums :/
-declare const enum InputEventType {
-  KEYDOWN = "keydown",
-  KEYUP = "keyup",
-}
-type InputKey = string;
-type InputObject = { type: InputEventType; key: InputKey };
-
 declare const enum InteractiveEventType {
   POINTER_DOWN = "pointerdown",
   POINTER_UP = "pointerup",

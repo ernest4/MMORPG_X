@@ -8,11 +8,11 @@ import WebSocketInitEvent from "../components/WebSocketInitEvent";
 import MessageEvent from "../../shared/components/MessageEvent";
 
 class MessageListener extends System {
-  private _messages_buffer: Buffer<{ fromEntityId: EntityId; binaryMessage: ArrayBuffer }>;
+  private _messagesBuffer: Buffer<{ fromEntityId: EntityId; binaryMessage: ArrayBuffer }>;
 
   constructor(engine: Engine) {
     super(engine);
-    this._messages_buffer = new Buffer<{ fromEntityId: EntityId; binaryMessage: ArrayBuffer }>();
+    this._messagesBuffer = new Buffer<{ fromEntityId: EntityId; binaryMessage: ArrayBuffer }>();
   }
 
   start(): void {}
@@ -40,12 +40,12 @@ class MessageListener extends System {
       // # parsed_message = Pulse::Messages::Resolver.resolve(binaryMessage)
       // # new_message = Message.new(socket, parsed_message)
 
-      this._messages_buffer.push({ fromEntityId: entityId, binaryMessage: binaryMessage });
+      this._messagesBuffer.push({ fromEntityId: entityId, binaryMessage: binaryMessage });
     };
   };
 
   private createMessageEvents = () => {
-    this._messages_buffer.process(({ fromEntityId, binaryMessage }) => {
+    this._messagesBuffer.process(({ fromEntityId, binaryMessage }) => {
       const entityId = this.engine.generateEntityId();
       const clientMessageEvent = new MessageEvent(entityId, binaryMessage, fromEntityId);
       this.engine.addComponents(clientMessageEvent);

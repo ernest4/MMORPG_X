@@ -7,11 +7,11 @@ import WebSocketInitEvent from "../components/WebSocketInitEvent";
 import DisconnectionEvent from "../components/DisconnectionEvent";
 
 class DisconnectionListener extends System {
-  private _disconnections_buffer: Buffer<EntityId>;
+  private _disconnectionsBuffer: Buffer<EntityId>;
 
   constructor(engine: Engine) {
     super(engine);
-    this._disconnections_buffer = new Buffer<EntityId>();
+    this._disconnectionsBuffer = new Buffer<EntityId>();
   }
 
   start(): void {}
@@ -30,13 +30,13 @@ class DisconnectionListener extends System {
 
   private onClose = (entityId: EntityId) => {
     return (webSocket: uWS.WebSocket, code: number, message: ArrayBuffer) => {
-      this._disconnections_buffer.push(entityId);
+      this._disconnectionsBuffer.push(entityId);
       console.log("WebSocket closed"); // TODO: remove
     };
   };
 
   private createDisconnectionEvents = () => {
-    this._disconnections_buffer.process(entityId => {
+    this._disconnectionsBuffer.process(entityId => {
       const disconnectionEvent = new DisconnectionEvent(entityId);
       this.engine.addComponents(disconnectionEvent);
     });

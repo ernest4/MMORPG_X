@@ -6,12 +6,12 @@ import Buffer from "../../shared/utils/Buffer";
 
 class ConnectionListener extends System {
   private _webSocket: WebSocket;
-  private _connections_buffer: Buffer<boolean>;
+  private _connectionsBuffer: Buffer<boolean>;
 
   constructor(engine: Engine, webSocket: WebSocket) {
     super(engine);
     this._webSocket = webSocket;
-    this._connections_buffer = new Buffer<boolean>();
+    this._connectionsBuffer = new Buffer<boolean>();
   }
 
   start(): void {
@@ -25,10 +25,10 @@ class ConnectionListener extends System {
 
   destroy(): void {}
 
-  private onOpen = (event: Event) => this._connections_buffer.push(true);
+  private onOpen = (event: Event) => this._connectionsBuffer.push(true);
 
   private createConnectionEvents = () => {
-    this._connections_buffer.process(isConnected => {
+    this._connectionsBuffer.process(isConnected => {
       const entityId = this.engine.generateEntityId();
       const connectionEvent = new ConnectionEvent(entityId);
       const webSocket = new WebSocketComponent(entityId, this._webSocket);
