@@ -17,6 +17,7 @@ import State from "./game/State";
 import SpatialPartitioning from "./systems/SpatialPartitioning";
 import CharacterConnected from "./systems/CharacterConnected";
 import CharacterMove from "./systems/CharacterMove";
+import Broadcast from "./systems/Broadcast";
 
 class Game {
   lastDeltaTime: any;
@@ -57,7 +58,7 @@ class Game {
     // this._engine.addSystem(new Serializer(this._engine)); # gonna invoke sidekiq workers
     // this._engine.addSystem(new AI(this._engine));
     // this._engine.addSystem(new Script(this._engine)); // scripts ?
-    this._engine.addSystem(new Broadcast(this._engine)); // NOTE: always last // TODO
+    this._engine.addSystem(new Broadcast(this._engine)); // NOTE: always last
   };
 
   private updateEngine = (deltaTime: DeltaTime) => this._engine.update(deltaTime);
