@@ -91,6 +91,7 @@ const SCHEMA = {
       ["characterId", FIELD_TYPES.INT_32],
       ["x", FIELD_TYPES.FLOAT_32],
       ["y", FIELD_TYPES.FLOAT_32],
+      ["z", FIELD_TYPES.FLOAT_32],
     ],
     component: Position,
   },

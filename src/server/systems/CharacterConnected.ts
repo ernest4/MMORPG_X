@@ -38,52 +38,80 @@ class CharacterConnected extends System {
 
     let serverMessageComponents: OutgoingMessage[] = [];
     const newCharacterEntityId = connectionEvent.id;
-    const messagesToInformClientOfSelf = this.messagesToInformClientOfSelf(room, name, transform);
-    serverMessageComponents = [...serverMessageComponents, ...messagesToInformClientOfSelf];
+    const messagesToInformCharacterOfSelf = this.messagesToInformNewCharacterOfSelf(
+      room,
+      name,
+      transform
+    );
+    serverMessageComponents = [...serverMessageComponents, ...messagesToInformCharacterOfSelf];
 
     nearbyCharacters.entityIdsSet.stream(({ id: nearbyCharacterEntityId }: SparseSetItem) => {
-      // ...
-      const messagesToInformOthersOfClient = this.messagesToInformOthersOfClient();
-      const messagesToInformClientOfOthers = this.messagesToInformClientOfOthers();
+      const messagesToNearbyCharacter = this.messagesToInformOneCharacterOfAnother(
+        name,
+        transform,
+        nearbyCharacterEntityId
+      );
+
+      const nearbyCharacterName = this.engine.getComponent<Name>(Name, nearbyCharacterEntityId);
+      const nearbyCharacterTransform = this.engine.getComponent<Transform>(
+        Transform,
+        nearbyCharacterEntityId
+      );
+      const messagesToNewCharacter = this.messagesToInformOneCharacterOfAnother(
+        nearbyCharacterName,
+        nearbyCharacterTransform,
+        newCharacterEntityId
+      );
 
       serverMessageComponents = [
         ...serverMessageComponents,
-        ...messagesToInformOthersOfClient,
-        ...messagesToInformClientOfOthers,
+        ...messagesToNearbyCharacter,
+        ...messagesToNewCharacter,
       ];
     });
 
     this.engine.addComponents(...serverMessageComponents);
   };
 
-  private messagesToInformClientOfSelf = () => {
+  private messagesToInformNewCharacterOfSelf = (room: Room, name: Name, transform: Transform) => {
     return [
-      this.createRoomInitMessageComponent(),
-      this.createEnterMessageComponent(),
-      this.createPositionMessageComponent(),
+      this.createRoomInitMessageComponent(room),
+      this.createConnectedMessageComponent(name, name.id),
+      this.createPositionMessageComponent(transform, transform.id),
     ];
   };
 
-  private messagesToInformOthersOfClient = () => {
-    //
+  private messagesToInformOneCharacterOfAnother = (
+    name: Name,
+    transform: Transform,
+    toEntityId
+  ) => {
+    return [
+      this.createConnectedMessageComponent(name, toEntityId),
+      this.createPositionMessageComponent(transform, toEntityId),
+    ];
   };
 
-  private messagesToInformClientOfOthers = () => {
-    //
-  };
-
-  private createRoomInitMessageComponent = (currentRoomName: string, toEntityId: EntityId) => {
-    const { tileSizeInPx, widthInTiles, heightInTiles, tiles } = this._state.rooms[currentRoomName];
+  private createRoomInitMessageComponent = ({ roomName, id: toEntityId }: Room) => {
+    const { tileSizeInPx, widthInTiles, heightInTiles, tiles } = this._state.rooms[roomName];
     const parsedMessage = { tileSizeInPx, widthInTiles, heightInTiles, tiles };
     return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
   };
 
-  private createEnterMessageComponent = () => {
-    //
+  private createConnectedMessageComponent = (
+    { name: characterName, id: characterId }: Name,
+    toEntityId: EntityId
+  ) => {
+    const parsedMessage = { characterId, characterName };
+    return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
   };
 
-  private createPositionMessageComponent = () => {
-    //
+  private createPositionMessageComponent = (
+    { position, id: characterId }: Transform,
+    toEntityId: EntityId
+  ) => {
+    const parsedMessage = { characterId, ...position.xyz };
+    return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
   };
 }
 
@@ -115,14 +143,6 @@ export default CharacterConnected;
 //       end
 
 //       engine.add_components(components)
-//     end
-
-//     private def map_init_message(current_map_name, recipient_character_entity_id)
-//       Component::ServerMessage.new(
-//         entity_id: engine.generate_entity_id,
-//         to_entity_id: recipient_character_entity_id,
-//         message: Pulse::Messages::MapInit.new(@state.maps[current_map_name])
-//       )
 //     end
 
 //     private def enter_message(subject_character_entity_id, name, recipient_character_entity_id)

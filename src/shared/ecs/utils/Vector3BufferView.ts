@@ -40,6 +40,11 @@ class Vector3BufferView {
     this._values[Z_INDEX] = value;
   }
 
+  get xyz(): { x: number; y: number; z: number } {
+    const { x, y, z } = this;
+    return { x, y, z };
+  }
+
   set xyz({ x, y, z }: VectorHash) {
     this._values[X_INDEX] = x;
     this._values[Y_INDEX] = y;
