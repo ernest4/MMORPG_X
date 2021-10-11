@@ -68,7 +68,7 @@ class Interaction extends System {
     if (interactive.loaded) return (interactive.processed = true);
 
     // We have a a valid new Interactive component, or existing one with listener changes...
-    const phaserSprite = sprite.phaserSpriteRef!;
+    const phaserSprite = sprite.phaserSprite!;
     phaserSprite.setInteractive(); // TODO: leak? once attached this wont go away... could clean up but does it matter ??
 
     const spriteInteractionEventHandler = (type: InteractiveEventType) => {
@@ -139,7 +139,7 @@ class Interaction extends System {
 
     const sprite = this.engine.getComponent<Sprite>(Sprite, interactive.id);
 
-    const phaserSprite = sprite?.phaserSpriteRef;
+    const phaserSprite = sprite?.phaserSprite;
 
     // deregister listeners if phaser sprite ref present. If sprite not present, then it must have
     // de-registered all listeners before removal anyway.

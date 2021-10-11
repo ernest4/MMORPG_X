@@ -51,7 +51,7 @@ class Render extends System {
         const { textureUrl, frame } = sprite;
         const phaserSprite = this._scene.add.sprite(0, 0, textureUrl, frame);
         sprite.loaded = true;
-        sprite.phaserSpriteRef = phaserSprite;
+        sprite.phaserSprite = phaserSprite;
         this.addSceneItem(sprite, phaserSprite);
       });
 

@@ -8,7 +8,7 @@ import DisconnectionListener from "./systems/DisconnectionListener";
 import InputListener from "./systems/InputListener";
 import Manager from "./systems/Manager";
 import MessageListener from "./systems/MessageListener";
-import Render from "./systems/Render";
+import SpriteRender from "./systems/SpriteRender";
 import Broadcast from "./systems/Broadcast";
 import Scene from "./systems/Scene";
 // import FpsCounter from "./utils/FpsCounter";
@@ -51,13 +51,13 @@ class Game {
     this._engine = new Engine(DEVELOPMENT);
     // TODO: test all systems.
     this._engine.addSystem(new Manager(this._engine));
-    this._engine.addSystem(new Scene(this._engine, this._phaserGame)); // TODO: do we need this ?
+    this._engine.addSystem(new Scene(this._engine, this._phaserGame));
     this._engine.addSystem(new ConnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new MessageListener(this._engine, this._webSocket));
     this._engine.addSystem(new MessageDeserializer(this._engine));
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new InputListener(this._engine));
-    this._engine.addSystem(new Render(this._engine)); // TODO:
+    this._engine.addSystem(new SpriteRender(this._engine));
     this._engine.addSystem(new Broadcast(this._engine, this._webSocket)); // NOTE: always last
 
     // this._engine.addSystem(new Serialization(this._engine, this));
