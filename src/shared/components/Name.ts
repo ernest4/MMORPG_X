@@ -1,5 +1,5 @@
-import Component from "../../shared/ecs/Component";
-import { EntityId } from "../../shared/ecs/types";
+import Component from "../ecs/Component";
+import { EntityId } from "../ecs/types";
 
 // TODO: optimize with ArrayBuffers ??
 class Name extends Component {

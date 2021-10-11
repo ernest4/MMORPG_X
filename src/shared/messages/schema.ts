@@ -1,5 +1,5 @@
-import Enter from "../components/message/Enter";
-import Exit from "../components/message/Exit";
+import CharacterConnected from "../components/message/CharacterConnected";
+import CharacterDisconnected from "../components/message/CharacterDisconnected";
 import MapInit from "../components/message/MapInit";
 import Move from "../components/message/Move";
 import Ping from "../components/message/Ping";
@@ -66,12 +66,16 @@ const SCHEMA = {
     binary: [
       ["characterId", FIELD_TYPES.INT_32],
       ["characterName", FIELD_TYPES.STRING],
+      ["hitpoints", FIELD_TYPES.INT_32],
+      ["x", FIELD_TYPES.FLOAT_32],
+      ["y", FIELD_TYPES.FLOAT_32],
+      ["z", FIELD_TYPES.FLOAT_32],
     ],
-    component: Enter,
+    component: CharacterConnected,
   },
   [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
     binary: [["characterId", FIELD_TYPES.STRING]],
-    component: Exit,
+    component: CharacterDisconnected,
   },
   [MESSAGE_TYPES.ROOM_INIT]: {
     binary: [

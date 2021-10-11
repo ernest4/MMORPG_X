@@ -4,7 +4,7 @@ import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { EntityId } from "../../shared/ecs/types";
 import { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
-import Name from "../components/Name";
+import Name from "../../shared/components/Name";
 import NearbyCharacters from "../components/NearbyCharacters";
 import OutgoingMessage from "../components/OutgoingMessage";
 import Room from "../components/Room";

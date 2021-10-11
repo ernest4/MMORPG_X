@@ -12,6 +12,7 @@ import SpriteRender from "./systems/SpriteRender";
 import Broadcast from "./systems/Broadcast";
 import Scene from "./systems/Scene";
 import MovementControl from "./systems/MovementControl";
+import CharacterDeserializer from "./systems/CharacterDeserializer";
 // import FpsCounter from "./utils/FpsCounter";
 
 const PHASER_GAME_CONFIG = {
@@ -58,7 +59,9 @@ class Game {
     this._engine.addSystem(new MessageDeserializer(this._engine));
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new InputListener(this._engine));
-    this._engine.addSystem(new MovementControl(this._engine)); // TODO: generate move messages from inputs
+    this._engine.addSystem(new MovementControl(this._engine));
+    this._engine.addSystem(new CharacterDeserializer(this._engine)); // TODO: similiar to server, but will respond to charaacterConnected messages over cconnection events
+    this._engine.addSystem(new CharacterPosition(this._engine)); // TODO: analogous to servers CharacterMoove
     // this._engine.addSystem(new SpriteLoader(this._engine)); // TODO:
     this._engine.addSystem(new SpriteRender(this._engine));
     this._engine.addSystem(new Broadcast(this._engine, this._webSocket)); // NOTE: always last

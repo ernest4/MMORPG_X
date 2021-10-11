@@ -2,7 +2,7 @@ import Move from "../../shared/components/message/Move";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { VectorHash } from "../../shared/ecs/utils/Vector3BufferView";
-import Character from "../components/Character";
+import Character from "../../shared/components/Character";
 import PhysicsBody from "../components/PhysicsBody";
 import Speed from "../components/Speed";
 
