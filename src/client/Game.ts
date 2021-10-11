@@ -5,8 +5,11 @@ import MessageDeserializer from "../shared/systems/MessageDeserializer";
 import { DEVELOPMENT } from "../shared/utils/environment";
 import ConnectionListener from "./systems/ConnectionListener";
 import DisconnectionListener from "./systems/DisconnectionListener";
+import Input from "./systems/Input";
 import Manager from "./systems/Manager";
 import MessageListener from "./systems/MessageListener";
+import Render from "./systems/Render";
+import Broadcast from "./systems/Broadcast";
 // import FpsCounter from "./utils/FpsCounter";
 
 class Game {
@@ -36,6 +39,9 @@ class Game {
     this._engine.addSystem(new MessageListener(this._engine, this._webSocket));
     this._engine.addSystem(new MessageDeserializer(this._engine));
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
+    this._engine.addSystem(new Input(this._engine)); // TODO:
+    this._engine.addSystem(new Render(this._engine)); // TODO:
+    this._engine.addSystem(new Broadcast(this._engine, this._webSocket)); // NOTE: always last
 
     // this._engine.addSystem(new Serialization(this._engine, this));
     // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));
