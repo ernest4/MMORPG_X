@@ -46,6 +46,10 @@ class CharacterPosition extends System {
     // components.forEach(component => (this[component.constructor.name] = component))
     // }
 
+    // maybe use callback so you dont have to check all the time if 
+    // component present or not? it will either callback or wont
+    // entity.transform(transform => transform.xyz = { x, y, z });
+
     // could also add engine.queryForEntities()
     // that just wraps the query set in entity basically...
   };
