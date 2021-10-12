@@ -15,9 +15,20 @@ class Entity {
 
     // TODO: store entity refs so can loop through that when removing? faster than engine looping
     // through all component lists.
+
+    // entity.transform.xyz = { x, y, z }; // should be possible...something like
+    // constructor(){
+    // components.forEach(component => (this[component.constructor.name] = component))
+    // }
+    // kinda magic, BUT whats gonna happen if component is remove by system??
+    // how will this entity know to update itself?
+    // actually the engine should be responsible for that!
+    // ALTHOUGH entities are kinda ephemeral...
+    // could have loadComponents() method to reinitialize a cached entity if needed?
+    this.loadComponents()
   }
 
-  get entityId(): EntityId {
+  get id(): EntityId {
     return this._entityId;
   }
 
@@ -25,8 +36,8 @@ class Entity {
   //   return this._engine.addComponent(component);
   // };
 
-  addComponent = (assignmentFunction: (id: EntityId) => Component): Component => {
-    return this._engine.addComponent(assignmentFunction(this._entityId));
+  addComponent = (assignmentCallback: (id: EntityId) => Component): Component => {
+    return this._engine.addComponent(assignmentCallback(this._entityId));
   };
   // usage entity.addComponent(id => new Transform(id, ... other params));
 
@@ -35,6 +46,14 @@ class Entity {
   // removeComponent
 
   // removeAllComponents
+
+  loadComponents = () => {
+    // TODO:
+    // entity.transform.xyz = { x, y, z }; // should be possible...something like
+    // constructor(){
+    // components.forEach(component => (this[component.constructor.name] = component))
+    // }
+  }
 }
 
 export default Entity;
