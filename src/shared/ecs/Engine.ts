@@ -12,6 +12,16 @@ import SparseSet, { SparseSetItem } from "./utils/SparseSet";
 import System from "./System";
 import { isNumber } from "./utils/Number";
 
+// TODO: move out to own class?
+class EntityIdAlias extends SparseSetItem {
+  entityId: EntityId;
+
+  constructor(aliasId: EntityId, entityId: EntityId) {
+    super(aliasId);
+    this.entityId = entityId;
+  }
+}
+
 // TODO: jest tests !!!!
 class Engine {
   _deltaTime: DeltaTime;
@@ -24,6 +34,7 @@ class Engine {
   _componentLists: { [key: string]: SparseSet };
   _entityIdPool: EntityIdPool;
   private _debug: boolean | undefined;
+  private _entityIdAliases: SparseSet;
 
   constructor(debug?: boolean) {
     this._debug = debug;
@@ -34,6 +45,7 @@ class Engine {
     this._componentLists = {};
     // this.updateComplete = new signals.Signal(); // TODO: signals?? https://github.com/millermedeiros/js-signals
     this._entityIdPool = new EntityIdPool();
+    this._entityIdAliases = new SparseSet();
   }
 
   // TODO: jests
@@ -127,6 +139,21 @@ class Engine {
   // };
 
   generateEntityId = (): EntityId => this._entityIdPool.getId();
+
+  // TODO: jests
+  generateEntityIdWithAlias = (aliasId: EntityId): EntityId => {
+    const entityId = this.generateEntityId();
+    this.addEntityIdAlias(entityId, aliasId);
+    return entityId;
+  };
+
+  // TODO: jests
+  addEntityIdAlias = (entityId: EntityId, aliasId: EntityId) => {
+    this._entityIdAliases.add(new EntityIdAlias(aliasId, entityId));
+  };
+
+  // TODO: jests
+  getEntityIdByAlias = (aliasId: EntityId) => this._entityIdAliases.get(aliasId)?.id;
 
   removeEntity = (entityId: EntityId) => {
     // NOTE: In EnTT this happens by iterating every single sparse set in the registry, checking if it contains the entity, and deleting it if it does.

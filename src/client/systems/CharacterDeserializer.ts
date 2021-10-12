@@ -21,21 +21,19 @@ class CharacterDeserializer extends System {
 
   destroy(): void {}
 
-  // TODO: how the feck will i match up the received characterId (entityId)
-  // from server to the one in client?? the two aren't in sync...
-  // Maybe new ability of engine to transfer all components from one entityId to another
-  // this.engine.freeEntityId(entityId) // => will transfer any components from one entityId to new generated one...but some components hold references to entityIds...problem...
   private createCharacterComponents = (querySet: QuerySet) => {
     const [characterConnected, webSocket] = querySet as [CharacterConnected, WebSocket];
     const { characterId, characterName, x, y, z, hitpoints } = characterConnected.parsedMessage;
 
-    // const entityId = this.engine.generateEntityId();
-    this.engine.freeEntityId(characterId); // something like that?
+    const entityId = this.engine.generateEntityIdWithAlias(characterId);
+    // const entityId = this.engine.getEntityIdByAlias(characterId);
+    // const characterId = this.engine.getAliasIdByEntityId(entityId);
+    // const component = this.engine.getComponentByAliasEntityId(Character, characterId); // => character.id => entityId
     const characterComponents = [
-      new Character(characterId),
-      new Name(characterId, characterName),
-      new HitPoints(characterId, hitpoints),
-      new Transform(characterId, { x, y, z }),
+      new Character(entityId),
+      new Name(entityId, characterName),
+      new HitPoints(entityId, hitpoints),
+      new Transform(entityId, { x, y, z }),
     ];
 
     this.engine.addComponents(...characterComponents);

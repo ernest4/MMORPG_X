@@ -53,6 +53,7 @@ export const FIELD_TYPE_RANGES = {
 } as const;
 
 // NOTE: order of fields in each message here matter!!
+// NOTE: strings and arrays should come last as their size is unknown in advance
 const SCHEMA = {
   [MESSAGE_TYPES.PING]: {
     binary: [["ping", FIELD_TYPES.STRING]],
@@ -64,14 +65,6 @@ const SCHEMA = {
   },
   [MESSAGE_TYPES.CHARACTER_CONNECTED]: {
     binary: [
-      // TODO: redo this to use classes or objects, or something more defined and rigid so that
-      // parsed messages are easy to use and well defined, instead of forcing me to lookup the
-      // schema all the time!
-      // Probs similar idea to crystal version, class per messageType that knows how to serialize
-      // and deserialize itself...!!!
-      // AND it can encapsulate the intended message receiver so it doesn't need to sit on the
-      // message component!
-      // Each Message component can then take in SPECIFIC parsedMessage class!!
       ["characterId", FIELD_TYPES.INT_32],
       ["characterName", FIELD_TYPES.STRING],
       ["hitpoints", FIELD_TYPES.INT_32],
@@ -108,6 +101,26 @@ const SCHEMA = {
     component: Position,
   },
 } as const;
+
+// TODO: this ?
+// class CharacterConnected {
+//   constructor(id, name, hitpoints, x, y, z) {
+//     this._id = id;
+//     this._name = name;
+//     this._hitpoints = hitpoints;
+//     this._x = x;
+//     this._y = y;
+//     this._z = z;
+//   }
+
+//   parseBinary = (binaryMessage: ArrayBuffer) => {
+//     //
+//   };
+
+//   toBinary = (): ArrayBuffer => {
+//     //
+//   };
+// }
 
 export default SCHEMA;
 
