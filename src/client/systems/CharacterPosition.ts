@@ -1,12 +1,7 @@
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import WebSocket from "../components/WebSocket";
 import { QuerySet } from "../../shared/ecs/types";
 import Transform from "../../shared/components/Transform";
-import Character from "../../shared/components/Character";
-import CharacterConnected from "../../shared/components/message/CharacterConnected";
-import Name from "../../shared/components/Name";
-import HitPoints from "../../shared/components/HitPoints";
 import Position from "../../shared/components/message/Position";
 
 class CharacterPosition extends System {

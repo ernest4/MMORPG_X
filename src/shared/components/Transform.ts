@@ -1,6 +1,6 @@
 import Component from "../../shared/ecs/Component";
 import { EntityId } from "../../shared/ecs/types";
-import Vector3BufferView, { VectorHash } from "../../shared/ecs/utils/Vector3BufferView";
+import Vector3BufferView, { Vector3Hash } from "../../shared/ecs/utils/Vector3BufferView";
 import { FIELD_TYPES, FIELD_TYPE_BYTES } from "../messages/schema";
 
 const FLOAT_32_BYTES = FIELD_TYPE_BYTES[FIELD_TYPES.FLOAT_32];
@@ -13,9 +13,9 @@ class Transform extends Component {
 
   constructor(
     entityId: EntityId,
-    position?: VectorHash,
-    rotation?: VectorHash,
-    scale?: VectorHash
+    position?: Vector3Hash,
+    rotation?: Vector3Hash,
+    scale?: Vector3Hash
   ) {
     super(entityId);
     this._values = new Float32Array(9);

@@ -2,11 +2,11 @@ import Component from "../../../Component";
 import { EntityId } from "../../../types";
 
 class StringComponent extends Component {
-  stringNumber: string;
+  testString: string;
 
-  constructor(entityId: EntityId) {
+  constructor(entityId: EntityId, testString?: string) {
     super(entityId);
-    this.stringNumber = "abc";
+    this.testString = testString || "abc";
   }
 }
 

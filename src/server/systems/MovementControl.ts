@@ -1,7 +1,7 @@
 import Move from "../../shared/components/message/Move";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import { VectorHash } from "../../shared/ecs/utils/Vector3BufferView";
+import { Vector3Hash } from "../../shared/ecs/utils/Vector3BufferView";
 import Character from "../../shared/components/Character";
 import PhysicsBody from "../components/PhysicsBody";
 import Speed from "../components/Speed";
@@ -49,8 +49,8 @@ class MovementControl extends System {
     physicsBody.linearVelocity.xyz = newLinearVelocity;
   };
 
-  private calculateNewLinearVelocity = (speed: number, direction: number): VectorHash => {
-    let newLinearVelocity: VectorHash = { x: 0, y: 0 };
+  private calculateNewLinearVelocity = (speed: number, direction: number): Vector3Hash => {
+    let newLinearVelocity: Vector3Hash = { x: 0, y: 0 };
 
     switch (direction) {
       case DIRECTIONS.LEFT:

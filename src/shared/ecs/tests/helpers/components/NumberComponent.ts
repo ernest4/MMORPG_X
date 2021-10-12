@@ -4,9 +4,9 @@ import { EntityId } from "../../../types";
 class NumberComponent extends Component {
   testNumber: number;
 
-  constructor(entityId: EntityId) {
+  constructor(entityId: EntityId, testNumber?: number) {
     super(entityId);
-    this.testNumber = 5;
+    this.testNumber = testNumber || 5;
   }
 }
 

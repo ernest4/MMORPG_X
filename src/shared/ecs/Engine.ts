@@ -103,12 +103,19 @@ class Engine {
 
   removeComponents = (...components: Component[]) => components.forEach(this.removeComponent);
 
-  removeComponentById = (componentClass: ComponentClass, entityId: EntityId) => {
+  removeComponentById = (entityId: EntityId, componentClass: ComponentClass) => {
     const componentList = this._componentLists[componentClass.name];
     if (!componentList) return;
 
     componentList.remove(entityId);
     if (isNumber(entityId)) this.reclaimEntityIdIfFree(entityId);
+  };
+
+  removeComponentsById = (entityId: EntityId, ...componentClasses: ComponentClass[]) => {
+    const callback = (componentClass: ComponentClass) => {
+      this.removeComponentById(entityId, componentClass);
+    };
+    componentClasses.forEach(callback);
   };
 
   removeComponentsOfClass = (componentClass: ComponentClass) => {

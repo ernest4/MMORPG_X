@@ -2,11 +2,11 @@ const X_INDEX = 0;
 const Y_INDEX = 1;
 const Z_INDEX = 2;
 
-export type VectorHash = { x?: number; y?: number; z?: number };
+export type Vector3Hash = { x: number; y: number; z: number };
 class Vector3BufferView {
   private _values: Float32Array;
 
-  constructor(arrayBuffer: ArrayBuffer, startByteOffset = 0, initialValues?: VectorHash) {
+  constructor(arrayBuffer: ArrayBuffer, startByteOffset = 0, initialValues?: Vector3Hash) {
     // Extract ArrayBuffer out of TypedArray if values is not already ArrayBuffer
     const buffer = (arrayBuffer as Float32Array).buffer || arrayBuffer;
     // Float32Array will error out at runtime if it can't construct itself at the right size
@@ -40,18 +40,18 @@ class Vector3BufferView {
     this._values[Z_INDEX] = value;
   }
 
-  get xyz(): { x: number; y: number; z: number } {
+  get xyz(): Vector3Hash {
     const { x, y, z } = this;
     return { x, y, z };
   }
 
-  set xyz({ x, y, z }: VectorHash) {
+  set xyz({ x, y, z }: Vector3Hash) {
     this._values[X_INDEX] = x;
     this._values[Y_INDEX] = y;
     this._values[Z_INDEX] = z;
   }
 
-  private initialize = (initialValues: VectorHash) => {
+  private initialize = (initialValues: Vector3Hash) => {
     this.x = initialValues.x;
     this.y = initialValues.y;
     this.z = initialValues.z;
