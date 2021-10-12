@@ -64,6 +64,14 @@ const SCHEMA = {
   },
   [MESSAGE_TYPES.CHARACTER_CONNECTED]: {
     binary: [
+      // TODO: redo this to use classes or objects, or something more defined and rigid so that
+      // parsed messages are easy to use and well defined, instead of forcing me to lookup the
+      // schema all the time!
+      // Probs similar idea to crystal version, class per messageType that knows how to serialize
+      // and deserialize itself...!!!
+      // AND it can encapsulate the intended message receiver so it doesn't need to sit on the
+      // message component!
+      // Each Message component can then take in SPECIFIC parsedMessage class!!
       ["characterId", FIELD_TYPES.INT_32],
       ["characterName", FIELD_TYPES.STRING],
       ["hitpoints", FIELD_TYPES.INT_32],

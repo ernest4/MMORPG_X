@@ -27,13 +27,15 @@ class CharacterDeserializer extends System {
   // this.engine.freeEntityId(entityId) // => will transfer any components from one entityId to new generated one...but some components hold references to entityIds...problem...
   private createCharacterComponents = (querySet: QuerySet) => {
     const [characterConnected, webSocket] = querySet as [CharacterConnected, WebSocket];
-    const { characterName, x, y, z, hitpoints } = characterConnected.parsedMessage;
-    const entityId = this.engine.generateEntityId();
+    const { characterId, characterName, x, y, z, hitpoints } = characterConnected.parsedMessage;
+
+    // const entityId = this.engine.generateEntityId();
+    this.engine.freeEntityId(characterId); // something like that?
     const characterComponents = [
-      new Character(entityId),
-      new Name(entityId, characterName),
-      new HitPoints(entityId, hitpoints),
-      new Transform(entityId, { x, y, z }),
+      new Character(characterId),
+      new Name(characterId, characterName),
+      new HitPoints(characterId, hitpoints),
+      new Transform(characterId, { x, y, z }),
     ];
 
     this.engine.addComponents(...characterComponents);

@@ -20,10 +20,12 @@ const PHASER_GAME_CONFIG = {
   width: window.innerWidth,
   height: window.innerHeight,
   parent: "phaser-game",
+  pixelArt: true, // NOTE: prevents anti-aliasing
   scale: {
-    mode: Phaser.Scale.WIDTH_CONTROLS_HEIGHT,
-    // autoCenter: Phaser.Scale.CENTER_BOTH,
+    mode: Phaser.Scale.FIT,
+    autoCenter: Phaser.Scale.CENTER_BOTH,
   },
+  // pixelArt: true, // how to set?
   physics: { default: "arcade", arcade: { debug: false, gravity: { y: 0 } } },
   // scene: [],
 };
@@ -62,7 +64,7 @@ class Game {
     this._engine.addSystem(new MovementControl(this._engine));
     this._engine.addSystem(new CharacterDeserializer(this._engine)); // TODO: similiar to server, but will respond to charaacterConnected messages over cconnection events
     this._engine.addSystem(new CharacterPosition(this._engine)); // TODO: analogous to servers CharacterMoove
-    // this._engine.addSystem(new SpriteLoader(this._engine)); // TODO:
+    // this._engine.addSystem(new AssetLoader(this._engine)); // TODO: async load in sprites / textures /sounds etc
     this._engine.addSystem(new SpriteRender(this._engine));
     this._engine.addSystem(new Broadcast(this._engine, this._webSocket)); // NOTE: always last
 
