@@ -44,7 +44,7 @@ class SpatialPartitioning extends System {
       newEntityIdsSet.add(new SparseSetItem(nearbyEntityId));
     };
     currentRoom.streamNearbyCharacterEntityIds(x, y, checkNearbyCharacterEntityId);
-    nearbyCharacters.entityIdsSet = newEntityIdsSet;
+    nearbyCharacters.entityIdSet = newEntityIdsSet;
   };
 
   private getOrCreateNearbyCharactersComponent = (entityId: EntityId): NearbyCharacters => {

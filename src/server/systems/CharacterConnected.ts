@@ -9,9 +9,10 @@ import NearbyCharacters from "../components/NearbyCharacters";
 import OutgoingMessage from "../components/OutgoingMessage";
 import Room from "../components/Room";
 import State from "../game/State";
+import HitPoints from "../../shared/components/HitPoints";
 
-const queryComponents = [ConnectionEvent, Name, Transform, Room, NearbyCharacters];
-type ComponentsSet = [ConnectionEvent, Name, Transform, Room, NearbyCharacters];
+const queryComponents = [ConnectionEvent, Name, HitPoints, Transform, Room, NearbyCharacters];
+type ComponentsSet = [ConnectionEvent, Name, HitPoints, Transform, Room, NearbyCharacters];
 class CharacterConnected extends System {
   private _state: State;
 
@@ -29,7 +30,7 @@ class CharacterConnected extends System {
   destroy(): void {}
 
   private createServerMessages = (querySet: ComponentsSet) => {
-    const [connectionEvent, name, transform, room, nearbyCharacters] = querySet;
+    const [connectionEvent, name, hitPoints, transform, room, nearbyCharacters] = querySet;
 
     // TODO: future 'Entity' API sample: ...
     // const entity = this.engine.getEntity(connectionEvent.id);
@@ -37,60 +38,32 @@ class CharacterConnected extends System {
     // OR? const components = entity.getComponents<ComponentsSet>(...queryComponents);
 
     let serverMessageComponents: OutgoingMessage[] = [];
-    const newCharacterEntityId = connectionEvent.id;
+    const newCharacterId = connectionEvent.id;
 
-    const messagesToInformCharacterOfSelf = this.messagesToInformNewCharacterOfSelf(
-      room,
-      name,
-      transform
-    );
-    serverMessageComponents = [...serverMessageComponents, ...messagesToInformCharacterOfSelf];
+    serverMessageComponents = [
+      this.createRoomInitMessageComponent(room, newCharacterId),
+      this.createConnectedMessageComponent(name, newCharacterId),
+      this.createHitPointsMessageComponent(hitPoints, newCharacterId),
+      this.createPositionMessageComponent(transform, newCharacterId),
+    ];
 
-    nearbyCharacters.entityIdsSet.stream(({ id: nearbyCharacterEntityId }: SparseSetItem) => {
-      const messagesToNearbyCharacter = this.messagesToInformOneCharacterOfAnother(
-        name,
-        transform,
-        nearbyCharacterEntityId
-      );
-
-      const nearbyCharacterName = this.engine.getComponent<Name>(Name, nearbyCharacterEntityId);
+    nearbyCharacters.entityIdSet.stream(({ id: nearbyCharacterId }: SparseSetItem) => {
+      const nearbyCharacterName = this.engine.getComponent<Name>(Name, nearbyCharacterId);
       const nearbyCharacterTransform = this.engine.getComponent<Transform>(
         Transform,
-        nearbyCharacterEntityId
-      );
-      const messagesToNewCharacter = this.messagesToInformOneCharacterOfAnother(
-        nearbyCharacterName,
-        nearbyCharacterTransform,
-        newCharacterEntityId
+        nearbyCharacterId
       );
 
       serverMessageComponents = [
         ...serverMessageComponents,
-        ...messagesToNearbyCharacter,
-        ...messagesToNewCharacter,
+        this.createConnectedMessageComponent(name, nearbyCharacterId),
+        this.createPositionMessageComponent(transform, nearbyCharacterId),
+        this.createConnectedMessageComponent(nearbyCharacterName, newCharacterId),
+        this.createPositionMessageComponent(nearbyCharacterTransform, newCharacterId),
       ];
     });
 
     this.engine.addComponents(...serverMessageComponents);
-  };
-
-  private messagesToInformNewCharacterOfSelf = (room: Room, name: Name, transform: Transform) => {
-    return [
-      this.createRoomInitMessageComponent(room, room.id),
-      this.createConnectedMessageComponent(name, name.id),
-      this.createPositionMessageComponent(transform, transform.id),
-    ];
-  };
-
-  private messagesToInformOneCharacterOfAnother = (
-    name: Name,
-    transform: Transform,
-    toEntityId
-  ) => {
-    return [
-      this.createConnectedMessageComponent(name, toEntityId),
-      this.createPositionMessageComponent(transform, toEntityId),
-    ];
   };
 
   private createRoomInitMessageComponent = ({ roomName }: Room, toEntityId: EntityId) => {
@@ -112,6 +85,14 @@ class CharacterConnected extends System {
     toEntityId: EntityId
   ) => {
     const parsedMessage = { characterId, ...position.xyz };
+    return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
+  };
+
+  private createHitPointsMessageComponent = (
+    { hitPoints, id: characterId }: HitPoints,
+    toEntityId: EntityId
+  ) => {
+    const parsedMessage = { characterId, hitPoints };
     return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
   };
 }

@@ -5,6 +5,7 @@ import Move from "../components/message/Move";
 import Ping from "../components/message/Ping";
 import Pong from "../components/message/Pong";
 import Position from "../components/message/Position";
+import HitPoints from "../components/message/HitPoints";
 
 export const MESSAGE_TYPE = 0;
 export const LITTLE_ENDIAN = true;
@@ -17,8 +18,7 @@ export const MESSAGE_TYPES = {
   CHARACTER_DISCONNECTED: 4,
   ROOM_INIT: 5,
   MOVE: 6,
-  // TODO: use this potentially more optimal way to batch initialize all characters
-  // CHARACTERS_INIT: 6, // kinda like ENTER + POSITION but for all present characters
+  HITPOINTS: 7,
 } as const;
 
 export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
@@ -67,12 +67,16 @@ const SCHEMA = {
     binary: [
       ["characterId", FIELD_TYPES.INT_32],
       ["characterName", FIELD_TYPES.STRING],
-      ["hitpoints", FIELD_TYPES.INT_32],
-      ["x", FIELD_TYPES.FLOAT_32],
-      ["y", FIELD_TYPES.FLOAT_32],
-      ["z", FIELD_TYPES.FLOAT_32],
+      ["type", FIELD_TYPES.UINT_8],
     ],
     component: CharacterConnected,
+  },
+  [MESSAGE_TYPES.HITPOINTS]: {
+    binary: [
+      ["characterId", FIELD_TYPES.INT_32],
+      ["hitpoints", FIELD_TYPES.INT_32],
+    ],
+    component: HitPoints,
   },
   [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
     binary: [["characterId", FIELD_TYPES.STRING]],

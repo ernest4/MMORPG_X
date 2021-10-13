@@ -4,11 +4,11 @@ import SparseSet from "../../shared/ecs/utils/SparseSet";
 
 // TODO: optimize with ArrayBuffers ??
 class NearbyCharacters extends Component {
-  entityIdsSet: SparseSet;
+  entityIdSet: SparseSet;
 
   constructor(entityId: EntityId) {
     super(entityId);
-    this.entityIdsSet = new SparseSet();
+    this.entityIdSet = new SparseSet();
   }
 }
 

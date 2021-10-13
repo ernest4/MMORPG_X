@@ -2,7 +2,7 @@ import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import WebSocket, { GUEST_UID_PREFIX } from "../components/WebSocket";
 import ConnectionEvent from "../../shared/components/ConnectionEvent";
-import { EntityId, QuerySet } from "../../shared/ecs/types";
+import { EntityId } from "../../shared/ecs/types";
 import Component from "../../shared/ecs/Component";
 import Character from "../../shared/components/Character";
 import Name from "../../shared/components/Name";
@@ -11,6 +11,7 @@ import Room from "../components/Room";
 import Speed from "../components/Speed";
 import PhysicsBody from "../components/PhysicsBody";
 import Transform from "../../shared/components/Transform";
+import Hunter from "../../shared/components/type/Hunter";
 import { DEFAULT_ROOM_NAME } from "../game/State";
 
 class CharacterDeserializer extends System {
@@ -42,12 +43,13 @@ class CharacterDeserializer extends System {
   private createGuestCharacterComponents = (entityId: EntityId): Component[] => {
     return [
       new Character(entityId),
+      new Hunter(entityId),
       new Name(entityId, `Name_${entityId}`),
       new HitPoints(entityId, 100),
       new Room(entityId, DEFAULT_ROOM_NAME),
       new Speed(entityId, 20),
       new PhysicsBody(entityId),
-      new Transform(entityId, { x: 0, y: 0 }),
+      new Transform(entityId, { x: 0, y: 0, z: 0 }),
     ];
   };
 

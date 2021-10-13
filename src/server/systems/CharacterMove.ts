@@ -29,7 +29,7 @@ class CharacterMove extends System {
 
     serverMessageComponents.push(this.createPositionMessageComponent(transform, transform.id));
 
-    nearbyCharacters.entityIdsSet.stream(({ id: nearbyCharacterEntityId }: SparseSetItem) => {
+    nearbyCharacters.entityIdSet.stream(({ id: nearbyCharacterEntityId }: SparseSetItem) => {
       serverMessageComponents.push(
         this.createPositionMessageComponent(transform, nearbyCharacterEntityId)
       );

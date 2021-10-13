@@ -10,10 +10,10 @@ import Manager from "./systems/Manager";
 import MessageListener from "./systems/MessageListener";
 import SpriteRender from "./systems/SpriteRender";
 import Broadcast from "./systems/Broadcast";
-import Scene from "./systems/Scene";
 import MovementControl from "./systems/MovementControl";
 import CharacterDeserializer from "./systems/CharacterDeserializer";
 import CharacterPosition from "./systems/CharacterPosition";
+import SpriteLoader from "./systems/SpriteLoader";
 // import FpsCounter from "./utils/FpsCounter";
 
 const PHASER_GAME_CONFIG = {
@@ -39,11 +39,14 @@ class Game {
   private _engine!: Engine;
   private _webSocket: WebSocket;
   private _phaserGame: Phaser.Game;
+  private _scene: Phaser.Scene;
 
   constructor() {
     this._webSocket = new WebSocket(this.webSocketURL());
     this._webSocket.binaryType = "arraybuffer"; // TODO: move this to MessageListener init?
     this._phaserGame = new Phaser.Game(PHASER_GAME_CONFIG);
+    this._phaserGame.scene.add("main", {});
+    this._scene = this._phaserGame.scene.getScene("main");
     this.initECS();
   }
 
@@ -56,7 +59,6 @@ class Game {
     this._engine = new Engine(DEVELOPMENT);
     // TODO: test all systems.
     this._engine.addSystem(new Manager(this._engine));
-    this._engine.addSystem(new Scene(this._engine, this._phaserGame));
     this._engine.addSystem(new ConnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new MessageListener(this._engine, this._webSocket));
     this._engine.addSystem(new MessageDeserializer(this._engine));
@@ -64,8 +66,9 @@ class Game {
     this._engine.addSystem(new InputListener(this._engine));
     this._engine.addSystem(new MovementControl(this._engine));
     this._engine.addSystem(new CharacterDeserializer(this._engine));
-    this._engine.addSystem(new CharacterPosition(this._engine)); // TODO: analogous to servers CharacterMoove
+    this._engine.addSystem(new CharacterPosition(this._engine));
     // this._engine.addSystem(new AssetLoader(this._engine)); // TODO: async load in sprites / textures /sounds etc
+    this._engine.addSystem(new SpriteLoader(this._engine, this._scene)); // TODO: refactor into asset loader?
     this._engine.addSystem(new SpriteRender(this._engine));
     this._engine.addSystem(new Broadcast(this._engine, this._webSocket)); // NOTE: always last
 
