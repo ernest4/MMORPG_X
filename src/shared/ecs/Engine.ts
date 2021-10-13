@@ -160,20 +160,19 @@ class Engine {
 
   generateEntityId = (): EntityId => this._entityIdPool.getId();
 
-  // TODO: jests
   generateEntityIdWithAlias = (aliasId: EntityId): EntityId => {
     const entityId = this.generateEntityId();
     this.addEntityIdAlias(entityId, aliasId);
     return entityId;
   };
 
-  // TODO: jests
   addEntityIdAlias = (entityId: EntityId, aliasId: EntityId) => {
     this._entityIdAliases.add(new EntityIdAlias(aliasId, entityId));
   };
 
-  // TODO: jests
-  getEntityIdByAlias = (aliasId: EntityId) => this._entityIdAliases.get(aliasId)?.id;
+  getEntityIdByAlias = (aliasId: EntityId) => {
+    return (<EntityIdAlias>this._entityIdAliases.get(aliasId))?.entityId;
+  };
 
   removeEntity = (entityId: EntityId) => {
     // NOTE: In EnTT this happens by iterating every single sparse set in the registry, checking if it contains the entity, and deleting it if it does.

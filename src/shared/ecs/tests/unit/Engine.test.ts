@@ -463,6 +463,34 @@ describe(Engine, () => {
     });
   });
 
+  describe("#generateEntityIdWithAlias", () => {
+    const aliasId = 123456;
+
+    beforeEach(() => {
+      entityId = engine.generateEntityIdWithAlias(aliasId);
+    });
+
+    it("adds alias to entityId", () => {
+      expect(entityId).toBeNumber();
+      expect(entityId).not.toEqual(aliasId);
+      expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
+    });
+  });
+
+  // also tests #getEntityIdByAlias
+  describe("#addEntityIdAlias", () => {
+    const aliasId = 123;
+
+    beforeEach(() => {
+      entityId = engine.generateEntityId();
+      engine.addEntityIdAlias(entityId, aliasId);
+    });
+
+    it("adds alias to entityId", () => {
+      expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
+    });
+  });
+
   describe("#removeEntity", () => {
     beforeEach(() => {
       entityId = engine.generateEntityId();
