@@ -5,6 +5,30 @@ import Engine from "./Engine";
 // TODO: entity wrapper ??
 
 // TODO: jest tests !!!!
+
+// TODO: entity api ?
+// const entity = this.engine.getEntityByAlias(characterId);
+// entity.components.transform.position.xyz = { x, y, z };
+// OR
+// entity.get.transform.position.xyz = { x, y, z };
+// OR
+// entity.get<Transform>(Transform).position.xyz = { x, y, z };
+// OR
+// entity.transform.xyz = { x, y, z }; // should be possible...something like
+// constructor(){
+// components.forEach(component => (this[component.constructor.name] = component))
+// }
+
+// maybe use callback so you dont have to check all the time if
+// component present or not? it will either callback or wont
+// entity.transform(transform => transform.xyz = { x, y, z });
+
+// could also add engine.queryForEntities()
+// that just wraps the query set in entity basically...
+
+// const entityId = this.engine.getEntityIdByAlias(characterId);
+// const characterId = this.engine.getAliasIdByEntityId(entityId);
+// const component = this.engine.getComponentByAliasEntityId(Character, characterId); // => character.id => entityId
 class Entity {
   private _entityId: EntityId;
   private _engine: Engine;

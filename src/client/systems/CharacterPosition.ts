@@ -27,26 +27,6 @@ class CharacterPosition extends System {
       const transform = this.engine.getComponent<Transform>(Transform, entityId);
       if (transform) transform.position.xyz = { x, y, z };
     }
-
-    // TODO: entity api ?
-    // const entity = this.engine.getEntityByAlias(characterId);
-    // entity.components.transform.position.xyz = { x, y, z };
-    // OR
-    // entity.get.transform.position.xyz = { x, y, z };
-    // OR
-    // entity.get<Transform>(Transform).position.xyz = { x, y, z };
-    // OR
-    // entity.transform.xyz = { x, y, z }; // should be possible...something like
-    // constructor(){
-    // components.forEach(component => (this[component.constructor.name] = component))
-    // }
-
-    // maybe use callback so you dont have to check all the time if 
-    // component present or not? it will either callback or wont
-    // entity.transform(transform => transform.xyz = { x, y, z });
-
-    // could also add engine.queryForEntities()
-    // that just wraps the query set in entity basically...
   };
 }
 

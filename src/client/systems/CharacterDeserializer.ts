@@ -26,16 +26,12 @@ class CharacterDeserializer extends System {
     const { characterId, characterName, x, y, z, hitpoints } = characterConnected.parsedMessage;
 
     const entityId = this.engine.generateEntityIdWithAlias(characterId);
-    // const entityId = this.engine.getEntityIdByAlias(characterId);
-    // const characterId = this.engine.getAliasIdByEntityId(entityId);
-    // const component = this.engine.getComponentByAliasEntityId(Character, characterId); // => character.id => entityId
     const characterComponents = [
       new Character(entityId),
       new Name(entityId, characterName),
       new HitPoints(entityId, hitpoints),
       new Transform(entityId, { x, y, z }),
     ];
-
     this.engine.addComponents(...characterComponents);
   };
 }
