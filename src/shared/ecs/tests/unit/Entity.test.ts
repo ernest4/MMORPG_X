@@ -25,21 +25,19 @@ describe(Entity, () => {
   });
 
   // describe("Entity initialization", () => {
-  // beforeEach(() => {
-  //   entityId = engine.generateEntityId();
-  //   component = new NumberComponent(entityId, 89);
-  //   component2 = new StringComponent(entityId, "wowser");
-  //   engine.addComponents(component, component2);
-
-  //   entity = new Entity(entityId, engine);
-  // });
+  //   beforeEach(() => {
+  //     entityId = engine.generateEntityId();
+  //     component = new NumberComponent(entityId, 89);
+  //     component2 = new StringComponent(entityId, "wowser");
+  //     engine.addComponents(component, component2);
+  //   });
 
   //   it("adds the components to the entity", () => {
   //     // NOTE: this is totally fine in JS, but TS gets real pissy about undefined methods like that
   //     // expect(entity.numbercomponent.testNumber).toEqual(89);
   //     // expect(entity.stringcomponent.testString).toEqual("wowser");
 
-  //     expect(entity.components.numbercomponent.testNumber).toEqual(89);
+  //     expect((<NumberComponent>entity.components.numbercomponent).testNumber).toEqual(89);
   //     expect(entity.components.stringcomponent.testString).toEqual("wowser");
   //   });
 
@@ -234,32 +232,76 @@ describe(Entity, () => {
   //   });
   // });
 
-  describe("#getComponent", () => {
+  // describe("#getComponent", () => {
+  //   beforeEach(() => {
+  //     entityId = engine.generateEntityId();
+  //     component = new NumberComponent(entityId, 89);
+  //     engine.addComponents(component);
+  //     entity = new Entity(entityId, engine);
+  //   });
+
+  //   context("when entity has component", () => {
+  //     it("returns component", () => {
+  //       expect(entity.getComponent<NumberComponent>(NumberComponent)).toEqual(component);
+  //     });
+  //   });
+
+  //   context("when entity does not have the component", () => {
+  //     beforeEach(() => engine.removeComponent(component));
+
+  //     it("returns null", () => {
+  //       expect(entity.getComponent<NumberComponent>(NumberComponent)).toEqual(null);
+  //     });
+  //   });
+
+  //   context("when no component of that type exists at all", () => {
+  //     it("returns null", () => {
+  //       expect(entity.getComponent<StringComponent>(StringComponent)).not.toBeDefined();
+  //     });
+  //   });
+  // });
+
+  describe("#components", () => {
     beforeEach(() => {
       entityId = engine.generateEntityId();
-      component = new NumberComponent(entityId, 89);
-      engine.addComponents(component);
-
+      component = new NumberComponent(entityId);
+      component2 = new StringComponent(entityId);
+      engine.addComponents(component, component2);
       entity = new Entity(entityId, engine);
     });
 
-    context("when entity has component", () => {
-      it("returns component", () => {
-        expect(entity.getComponent<NumberComponent>(NumberComponent)).toEqual(component);
+    context("when entity has all possible components", () => {
+      it("returns hash of components for given entityId", () => {
+        expect(entity.components).toEqual({
+          numbercomponent: component,
+          stringcomponent: component2,
+        });
       });
     });
 
-    context("when entity does not have the component", () => {
-      beforeEach(() => engine.removeComponent(component));
+    context("when engine removes component", () => {
+      context("when entity is reloaded", () => {
+        beforeEach(() => {
+          engine.removeComponent(component);
+          entity.reload();
+        });
 
-      it("returns null", () => {
-        expect(entity.getComponent<NumberComponent>(NumberComponent)).toEqual(null);
+        it("returns new hash of components for given entityId", () => {
+          expect(entity.components).toEqual({ stringcomponent: component2 });
+        });
       });
-    });
 
-    context("when no component of that type exists at all", () => {
-      it("returns null", () => {
-        expect(entity.getComponent<StringComponent>(StringComponent)).not.toBeDefined();
+      context("when entity is reloaded", () => {
+        beforeEach(() => {
+          engine.removeComponent(component);
+        });
+
+        it("returns old hash of components for given entityId", () => {
+          expect(entity.components).toEqual({
+            numbercomponent: component,
+            stringcomponent: component2,
+          });
+        });
       });
     });
   });
@@ -268,24 +310,22 @@ describe(Entity, () => {
   //   beforeEach(() => {
   //     entityId = engine.generateEntityId();
   //     component = new NumberComponent(entityId);
-  //     engine.addComponent(component);
   //     component2 = new StringComponent(entityId);
-  //     engine.addComponent(component2);
+  //     engine.addComponents(component, component2);
+  //     entity = new Entity(entityId, engine);
   //   });
 
   //   context("when entity has all possible components", () => {
   //     it("returns array of components for given entityId", () => {
-  //       expect(engine.getComponents(entityId)).toEqual([component, component2]);
+  //       expect(entity.getComponents()).toEqual([component, component2]);
   //     });
   //   });
 
   //   context("when entity has only some of the possible components", () => {
-  //     beforeEach(() => {
-  //       engine.removeComponent(component);
-  //     });
+  //     beforeEach(() => engine.removeComponent(component));
 
   //     it("returns array of components for given entityId", () => {
-  //       expect(engine.getComponents(entityId)).toEqual([component2]);
+  //       expect(entity.getComponents()).toEqual([component2]);
   //     });
   //   });
   // });

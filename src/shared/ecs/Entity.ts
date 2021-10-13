@@ -8,12 +8,15 @@ import Engine from "./Engine";
 class Entity {
   private _entityId: EntityId;
   private _engine: Engine;
-  components: { [componentName: string]: Component };
+  private _components: { [componentName: string]: Component } = {};
 
   constructor(entityId: EntityId, engine: Engine) {
     this._entityId = entityId;
     this._engine = engine;
-    // this.loadComponents(); // TS doesn't like this too much...
+    this.loadComponents(); // TS doesn't like this too much...
+    // this._events = {
+    //   removedComponent: this._engine.events.removedComponent,
+    // };
   }
 
   get id(): EntityId {
@@ -21,19 +24,21 @@ class Entity {
   }
 
   // TODO: jests
-  addComponent = (callback: (id: EntityId) => Component): Component => {
-    return this._engine.addComponent(callback(this._entityId));
+  addComponent = <T extends Component>(callback: (id: EntityId) => T): T => {
+    return this._engine.addComponentToEntity(this, callback(this.id));
   };
 
   // TODO: jests
   addComponents = (callback: (id: EntityId) => Component[]): Component[] => {
-    const components = callback(this._entityId);
+    // TODO: check (validate) against internal hash ?
+    const components = callback(this.id);
     this._engine.addComponents(...components);
     return components;
   };
 
   // TODO: jests
   removeComponent = (componentClass: ComponentClass) => {
+    // TODO: check (validate) against internal hash ?
     this._engine.removeComponentById(this.id, componentClass);
   };
 
@@ -42,14 +47,19 @@ class Entity {
     this._engine.removeComponentsById(this.id, ...componentClasses);
   };
 
-  getComponent = <T extends Component>(componentClass: ComponentClass) => {
-    return this._engine.getComponent<T>(componentClass, this.id);
-  };
+  // getComponent = <T extends Component>(componentClass: ComponentClass) => {
+  //   return this._engine.getComponent<T>(componentClass, this.id);
+  // };
+
+  // getComponents = () => this._engine.getComponents(this.id);
+
+  get components() {
+    return this._components;
+  }
 
   // TODO: jests
-  getComponents = () => this._engine.getComponents(this.id);
-
-  // TODO: jests
+  // TODO: after remove add guard clauses that throw error on any add/remove
+  // action after ??
   remove = () => this._engine.removeEntity(this.id);
 
   // other util methods... ??
@@ -58,18 +68,38 @@ class Entity {
 
   // removeAllComponents
 
-  // // kinda magic, BUT whats gonna happen if component is remove by system??
-  // // how will this entity know to update itself?
-  // // actually the engine should be responsible for that!
-  // // ALTHOUGH entities are kinda ephemeral...
-  // // could have loadComponents() method to reinitialize a cached entity if needed?
-  // loadComponents = () => {
-  //   const components = this._engine.getComponents(this.id);
-  //   // NOTE: this is totally fine in JS, but TS gets real pissy about undefined methods like that
-  //   components.forEach(component => {
-  //     this[component.constructor.name.toLowerCase()] = component;
-  //   });
-  // };
+  // TODO: jests
+  reload = () => {
+    this.loadComponents();
+  };
+
+  // private ??
+  // kinda magic, BUT whats gonna happen if component is remove by system??
+  // how will this entity know to update itself?
+  // actually the engine should be responsible for that!
+  // ALTHOUGH entities are kinda ephemeral...
+  // could have loadComponents() method to reinitialize a cached entity if needed?
+  private loadComponents = () => {
+    const components = this._engine.getComponents(this.id);
+    // NOTE: this is totally fine in JS, but TS gets real pissy about undefined methods like that
+    // components.forEach(component => {
+    //   this[component.constructor.name.toLowerCase()] = component;
+    // });
+
+    this._components = {};
+
+    components.forEach(component => {
+      this._components[component.constructor.name.toLowerCase()] = component;
+    });
+  };
+
+  // private ??
+  _loadComponent = (component: Component) => {
+    this._components[component.constructor.name.toLowerCase()] = component;
+  };
+
+  // TODO: jests
+  _reloadEntityId = (newEntityId: EntityId) => (this._entityId = newEntityId);
 }
 
 export default Entity;

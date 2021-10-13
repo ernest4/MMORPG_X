@@ -11,6 +11,7 @@ import Component from "./Component";
 import SparseSet, { SparseSetItem } from "./utils/SparseSet";
 import System from "./System";
 import { isNumber } from "./utils/Number";
+import Entity from "./Entity";
 
 // TODO: move out to own class?
 class EntityIdAlias extends SparseSetItem {
@@ -46,6 +47,9 @@ class Engine {
     // this.updateComplete = new signals.Signal(); // TODO: signals?? https://github.com/millermedeiros/js-signals
     this._entityIdPool = new EntityIdPool();
     this._entityIdAliases = new SparseSet();
+    // this._events = {
+    //   removedComponent: (component: Component, oldEntityId: EntityId) => {},
+    // };
   }
 
   // TODO: jests
@@ -88,6 +92,11 @@ class Engine {
     return component;
   };
 
+  addComponentToEntity = <T extends Component>(entity: Entity, component: T) => {
+    entity._loadComponent(component); // TODO: maybe call reload() sticking to public api? but it's expensive, will loop through all component lists...
+    return this.addComponent(component);
+  };
+
   addComponents = (...components: Component[]) => components.forEach(this.addComponent);
 
   removeComponent = (component: Component) => {
@@ -97,6 +106,7 @@ class Engine {
     if (!componentList) return;
 
     const oldEntityId = component.id;
+    // this._events.removedComponent(component, oldEntityId);
     componentList.remove(component);
     if (isNumber(oldEntityId)) this.reclaimEntityIdIfFree(oldEntityId);
   };
@@ -131,9 +141,12 @@ class Engine {
   };
 
   getComponents = (entityId: EntityId) => {
-    return Object.values(this._componentLists)
-      .map(componentList => componentList.get(entityId))
-      .filter(component => component) as Component[];
+    let components: Component[] = [];
+    Object.values(this._componentLists).forEach(componentList => {
+      const component = componentList.get(entityId);
+      if (component) components.push(component);
+    });
+    return components;
   };
 
   // createEntity = (): Entity => {
@@ -242,7 +255,10 @@ class Engine {
   private updateSystem = (system: System) => system.update();
 
   private reclaimEntityIdIfFree = (entityId: EntityId) => {
-    if (this.getComponents(entityId).length === 0) this._entityIdPool.reclaimId(entityId);
+    if (this.getComponents(entityId).length === 0) {
+      this._entityIdPool.reclaimId(entityId);
+      // entity.reload();
+    }
   };
 }
 
