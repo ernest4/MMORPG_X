@@ -53,13 +53,19 @@ class CharacterConnected extends System {
         Transform,
         nearbyCharacterId
       );
+      const nearbyCharacterHitPoints = this.engine.getComponent<HitPoints>(
+        HitPoints,
+        nearbyCharacterId
+      );
 
       serverMessageComponents = [
         ...serverMessageComponents,
         this.createConnectedMessageComponent(name, nearbyCharacterId),
         this.createPositionMessageComponent(transform, nearbyCharacterId),
+        this.createHitPointsMessageComponent(hitPoints, nearbyCharacterId),
         this.createConnectedMessageComponent(nearbyCharacterName, newCharacterId),
         this.createPositionMessageComponent(nearbyCharacterTransform, newCharacterId),
+        this.createHitPointsMessageComponent(nearbyCharacterHitPoints, newCharacterId),
       ];
     });
 

@@ -6,6 +6,9 @@ import Ping from "../components/message/Ping";
 import Pong from "../components/message/Pong";
 import Position from "../components/message/Position";
 import HitPoints from "../components/message/HitPoints";
+import { Vector3Hash } from "../ecs/utils/Vector3BufferView";
+import { EntityId } from "../ecs/types";
+import Component from "../ecs/Component";
 
 export const MESSAGE_TYPE = 0;
 export const LITTLE_ENDIAN = true;
@@ -106,25 +109,39 @@ const SCHEMA = {
   },
 } as const;
 
+type testy = typeof CharacterConnected.binary[number];
+// type obj = {[key in testy[0]]: any}
+type obj = {[key in testy[0]]: typeof testy[2]}
 // TODO: this ?
-// class CharacterConnected {
-//   constructor(id, name, hitpoints, x, y, z) {
-//     this._id = id;
-//     this._name = name;
-//     this._hitpoints = hitpoints;
-//     this._x = x;
-//     this._y = y;
-//     this._z = z;
-//   }
+class CharacterConnected extends Component {
+  // constructor(entityId, [characterId, characterName, type]: [EntityId, string, number]) {
+  constructor(entityId, params: obj) {
+    super(entityId);
+    // this._id = id;
+    // this._name = name;
+    // this._hitpoints = hitpoints;
+    // this._x = x;
+    // this._y = y;
+    // this._z = z;
+    // CharacterConnected.wowser["123"];
+  }
 
-//   parseBinary = (binaryMessage: ArrayBuffer) => {
-//     //
-//   };
+  static binary = [
+    ["characterId", FIELD_TYPES.INT_32, "string"],
+    ["characterName", FIELD_TYPES.STRING, "number"],
+    ["type", FIELD_TYPES.UINT_8, "number"],
+  ] as const;
 
-//   toBinary = (): ArrayBuffer => {
-//     //
-//   };
-// }
+  // parseBinary = (binaryMessage: ArrayBuffer) => {
+  //   //
+  // };
+
+  // toBinary = (): ArrayBuffer => {
+  //   //
+  // };
+}
+
+const testy = new CharacterConnected(123, ["abcc", 123, { x: 1, y: 2, z: 3 }]);
 
 export default SCHEMA;
 
