@@ -135,12 +135,18 @@ type obj = { [key in testy[0]]: StringToType<typeof testy[number][2]> };
 
 // type parsedMessage = { [key in typeof CharacterConnected.binary[number][0]]: any };
 // TODO: this ?
+
+type UInt8 = number;
+
+// const int32 = (string: string) => `${string}_Int32`;
 class CharacterConnected extends Component {
+  // parsedMessage: { thing: UInt8 };
   // characterId: string;
-  parsedMessage: obj;
+  parsedMessage: typeof CharacterConnected.binary;
 
   // constructor(entityId, [characterId, characterName, type]: [EntityId, string, number]) {
   constructor(entityId, parsedMessage: typeof CharacterConnected.binary) {
+    // constructor(entityId, parsedMessage: { thing: UInt8 }) {
     super(entityId);
     // this.characterId = params.characterId as string;
     // this._id = id;
@@ -163,15 +169,14 @@ class CharacterConnected extends Component {
   // ] as const;
 
   static binary = {
-    characterId: (<unknown>[FIELD_TYPES.INT_32, 0]) as BinaryTypeToTypeScriptType<
-      typeof FIELD_TYPES.INT_32
-    >,
-    characterName: (<unknown>[FIELD_TYPES.STRING, 1]) as BinaryTypeToTypeScriptType<
-      typeof FIELD_TYPES.STRING
-    >,
+    characterId_Int32: <BinaryTypeToTypeScriptType<typeof FIELD_TYPES.INT_32>>(
+      (<any>[FIELD_TYPES.INT_32, 0])
+    ),
+    characterName: <string>(<unknown>[FIELD_TYPES.STRING, 1]),
     type: (<unknown>[FIELD_TYPES.UINT_8, 2]) as BinaryTypeToTypeScriptType<
       typeof FIELD_TYPES.UINT_8
     >,
+    something: <number>(<unknown>{ binaryType: FIELD_TYPES.UINT_8, position: 2 }),
   };
 
   // static test = () => {
@@ -187,14 +192,11 @@ class CharacterConnected extends Component {
   // };
 }
 
-const fieldType = CharacterConnected.binary.characterId[0]
-const fieldCardinality = CharacterConnected.binary.characterId[1]
+const fieldType = CharacterConnected.binary.characterId[0];
+const fieldCardinality = CharacterConnected.binary.characterId[1];
 
-const testy = new CharacterConnected(123, {
-  characterId: "123",
-  characterName: "wer",
-  type: "wow",
-});
+const testy = new CharacterConnected(123, { characterId: 123, characterName: "wowser", type: 123 });
+// const testy = new CharacterConnected(123, {});
 
 // const testy = new CharacterConnected(123, ["abcc", 123, { x: 1, y: 2, z: 3 }]);
 
