@@ -109,14 +109,40 @@ const SCHEMA = {
   },
 } as const;
 
+const typeName = "number";
+const typeName2 = "boolean";
+const typeName3 = "string";
+
+type StringToType<T> = T extends "number"
+  ? number
+  : T extends "boolean"
+  ? boolean
+  : T extends "string"
+  ? string
+  : never;
+type myNumberType = StringToType<typeof typeName>;
+type myBooleanType = StringToType<typeof typeName2>;
+type myStringType = StringToType<typeof typeName3>;
+
+const x: myNumberType = 5;
+const y: myBooleanType = true;
+const z: myStringType = "5";
+
 type testy = typeof CharacterConnected.binary[number];
+// type values = testy[number][2];
 // type obj = {[key in testy[0]]: any}
-type obj = {[key in testy[0]]: typeof testy[2]}
+type obj = { [key in testy[0]]: StringToType<typeof testy[number][2]> };
+
+// type parsedMessage = { [key in typeof CharacterConnected.binary[number][0]]: any };
 // TODO: this ?
 class CharacterConnected extends Component {
+  // characterId: string;
+  parsedMessage: obj;
+
   // constructor(entityId, [characterId, characterName, type]: [EntityId, string, number]) {
-  constructor(entityId, params: obj) {
+  constructor(entityId, parsedMessage: typeof CharacterConnected.binary) {
     super(entityId);
+    // this.characterId = params.characterId as string;
     // this._id = id;
     // this._name = name;
     // this._hitpoints = hitpoints;
@@ -124,13 +150,33 @@ class CharacterConnected extends Component {
     // this._y = y;
     // this._z = z;
     // CharacterConnected.wowser["123"];
+    // Object.entries(params).forEach(([field, value]) => {
+    //   this[field] = value;
+    // });
+    this.parsedMessage = parsedMessage;
   }
 
-  static binary = [
-    ["characterId", FIELD_TYPES.INT_32, "string"],
-    ["characterName", FIELD_TYPES.STRING, "number"],
-    ["type", FIELD_TYPES.UINT_8, "number"],
-  ] as const;
+  // static binary = [
+  //   ["characterId", FIELD_TYPES.INT_32, "number"] as const,
+  //   ["characterName", FIELD_TYPES.STRING, "string"] as const,
+  //   ["type", FIELD_TYPES.UINT_8, "number"] as const,
+  // ] as const;
+
+  static binary = {
+    characterId: (<unknown>[FIELD_TYPES.INT_32, 0]) as BinaryTypeToTypeScriptType<
+      typeof FIELD_TYPES.INT_32
+    >,
+    characterName: (<unknown>[FIELD_TYPES.STRING, 1]) as BinaryTypeToTypeScriptType<
+      typeof FIELD_TYPES.STRING
+    >,
+    type: (<unknown>[FIELD_TYPES.UINT_8, 2]) as BinaryTypeToTypeScriptType<
+      typeof FIELD_TYPES.UINT_8
+    >,
+  };
+
+  // static test = () => {
+  //   this.name
+  // }
 
   // parseBinary = (binaryMessage: ArrayBuffer) => {
   //   //
@@ -141,8 +187,64 @@ class CharacterConnected extends Component {
   // };
 }
 
-const testy = new CharacterConnected(123, ["abcc", 123, { x: 1, y: 2, z: 3 }]);
+const fieldType = CharacterConnected.binary.characterId[0]
+const fieldCardinality = CharacterConnected.binary.characterId[1]
+
+const testy = new CharacterConnected(123, {
+  characterId: "123",
+  characterName: "wer",
+  type: "wow",
+});
+
+// const testy = new CharacterConnected(123, ["abcc", 123, { x: 1, y: 2, z: 3 }]);
 
 export default SCHEMA;
 
 export const MESSAGE_COMPONENT_CLASSES = Object.values(SCHEMA).map(({ component }) => component);
+
+// type BinaryTypeToTypeScriptType<T> = T extends typeof FIELD_TYPES.INT_32
+//   ? number
+//   : T extends typeof FIELD_TYPES.UINT_8
+//   ? number
+//   : T extends typeof FIELD_TYPES.STRING
+//   ? string
+//   : never;
+
+// type keys = typeof binary[number]['field']
+// type values = BinaryTypeToTypeScriptType<typeof binary[number]['binaryType']>
+
+// type parsedMessage = {[key in typeof binary[number]['field']]: typeof binary[number]['binaryType']}
+
+// const binary = [
+//   { field: 'characterId', binaryType: FIELD_TYPES.INT_32 },
+//   { field: 'characterName', binaryType: FIELD_TYPES.STRING },
+//   { field: 'type', binaryType: FIELD_TYPES.UINT_8 }
+// ] as const
+
+type BinaryTypeToTypeScriptType<T> = T extends typeof FIELD_TYPES.INT_32
+  ? number
+  : T extends typeof FIELD_TYPES.UINT_8
+  ? number
+  : T extends typeof FIELD_TYPES.STRING
+  ? string
+  : never;
+
+// type keys = keyof typeof binary;
+// // type values = BinaryTypeToTypeScriptType<typeof binary[number]["binaryType"]>;
+
+// type parsedMessage = {
+//   [key in keyof typeof binary]: typeof binary[keyof typeof binary][0];
+// };
+
+// // what a hack :D
+// const binary = {
+//   characterId: (<unknown>[FIELD_TYPES.INT_32, 0]) as BinaryTypeToTypeScriptType<
+//     typeof FIELD_TYPES.INT_32
+//   >,
+//   characterName: (<unknown>[FIELD_TYPES.STRING, 1]) as BinaryTypeToTypeScriptType<
+//     typeof FIELD_TYPES.STRING
+//   >,
+//   type: (<unknown>[FIELD_TYPES.UINT_8, 2]) as BinaryTypeToTypeScriptType<typeof FIELD_TYPES.UINT_8>,
+// };
+
+// type b = typeof binary;

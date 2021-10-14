@@ -63,7 +63,7 @@ class Game {
     this._engine.addSystem(new MessageListener(this._engine, this._webSocket));
     this._engine.addSystem(new MessageDeserializer(this._engine));
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
-    this._engine.addSystem(new InputListener(this._engine));
+    this._engine.addSystem(new InputListener(this._engine, this._scene));
     this._engine.addSystem(new MovementControl(this._engine));
     this._engine.addSystem(new CharacterDeserializer(this._engine));
     this._engine.addSystem(new CharacterPosition(this._engine));

@@ -1,9 +1,7 @@
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import { QuerySet } from "../../shared/ecs/types";
 import Buffer from "../../shared/utils/Buffer";
 import InputEvent from "../components/InputEvent";
-import Scene from "../components/Scene";
 
 export const INPUT_KEYS = {
   UP: "UP",
@@ -50,32 +48,32 @@ const DEFAULT_INPUTS: InputEventObject[] = [
 class InputListener extends System {
   private _inputs: InputEventObject[];
   private _inputsBuffer: Buffer<InputEventObject>;
-  private _inputsRegistered: boolean = false;
+  private _scene: Phaser.Scene;
 
-  constructor(engine: Engine, inputs?: InputEventObject[]) {
+  constructor(engine: Engine, scene: Phaser.Scene, inputs?: InputEventObject[]) {
     super(engine);
+    this._scene = scene;
     this._inputs = inputs || DEFAULT_INPUTS;
     this._inputsBuffer = new Buffer<InputEventObject>();
   }
 
-  start(): void {}
+  start(): void {
+    this.registerInputCallbacks();
+  }
 
   update(): void {
-    if (!this._inputsRegistered) this.engine.query(this.registerInputCallbacks, Scene);
     this.engine.removeComponentsOfClass(InputEvent);
     this.createInputEvents();
   }
 
   destroy(): void {}
 
-  private registerInputCallbacks = (querySet: QuerySet) => {
-    const [{ scene }] = querySet as [Scene];
-    this._inputs.forEach(inputEventObject => this.registerInputCallback(inputEventObject, scene));
-    this._inputsRegistered = true;
-  };
+  private registerInputCallbacks = () => this._inputs.forEach(this.registerInputCallback);
 
-  private registerInputCallback = ([type, key]: InputEventObject, scene: Phaser.Scene) => {
-    scene.input.keyboard.on(`${type}-${key}`, (e: any) => this._inputsBuffer.push([type, key]));
+  private registerInputCallback = ([type, key]: InputEventObject) => {
+    this._scene.input.keyboard.on(`${type}-${key}`, (e: any) =>
+      this._inputsBuffer.push([type, key])
+    );
   };
 
   private createInputEvents = () => {
