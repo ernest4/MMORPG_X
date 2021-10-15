@@ -1,7 +1,7 @@
 import { isNumber } from "./Number";
 
 export class SparseSetItem {
-  private _id: number;
+  protected _id: number;
 
   constructor(id: number) {
     this._id = id;

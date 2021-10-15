@@ -1,4 +1,4 @@
-import CharacterConnected from "../components/message/CharacterConnected";
+// import CharacterConnected from "../components/message/CharacterConnected";
 import CharacterDisconnected from "../components/message/CharacterDisconnected";
 import MapInit from "../components/message/MapInit";
 import Move from "../components/message/Move";
@@ -9,6 +9,7 @@ import HitPoints from "../components/message/HitPoints";
 import { Vector3Hash } from "../ecs/utils/Vector3BufferView";
 import { EntityId } from "../ecs/types";
 import Component from "../ecs/Component";
+import Message from "../components/Message";
 
 export const MESSAGE_TYPE = 0;
 export const LITTLE_ENDIAN = true;
@@ -55,86 +56,98 @@ export const FIELD_TYPE_RANGES = {
   // [FIELD_TYPES.UINT_16_ARRAY] // unknown in advance
 } as const;
 
+class CharacterConnected extends Message<"CHARACTER_CONNECTED"> {}
 // NOTE: order of fields in each message here matter!!
 // NOTE: strings and arrays should come last as their size is unknown in advance
 const SCHEMA = {
-  [MESSAGE_TYPES.PING]: {
-    binary: [["ping", FIELD_TYPES.STRING]],
-    component: Ping,
-  },
-  [MESSAGE_TYPES.PONG]: {
-    binary: [["pong", FIELD_TYPES.STRING]],
-    component: Pong,
-  },
+  // [MESSAGE_TYPES.PING]: {
+  //   binary: [["ping", FIELD_TYPES.STRING]],
+  //   component: Ping,
+  // },
+  // [MESSAGE_TYPES.PONG]: {
+  //   binary: [["pong", FIELD_TYPES.STRING]],
+  //   component: Pong,
+  // },
   [MESSAGE_TYPES.CHARACTER_CONNECTED]: {
-    binary: [
-      ["characterId", FIELD_TYPES.INT_32],
-      ["characterName", FIELD_TYPES.STRING],
-      ["type", FIELD_TYPES.UINT_8],
-    ],
+    // binary: [
+    //   ["characterId", FIELD_TYPES.INT_32],
+    //   ["characterName", FIELD_TYPES.STRING],
+    //   ["type", FIELD_TYPES.UINT_8],
+    // ],
+    binary: {
+      characterId_u32: <number>(<any>0),
+      type_u8: <number>(<any>1),
+      characterName_s: <string>(<any>2),
+    },
     component: CharacterConnected,
+    // component: class CharacterConnected extends Message<"CHARACTER_CONNECTED"> {},
   },
-  [MESSAGE_TYPES.HITPOINTS]: {
-    binary: [
-      ["characterId", FIELD_TYPES.INT_32],
-      ["hitpoints", FIELD_TYPES.INT_32],
-    ],
-    component: HitPoints,
-  },
-  [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
-    binary: [["characterId", FIELD_TYPES.STRING]],
-    component: CharacterDisconnected,
-  },
-  [MESSAGE_TYPES.ROOM_INIT]: {
-    binary: [
-      ["tileSizeInPx", FIELD_TYPES.UINT_8],
-      ["widthInTiles", FIELD_TYPES.UINT_16],
-      ["heightInTiles", FIELD_TYPES.UINT_16],
-      ["tiles", FIELD_TYPES.UINT_16_ARRAY],
-    ],
-    component: MapInit,
-  },
-  [MESSAGE_TYPES.MOVE]: {
-    binary: [["direction", FIELD_TYPES.UINT_8]],
-    component: Move,
-  },
-  [MESSAGE_TYPES.POSITION]: {
-    binary: [
-      ["characterId", FIELD_TYPES.INT_32],
-      ["x", FIELD_TYPES.FLOAT_32],
-      ["y", FIELD_TYPES.FLOAT_32],
-      ["z", FIELD_TYPES.FLOAT_32],
-    ],
-    component: Position,
-  },
-} as const;
+  // [MESSAGE_TYPES.HITPOINTS]: {
+  //   binary: [
+  //     ["characterId", FIELD_TYPES.INT_32],
+  //     ["hitpoints", FIELD_TYPES.INT_32],
+  //   ],
+  //   component: HitPoints,
+  // },
+  // [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
+  //   binary: [["characterId", FIELD_TYPES.STRING]],
+  //   component: CharacterDisconnected,
+  // },
+  // [MESSAGE_TYPES.ROOM_INIT]: {
+  //   binary: [
+  //     ["tileSizeInPx", FIELD_TYPES.UINT_8],
+  //     ["widthInTiles", FIELD_TYPES.UINT_16],
+  //     ["heightInTiles", FIELD_TYPES.UINT_16],
+  //     ["tiles", FIELD_TYPES.UINT_16_ARRAY],
+  //   ],
+  //   component: MapInit,
+  // },
+  // [MESSAGE_TYPES.MOVE]: {
+  //   binary: [["direction", FIELD_TYPES.UINT_8]],
+  //   component: Move,
+  // },
+  // [MESSAGE_TYPES.POSITION]: {
+  //   binary: [
+  //     ["characterId", FIELD_TYPES.INT_32],
+  //     ["x", FIELD_TYPES.FLOAT_32],
+  //     ["y", FIELD_TYPES.FLOAT_32],
+  //     ["z", FIELD_TYPES.FLOAT_32],
+  //   ],
+  //   component: Position,
+  // },
+  // };
+// } as const;
+};
 
-class CharacterConnected extends Component {
-  parsedMessage: typeof CharacterConnected.binary;
+// class CharacterConnected extends Component {
+//   parsedMessage: typeof CharacterConnected.binary;
 
-  constructor(entityId: EntityId, parsedMessage: typeof CharacterConnected.binary) {
-    super(entityId);
-    this.parsedMessage = parsedMessage;
-  }
+//   constructor(entityId: EntityId, parsedMessage: typeof CharacterConnected.binary) {
+//     super(entityId);
+//     this.parsedMessage = parsedMessage;
+//   }
 
-  // static binary = [
-  //   ["characterId", FIELD_TYPES.INT_32, "number"] as const,
-  //   ["characterName", FIELD_TYPES.STRING, "string"] as const,
-  //   ["type", FIELD_TYPES.UINT_8, "number"] as const,
-  // ] as const;
+//   // static binary = [
+//   //   ["characterId", FIELD_TYPES.INT_32, "number"] as const,
+//   //   ["characterName", FIELD_TYPES.STRING, "string"] as const,
+//   //   ["type", FIELD_TYPES.UINT_8, "number"] as const,
+//   // ] as const;
 
-  static binary = {
-    characterId_u32: <number>(<any>0),
-    type_u8: <number>(<any>1),
-    characterName_s: <string>(<any>2),
-  };
-}
+//   static binary = {
+//     characterId_u32: <number>(<any>0),
+//     type_u8: <number>(<any>1),
+//     characterName_s: <string>(<any>2),
+//   };
+// }
 
 const c = new CharacterConnected(123, {
-  characterId: 5,
-  type: 1,
-  characterName_String: "wow",
+  characterId_u32: 123,
+  characterName_s: "123",
+  type_u8: 123,
 });
+
+c.parsedMessage.characterId_u32 = 5;
+c.parsedMessage
 
 export default SCHEMA;
 

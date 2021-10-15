@@ -95,13 +95,15 @@ class CharacterConnected extends System {
     //   toEntityId
     // );
 
-    const i = new CharacterConnectedComponent(
-      this.engine.generateEntityId(),
-      { characterId_u32, characterName_s, type_u8: 99 },
-      toEntityId
-    );
+    // const i = new CharacterConnectedComponent(
+    //   this.engine.generateEntityId(),
+    //   { characterId_u32, characterName_s, type_u8: 99 },
+    //   toEntityId
+    // );
 
-    // i.parsedMessage.
+    // const i = new CharacterConnectedComponent(123, {characterId_u32: 123, characterName_s: '123', type_u8: 123});
+
+    // i.parsedMessage
   };
 
   private createPositionMessageComponent = (
