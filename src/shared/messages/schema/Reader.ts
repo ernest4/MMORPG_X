@@ -4,7 +4,7 @@ import { EntityId } from "../../ecs/types";
 import { SERVER } from "../../utils/environment";
 import SCHEMA, {
   LITTLE_ENDIAN,
-  MESSAGE_TYPE,
+  MESSAGE_TYPE_POSITION,
   FIELD_TYPES,
   FIELD_TYPE_BYTES,
   FIELD_TYPE,
@@ -36,7 +36,7 @@ class Reader {
 
   parseBinary = (binaryMessage: ArrayBuffer) => {
     const messageDataView = new DataView(binaryMessage);
-    let [messageType, currentByteOffset] = this.parseUInt8(MESSAGE_TYPE, messageDataView);
+    let [messageType, currentByteOffset] = this.parseUInt8(MESSAGE_TYPE_POSITION, messageDataView);
 
     const messageObject = { messageType };
     SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {

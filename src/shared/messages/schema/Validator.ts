@@ -1,6 +1,6 @@
 import { isNumber } from "../../ecs/utils/Number";
 import SCHEMA, {
-  MESSAGE_TYPE,
+  MESSAGE_TYPE_POSITION,
   FIELD_TYPES,
   FIELD_TYPE_BYTES,
   FIELD_TYPE_RANGES,

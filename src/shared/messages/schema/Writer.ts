@@ -6,7 +6,7 @@ import { prettyPrintArray } from "../../utils/logging";
 import Validator from "./Validator";
 import SCHEMA, {
   LITTLE_ENDIAN,
-  MESSAGE_TYPE,
+  MESSAGE_TYPE_POSITION,
   FIELD_TYPES,
   FIELD_TYPE_BYTES,
   FIELD_TYPE,
@@ -105,7 +105,7 @@ class Writer {
   private populateBinaryMessage = (binaryMessage: ArrayBuffer, parsedMessage) => {
     const messageDataView = new DataView(binaryMessage);
     const { messageType } = parsedMessage;
-    let currentByteOffset = this.writeUInt8(MESSAGE_TYPE, messageDataView, messageType);
+    let currentByteOffset = this.writeUInt8(MESSAGE_TYPE_POSITION, messageDataView, messageType);
 
     SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
       const data = parsedMessage[fieldName];
