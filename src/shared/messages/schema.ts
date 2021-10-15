@@ -25,6 +25,17 @@ export const MESSAGE_TYPES = {
   HITPOINTS: 7,
 } as const;
 
+// export const enum MESSAGE_TYPES {
+//   PING,
+//   PONG,
+//   POSITION,
+//   CHARACTER_CONNECTED,
+//   CHARACTER_DISCONNECTED,
+//   ROOM_INIT,
+//   MOVE,
+//   HITPOINTS,
+// }
+
 export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
 
 export const FIELD_TYPES = {
@@ -59,6 +70,13 @@ export const FIELD_TYPE_RANGES = {
 class CharacterConnected extends Message<"CHARACTER_CONNECTED"> {}
 // NOTE: order of fields in each message here matter!!
 // NOTE: strings and arrays should come last as their size is unknown in advance
+// type testy<T> = <T><any>;
+// declare type testy<T> = <T><any>;
+
+const convertPositionToFieldType = <T>(position: number) => <T>(<unknown>position);
+const NUMBER = (position: number) => convertPositionToFieldType<number>(position);
+const STRING = (position: number) => convertPositionToFieldType<string>(position);
+
 const SCHEMA = {
   // [MESSAGE_TYPES.PING]: {
   //   binary: [["ping", FIELD_TYPES.STRING]],
@@ -75,9 +93,12 @@ const SCHEMA = {
     //   ["type", FIELD_TYPES.UINT_8],
     // ],
     binary: {
-      characterId_u32: <number>(<any>0),
-      type_u8: <number>(<any>1),
-      characterName_s: <string>(<any>2),
+      // characterId_u32: <number>(<any>0),
+      // type_u8: <number>(<any>1),
+      // characterName_s: <string>(<any>2),
+      characterId_u32: NUMBER(0),
+      type_u8: NUMBER(1),
+      characterName_s: STRING(2),
     },
     component: CharacterConnected,
     // component: class CharacterConnected extends Message<"CHARACTER_CONNECTED"> {},
@@ -116,29 +137,8 @@ const SCHEMA = {
   //   component: Position,
   // },
   // };
-// } as const;
+  // } as const;
 };
-
-// class CharacterConnected extends Component {
-//   parsedMessage: typeof CharacterConnected.binary;
-
-//   constructor(entityId: EntityId, parsedMessage: typeof CharacterConnected.binary) {
-//     super(entityId);
-//     this.parsedMessage = parsedMessage;
-//   }
-
-//   // static binary = [
-//   //   ["characterId", FIELD_TYPES.INT_32, "number"] as const,
-//   //   ["characterName", FIELD_TYPES.STRING, "string"] as const,
-//   //   ["type", FIELD_TYPES.UINT_8, "number"] as const,
-//   // ] as const;
-
-//   static binary = {
-//     characterId_u32: <number>(<any>0),
-//     type_u8: <number>(<any>1),
-//     characterName_s: <string>(<any>2),
-//   };
-// }
 
 const c = new CharacterConnected(123, {
   characterId_u32: 123,
@@ -147,7 +147,7 @@ const c = new CharacterConnected(123, {
 });
 
 c.parsedMessage.characterId_u32 = 5;
-c.parsedMessage
+c.parsedMessage;
 
 export default SCHEMA;
 
@@ -162,7 +162,7 @@ export const MESSAGE_COMPONENT_CLASSES = Object.values(SCHEMA).map(({ component 
 //   : never;
 
 // type keys = typeof binary[number]['field']
-// type values = BinaryTypeToTypeScriptType<typeof binary[number]['binaryType']>
+// // type values = BinaryTypeToTypeScriptType<typeof binary[number]['binaryType']>
 
 // type parsedMessage = {[key in typeof binary[number]['field']]: typeof binary[number]['binaryType']}
 
