@@ -1,4 +1,4 @@
-import Message from "../../messages/schema/Message";
+import Message from "../Message";
 
 // TODO: optimize with ArrayBuffers ??
 class CharacterDisconnected extends Message {}

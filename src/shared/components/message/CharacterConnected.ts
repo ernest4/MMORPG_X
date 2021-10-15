@@ -1,6 +1,6 @@
 import { EntityId } from "../../ecs/types";
 import SCHEMA, { MESSAGE_TYPES } from "../../messages/schema";
-import Message from "../../messages/schema/Message";
+import Message from "../Message";
 
 // maybe this way? but how will reader/writer distinguis this per message?
 // import all messages? index of mmessages?

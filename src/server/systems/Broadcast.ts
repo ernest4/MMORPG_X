@@ -22,10 +22,10 @@ class Broadcast extends System {
 
   destroy(): void {}
 
-  private broadcast = ([outgoingMessage]: [OutgoingMessage]) => {
+  private broadcast = ([outgoingMessage]: [OutgoingMessage<any>]) => {
     const recipientWebSocket = this.engine.getComponent<WebSocket>(
       WebSocket,
-      outgoingMessage.toEntityId
+      outgoingMessage.recipient
     );
     const binaryMessage = Writer.messageComponentToBinary(outgoingMessage);
     recipientWebSocket.websocket.send(binaryMessage);

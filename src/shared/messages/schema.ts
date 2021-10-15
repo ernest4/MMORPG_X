@@ -1,50 +1,17 @@
-import CharacterDisconnected from "../components/message/CharacterDisconnected";
+// import CharacterDisconnected from "../components/message/CharacterDisconnected";
 import MapInit from "../components/message/MapInit";
 import Move from "../components/message/Move";
-import Ping from "../components/message/Ping";
-import Pong from "../components/message/Pong";
+// import Ping from "../components/message/Ping";
+// import Pong from "../components/message/Pong";
 import Position from "../components/message/Position";
-import HitPoints from "../components/message/HitPoints";
+// import HitPoints from "../components/message/HitPoints";
 import { Vector3Hash } from "../ecs/utils/Vector3BufferView";
 import { ComponentClass, EntityId } from "../ecs/types";
 import Component from "../ecs/Component";
-import Message from "./schema/Message";
+import Message from "../components/Message";
 
 export const MESSAGE_TYPE_POSITION = 0;
 export const LITTLE_ENDIAN = true;
-
-export const MESSAGE_TYPES = {
-  PING: 0,
-  PONG: 1,
-  POSITION: 2,
-  CHARACTER_CONNECTED: 3,
-  CHARACTER_DISCONNECTED: 4,
-  ROOM_INIT: 5,
-  MOVE: 6,
-  HITPOINTS: 7,
-} as const;
-
-// export enum MESSAGE_TYPE {
-//   PING,
-//   PONG,
-//   POSITION,
-//   CHARACTER_CONNECTED,
-//   CHARACTER_DISCONNECTED,
-//   ROOM_INIT,
-//   MOVE,
-//   HITPOINTS,
-// }
-
-export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
-
-// export const FIELD_TYPES = {
-//   UINT_8: "UInt8",
-//   UINT_16: "UInt16",
-//   INT_32: "Int32",
-//   FLOAT_32: "Float32",
-//   STRING: "String",
-//   UINT_16_ARRAY: "UInt16Array",
-// } as const;
 
 export const FIELD_TYPES = {
   UINT_8: { bytes: 1, min: 0, max: 255 },
@@ -57,44 +24,6 @@ export const FIELD_TYPES = {
 
 export type FIELD_TYPE = keyof typeof FIELD_TYPES;
 
-// export enum FIELD_TYPE {
-//   UINT_8,
-//   UINT_16,
-//   INT_32,
-//   FLOAT_32,
-//   STRING,
-//   UINT_16_ARRAY,
-// }
-
-// export enum FIELD_TYPE_BYTES {
-//   UINT_8 = 1,
-//   UINT_16 = 2,
-//   INT_32 = 4,
-//   FLOAT_32 = 4,
-//   // STRING // unknown in advance
-//   // UINT_16_ARRAY // unknown in advance
-// }
-
-// export const FIELD_TYPE_BYTES = {
-//   [FIELD_TYPE.UINT_8]: 1,
-//   [FIELD_TYPE.UINT_16]: 2,
-//   [FIELD_TYPE.INT_32]: 4,
-//   [FIELD_TYPE.FLOAT_32]: 4,
-//   // [FIELD_TYPE.STRING] // unknown in advance
-//   // [FIELD_TYPE.UINT_16_ARRAY] // unknown in advance
-// } as const;
-
-// export const FIELD_TYPE_RANGES = {
-//   [FIELD_TYPE.UINT_8]: { min: 0, max: 255 },
-//   [FIELD_TYPE.UINT_16]: { min: 0, max: 65535 },
-//   [FIELD_TYPE.INT_32]: { min: -2147483648, max: 2147483647 },
-//   [FIELD_TYPE.FLOAT_32]: { min: -3.40282347e38, max: 3.40282347e38 },
-//   // [FIELD_TYPE.STRING] // unknown in advance
-//   // [FIELD_TYPE.UINT_16_ARRAY] // unknown in advance
-// } as const;
-
-class CharacterConnected extends Message<typeof MESSAGE_TYPES.CHARACTER_CONNECTED> {}
-
 export type FieldName = string;
 export enum BinaryOrder {}
 const convertPositionToFieldType = <T>(binaryType: FIELD_TYPE, position: BinaryOrder) =>
@@ -106,15 +35,42 @@ const i32 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<Int32>("INT
 const u8 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<UInt8>("UINT_8", binaryOrder);
 const s = (binaryOrder: BinaryOrder) => convertPositionToFieldType<string>("STRING", binaryOrder);
 
+export const MESSAGE_TYPES = {
+  PING: 0,
+  PONG: 1,
+  POSITION: 2,
+  CHARACTER_CONNECTED: 3,
+  CHARACTER_DISCONNECTED: 4,
+  ROOM_INIT: 5,
+  MOVE: 6,
+  HITPOINTS: 7,
+} as const;
+
+export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
+
+// type ParsedMessage<T extends "CHARACTER_CONNECTED" | "HITPOINTS"> = typeof SCHEMA[typeof MESSAGE_TYPES[T]]["binary"];
+// @ts-ignore
+export type ParsedMessage<K extends MESSAGE_TYPE> = typeof SCHEMA[K]["parsedMessage"];
+
+class Ping extends Message<typeof MESSAGE_TYPES.PING> {}
+class Pong extends Message<typeof MESSAGE_TYPES.PONG> {}
+class CharacterConnected extends Message<typeof MESSAGE_TYPES.CHARACTER_CONNECTED> {}
+class CharacterDisconnected extends Message<typeof MESSAGE_TYPES.CHARACTER_DISCONNECTED> {}
+class HitPoints extends Message<typeof MESSAGE_TYPES.HITPOINTS> {}
+
 const SCHEMA = {
-  // [MESSAGE_TYPES.PING]: {
-  //   binary: [["ping", FIELD_TYPE.STRING]],
-  //   component: Ping,
-  // },
-  // [MESSAGE_TYPES.PONG]: {
-  //   binary: [["pong", FIELD_TYPE.STRING]],
-  //   component: Pong,
-  // },
+  [MESSAGE_TYPES.PING]: {
+    parsedMessage: {
+      ping: s(0),
+    },
+    component: Ping,
+  },
+  [MESSAGE_TYPES.PONG]: {
+    parsedMessage: {
+      pong: s(0),
+    },
+    component: Pong,
+  },
   [MESSAGE_TYPES.CHARACTER_CONNECTED]: {
     parsedMessage: {
       characterId: i32(0),
@@ -123,17 +79,19 @@ const SCHEMA = {
     },
     component: CharacterConnected,
   },
-  // [MESSAGE_TYPES.HITPOINTS]: {
-  //   binary: [
-  //     ["characterId", FIELD_TYPE.INT_32],
-  //     ["hitpoints", FIELD_TYPE.INT_32],
-  //   ],
-  //   component: HitPoints,
-  // },
-  // [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
-  //   binary: [["characterId", FIELD_TYPE.STRING]],
-  //   component: CharacterDisconnected,
-  // },
+  [MESSAGE_TYPES.HITPOINTS]: {
+    parsedMessage: {
+      characterId: i32(0),
+      hitpoints: i32(1),
+    },
+    component: HitPoints,
+  },
+  [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
+    parsedMessage: {
+      characterId: i32(0),
+    },
+    component: CharacterDisconnected,
+  },
   // [MESSAGE_TYPES.ROOM_INIT]: {
   //   binary: [
   //     ["tileSizeInPx", FIELD_TYPE.UINT_8],

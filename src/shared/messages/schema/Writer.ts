@@ -1,16 +1,10 @@
 import { Buffer } from "buffer";
-import MessageComponent from "./Message";
+import Message from "../../components/Message";
 import { isNumber } from "../../ecs/utils/Number";
 import { SERVER } from "../../utils/environment";
 import { prettyPrintArray } from "../../utils/logging";
 import Validator from "./Validator";
-import SCHEMA, {
-  LITTLE_ENDIAN,
-  MESSAGE_TYPE_POSITION,
-  FIELD_TYPES,
-  FIELD_TYPE_BYTES,
-  FIELD_TYPE,
-} from "../schema";
+import SCHEMA, { LITTLE_ENDIAN, MESSAGE_TYPE_POSITION, FIELD_TYPES, FIELD_TYPE } from "../schema";
 
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
@@ -26,12 +20,12 @@ class Writer {
     // NOTE: the [K in FIELD_TYPE]: ... above enforces that ALL field types are present in the hash
     // and thus will have a decoder function !!
     this._fieldEncoders = {
-      [FIELD_TYPES.UINT_8]: this.writeUInt8,
-      [FIELD_TYPES.UINT_16]: this.writeUInt16,
-      [FIELD_TYPES.INT_32]: this.writeInt32,
-      [FIELD_TYPES.FLOAT_32]: this.writeFloat32,
-      [FIELD_TYPES.STRING]: this.writeString,
-      [FIELD_TYPES.UINT_16_ARRAY]: this.writeUInt16Array,
+      UINT_8: this.writeUInt8,
+      UINT_16: this.writeUInt16,
+      INT_32: this.writeInt32,
+      FLOAT_32: this.writeFloat32,
+      STRING: this.writeString,
+      UINT_16_ARRAY: this.writeUInt16Array,
       // TODO: ...more?
     };
   }
@@ -46,9 +40,37 @@ class Writer {
     return binaryMessage;
   };
 
-  messageComponentToBinary = (messageComponent: MessageComponent): ArrayBuffer => {
+  messageComponentToBinary = (messageComponent: Message<any>): ArrayBuffer => {
     return this.toBinary(messageComponent.parsedMessage);
   };
+
+  // private getByteCount = (parsedMessage): number => {
+  //   let byteCount = 1; // message type
+
+  //   SCHEMA[parsedMessage.messageType].binary.forEach(
+  //     ([fieldName, fieldType]: [string, FIELD_TYPE]) => {
+  //       let fieldTypeBytes = FIELD_TYPE_BYTES[fieldType]; // try access available
+  //       if (!isNumber(fieldTypeBytes)) {
+  //         // must be one of the unknown in advance types...
+  //         switch (fieldType) {
+  //           case FIELD_TYPES.STRING:
+  //             byteCount = this.getStringByteCount(parsedMessage[fieldName]);
+  //             break;
+  //           case FIELD_TYPES.UINT_16_ARRAY:
+  //             byteCount = this.getNumberArrayByteCount(
+  //               parsedMessage[fieldName],
+  //               FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]
+  //             );
+  //             break;
+  //           default:
+  //             throw Error(this.getByteCountErrorMessage(fieldType));
+  //         }
+  //       }
+  //       byteCount += fieldTypeBytes;
+  //     }
+  //   );
+  //   return byteCount;
+  // };
 
   private getByteCount = (parsedMessage): number => {
     let byteCount = 1; // message type

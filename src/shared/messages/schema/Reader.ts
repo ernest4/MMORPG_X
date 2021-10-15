@@ -10,7 +10,7 @@ import SCHEMA, {
   FieldName,
   MESSAGE_TYPE,
 } from "../schema";
-import Component from "../../ecs/Component";
+import Message from "../../components/Message";
 
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
@@ -60,7 +60,7 @@ class Reader {
     messageComponentEntityId: EntityId,
     binaryMessage: ArrayBuffer,
     fromEntityId?: EntityId
-  ): Component => {
+  ): Message<any> => {
     const parsedMessage = this.parseBinary(binaryMessage);
     const messageComponent = new SCHEMA[parsedMessage.messageType].component(
       messageComponentEntityId,

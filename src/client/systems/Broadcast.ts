@@ -26,7 +26,7 @@ class Broadcast extends System {
   destroy(): void {}
 
   private broadcast = (querySet: QuerySet) => {
-    const [outgoingMessage] = querySet as [OutgoingMessage];
+    const [outgoingMessage] = querySet as [OutgoingMessage<any>];
     const binaryMessage = Writer.messageComponentToBinary(outgoingMessage);
     this._webSocket.send(binaryMessage);
     this.engine.removeComponent(outgoingMessage);
