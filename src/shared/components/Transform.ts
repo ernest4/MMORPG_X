@@ -1,9 +1,9 @@
 import Component from "../../shared/ecs/Component";
 import { EntityId } from "../../shared/ecs/types";
 import Vector3BufferView, { Vector3Hash } from "../../shared/ecs/utils/Vector3BufferView";
-import { FIELD_TYPES, FIELD_TYPE_BYTES } from "../messages/schema";
+import { FIELD_TYPES } from "../messages/schema";
 
-const FLOAT_32_BYTES = FIELD_TYPE_BYTES[FIELD_TYPES.FLOAT_32];
+const FLOAT_32_BYTES = FIELD_TYPES.FLOAT_32.bytes;
 
 class Transform extends Component {
   private _values: Float32Array;
