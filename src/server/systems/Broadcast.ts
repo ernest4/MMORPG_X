@@ -2,7 +2,7 @@ import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import OutgoingMessage from "../components/OutgoingMessage";
 import WebSocket from "../components/WebSocket";
-import Writer from "../../shared/messages/message/Writer";
+import Writer from "../../shared/messages/schema/Writer";
 
 class Broadcast extends System {
   constructor(engine: Engine) {

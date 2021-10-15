@@ -1,4 +1,4 @@
-import Message from "../Message";
+import Message from "../../messages/schema/Message";
 
 // TODO: optimize with ArrayBuffers ??
 class Move extends Message {}

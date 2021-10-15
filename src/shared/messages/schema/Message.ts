@@ -1,6 +1,6 @@
-import Component from "../ecs/Component";
-import { EntityId } from "../../shared/ecs/types";
-import SCHEMA, { MESSAGE_TYPES } from "../messages/schema";
+import Component from "../../ecs/Component";
+import { EntityId } from "../../ecs/types";
+import SCHEMA, { MESSAGE_TYPES } from "../schema";
 
 // type ParsedMessageType<T extends "CHARACTER_CONNECTED" | "HITPOINTS"> = typeof SCHEMA[typeof MESSAGE_TYPES[T]]["binary"];
 

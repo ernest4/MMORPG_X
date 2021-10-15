@@ -9,7 +9,7 @@ import HitPoints from "../components/message/HitPoints";
 import { Vector3Hash } from "../ecs/utils/Vector3BufferView";
 import { EntityId } from "../ecs/types";
 import Component from "../ecs/Component";
-import Message from "../components/Message";
+import Message from "./schema/Message";
 
 export const MESSAGE_TYPE = 0;
 export const LITTLE_ENDIAN = true;
@@ -73,9 +73,14 @@ class CharacterConnected extends Message<"CHARACTER_CONNECTED"> {}
 // type testy<T> = <T><any>;
 // declare type testy<T> = <T><any>;
 
-const convertPositionToFieldType = <T>(position: number) => <T>(<unknown>position);
-const NUMBER = (position: number) => convertPositionToFieldType<number>(position);
-const STRING = (position: number) => convertPositionToFieldType<string>(position);
+const convertPositionToFieldType = <T>(binaryType: FIELD_TYPE, position: number) =>
+  <T>(<unknown>[binaryType, position]);
+
+enum Int32 {}
+const i32 = (position: number) => convertPositionToFieldType<Int32>("Int32", position);
+enum UInt8 {}
+const u8 = (position: number) => convertPositionToFieldType<UInt8>("UInt8", position);
+const s = (position: number) => convertPositionToFieldType<string>("String", position);
 
 const SCHEMA = {
   // [MESSAGE_TYPES.PING]: {
@@ -96,9 +101,9 @@ const SCHEMA = {
       // characterId_u32: <number>(<any>0),
       // type_u8: <number>(<any>1),
       // characterName_s: <string>(<any>2),
-      characterId_u32: NUMBER(0),
-      type_u8: NUMBER(1),
-      characterName_s: STRING(2),
+      characterId: i32(0),
+      type: u8(1),
+      characterName: s(2),
     },
     component: CharacterConnected,
     // component: class CharacterConnected extends Message<"CHARACTER_CONNECTED"> {},
@@ -141,12 +146,12 @@ const SCHEMA = {
 };
 
 const c = new CharacterConnected(123, {
-  characterId_u32: 123,
-  characterName_s: "123",
-  type_u8: 123,
+  characterId: 123,
+  characterName: "123",
+  type: 123,
 });
 
-c.parsedMessage.characterId_u32 = 5;
+c.parsedMessage.characterId = 5;
 c.parsedMessage;
 
 export default SCHEMA;

@@ -1,7 +1,7 @@
 import { Engine } from "../ecs";
 import System from "../ecs/System";
 import { MESSAGE_COMPONENT_CLASSES } from "../messages/schema";
-import Reader from "../messages/message/Reader";
+import Reader from "../messages/schema/Reader";
 import MessageEvent from "../components/MessageEvent";
 
 class MessageDeserializer extends System {

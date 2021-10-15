@@ -1,5 +1,5 @@
 import { Buffer } from "buffer";
-import MessageComponent from "../../components/Message";
+import MessageComponent from "./Message";
 import { isNumber } from "../../ecs/utils/Number";
 import { SERVER } from "../../utils/environment";
 import { prettyPrintArray } from "../../utils/logging";
