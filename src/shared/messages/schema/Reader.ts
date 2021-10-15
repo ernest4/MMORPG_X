@@ -1,14 +1,16 @@
 import { Buffer } from "buffer";
-import MessageComponent from "./Message";
 import { EntityId } from "../../ecs/types";
 import { SERVER } from "../../utils/environment";
 import SCHEMA, {
   LITTLE_ENDIAN,
   MESSAGE_TYPE_POSITION,
   FIELD_TYPES,
-  FIELD_TYPE_BYTES,
   FIELD_TYPE,
+  BinaryOrder,
+  FieldName,
+  MESSAGE_TYPE,
 } from "../schema";
+import Component from "../../ecs/Component";
 
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
@@ -24,22 +26,28 @@ class Reader {
     // NOTE: the [K in FIELD_TYPE]: ... above enforces that ALL field types are present in the hash
     // and thus will have a decoder function !!
     this._fieldDecoders = {
-      [FIELD_TYPES.UINT_8]: this.parseUInt8,
-      [FIELD_TYPES.UINT_16]: this.parseUInt16,
-      [FIELD_TYPES.INT_32]: this.parseInt32,
-      [FIELD_TYPES.FLOAT_32]: this.parseFloat32,
-      [FIELD_TYPES.STRING]: this.parseString,
-      [FIELD_TYPES.UINT_16_ARRAY]: this.parseUInt16Array,
+      UINT_8: this.parseUInt8,
+      UINT_16: this.parseUInt16,
+      INT_32: this.parseInt32,
+      FLOAT_32: this.parseFloat32,
+      STRING: this.parseString,
+      UINT_16_ARRAY: this.parseUInt16Array,
       // TODO: ...more?
     };
   }
 
   parseBinary = (binaryMessage: ArrayBuffer) => {
     const messageDataView = new DataView(binaryMessage);
-    let [messageType, currentByteOffset] = this.parseUInt8(MESSAGE_TYPE_POSITION, messageDataView);
+    let [messageType, currentByteOffset] = <[MESSAGE_TYPE, number]>(
+      this.parseUInt8(MESSAGE_TYPE_POSITION, messageDataView)
+    );
 
     const messageObject = { messageType };
-    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
+    const parsedMessageEntries = <[FieldName, [FIELD_TYPE, BinaryOrder]][]>(
+      Object.entries(SCHEMA[messageType].parsedMessage)
+    );
+    const binaryOrderedParsedMessageEntries = this.toBinaryOrder(parsedMessageEntries);
+    binaryOrderedParsedMessageEntries.forEach(([fieldName, fieldType]) => {
       const fieldDecoder = this._fieldDecoders[fieldType];
       const [data, nextByteOffset] = fieldDecoder(currentByteOffset, messageDataView);
       messageObject[fieldName] = data;
@@ -52,7 +60,7 @@ class Reader {
     messageComponentEntityId: EntityId,
     binaryMessage: ArrayBuffer,
     fromEntityId?: EntityId
-  ): MessageComponent => {
+  ): Component => {
     const parsedMessage = this.parseBinary(binaryMessage);
     const messageComponent = new SCHEMA[parsedMessage.messageType].component(
       messageComponentEntityId,
@@ -62,24 +70,34 @@ class Reader {
     return messageComponent;
   };
 
+  private toBinaryOrder = (
+    parsedMessageEntries: [FieldName, [FIELD_TYPE, BinaryOrder]][]
+  ): [FieldName, FIELD_TYPE][] => {
+    const binaryOrderedParsedMessageEntries = [];
+    parsedMessageEntries.forEach(([fieldName, [fieldType, binaryOrder]]) => {
+      binaryOrderedParsedMessageEntries[binaryOrder] = [fieldName, fieldType];
+    });
+    return binaryOrderedParsedMessageEntries;
+  };
+
   private parseUInt8 = (currentByteOffset: number, dataView: DataView) => {
     const data = dataView.getUint8(currentByteOffset);
-    return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_8]];
+    return [data, currentByteOffset + FIELD_TYPES.UINT_8.bytes];
   };
 
   private parseUInt16 = (currentByteOffset: number, dataView: DataView) => {
     const data = dataView.getUint16(currentByteOffset, LITTLE_ENDIAN);
-    return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]];
+    return [data, currentByteOffset + FIELD_TYPES.UINT_16.bytes];
   };
 
   private parseInt32 = (currentByteOffset: number, dataView: DataView) => {
     const data = dataView.getInt32(currentByteOffset, LITTLE_ENDIAN);
-    return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.INT_32]];
+    return [data, currentByteOffset + FIELD_TYPES.INT_32.bytes];
   };
 
   private parseFloat32 = (currentByteOffset: number, dataView: DataView) => {
     const data = dataView.getFloat32(currentByteOffset, LITTLE_ENDIAN);
-    return [data, currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.FLOAT_32]];
+    return [data, currentByteOffset + FIELD_TYPES.FLOAT_32.bytes];
   };
 
   private parseString = (currentByteOffset: number, dataView: DataView) => {

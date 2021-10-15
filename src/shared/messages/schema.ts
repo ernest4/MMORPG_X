@@ -1,4 +1,3 @@
-// import CharacterConnected from "../components/message/CharacterConnected";
 import CharacterDisconnected from "../components/message/CharacterDisconnected";
 import MapInit from "../components/message/MapInit";
 import Move from "../components/message/Move";
@@ -47,25 +46,34 @@ export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
 //   UINT_16_ARRAY: "UInt16Array",
 // } as const;
 
-// export type FIELD_TYPE = typeof FIELD_TYPES[keyof typeof FIELD_TYPES];
+export const FIELD_TYPES = {
+  UINT_8: { bytes: 1, min: 0, max: 255 },
+  UINT_16: { bytes: 2, min: 0, max: 65535 },
+  INT_32: { bytes: 4, min: -2147483648, max: 2147483647 },
+  FLOAT_32: { bytes: 4, min: -3.40282347e38, max: 3.40282347e38 },
+  STRING: {},
+  UINT_16_ARRAY: {},
+} as const;
 
-export enum FIELD_TYPE {
-  UINT_8,
-  UINT_16,
-  INT_32,
-  FLOAT_32,
-  STRING,
-  UINT_16_ARRAY,
-}
+export type FIELD_TYPE = keyof typeof FIELD_TYPES;
 
-export enum FIELD_TYPE_BYTES {
-  UINT_8 = 1,
-  UINT_16 = 2,
-  INT_32 = 4,
-  FLOAT_32 = 4,
-  // STRING // unknown in advance
-  // UINT_16_ARRAY // unknown in advance
-}
+// export enum FIELD_TYPE {
+//   UINT_8,
+//   UINT_16,
+//   INT_32,
+//   FLOAT_32,
+//   STRING,
+//   UINT_16_ARRAY,
+// }
+
+// export enum FIELD_TYPE_BYTES {
+//   UINT_8 = 1,
+//   UINT_16 = 2,
+//   INT_32 = 4,
+//   FLOAT_32 = 4,
+//   // STRING // unknown in advance
+//   // UINT_16_ARRAY // unknown in advance
+// }
 
 // export const FIELD_TYPE_BYTES = {
 //   [FIELD_TYPE.UINT_8]: 1,
@@ -76,34 +84,28 @@ export enum FIELD_TYPE_BYTES {
 //   // [FIELD_TYPE.UINT_16_ARRAY] // unknown in advance
 // } as const;
 
-export const FIELD_TYPE_RANGES = {
-  [FIELD_TYPE.UINT_8]: { min: 0, max: 255 },
-  [FIELD_TYPE.UINT_16]: { min: 0, max: 65535 },
-  [FIELD_TYPE.INT_32]: { min: -2147483648, max: 2147483647 },
-  [FIELD_TYPE.FLOAT_32]: { min: -3.40282347e38, max: 3.40282347e38 },
-  // [FIELD_TYPE.STRING] // unknown in advance
-  // [FIELD_TYPE.UINT_16_ARRAY] // unknown in advance
-} as const;
+// export const FIELD_TYPE_RANGES = {
+//   [FIELD_TYPE.UINT_8]: { min: 0, max: 255 },
+//   [FIELD_TYPE.UINT_16]: { min: 0, max: 65535 },
+//   [FIELD_TYPE.INT_32]: { min: -2147483648, max: 2147483647 },
+//   [FIELD_TYPE.FLOAT_32]: { min: -3.40282347e38, max: 3.40282347e38 },
+//   // [FIELD_TYPE.STRING] // unknown in advance
+//   // [FIELD_TYPE.UINT_16_ARRAY] // unknown in advance
+// } as const;
 
 class CharacterConnected extends Message<typeof MESSAGE_TYPES.CHARACTER_CONNECTED> {}
-// NOTE: order of fields in each message here matter!!
-// NOTE: strings and arrays should come last as their size is unknown in advance
-// type testy<T> = <T><any>;
-// declare type testy<T> = <T><any>;
 
-const convertPositionToFieldType = <T>(binaryType: FIELD_TYPE, position: number) =>
+export type FieldName = string;
+export enum BinaryOrder {}
+const convertPositionToFieldType = <T>(binaryType: FIELD_TYPE, position: BinaryOrder) =>
   <T>(<unknown>[binaryType, position]);
 
 enum Int32 {}
-const i32 = (binaryOrder: number) =>
-  convertPositionToFieldType<Int32>(FIELD_TYPE.INT_32, binaryOrder);
 enum UInt8 {}
-const u8 = (binaryOrder: number) =>
-  convertPositionToFieldType<UInt8>(FIELD_TYPE.UINT_8, binaryOrder);
-const s = (binaryOrder: number) =>
-  convertPositionToFieldType<string>(FIELD_TYPE.STRING, binaryOrder);
+const i32 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<Int32>("INT_32", binaryOrder);
+const u8 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<UInt8>("UINT_8", binaryOrder);
+const s = (binaryOrder: BinaryOrder) => convertPositionToFieldType<string>("STRING", binaryOrder);
 
-// const SCHEMA: { [key in MESSAGE_TYPE]: { parsedMessage; component: ComponentClass } } = {
 const SCHEMA = {
   // [MESSAGE_TYPES.PING]: {
   //   binary: [["ping", FIELD_TYPE.STRING]],
@@ -114,18 +116,12 @@ const SCHEMA = {
   //   component: Pong,
   // },
   [MESSAGE_TYPES.CHARACTER_CONNECTED]: {
-    // binary: [
-    //   ["characterId", FIELD_TYPE.INT_32],
-    //   ["characterName", FIELD_TYPE.STRING],
-    //   ["type", FIELD_TYPE.UINT_8],
-    // ],
     parsedMessage: {
       characterId: i32(0),
-      type: u8(1),
+      characterType: u8(1),
       characterName: s(2),
     },
     component: CharacterConnected,
-    // component: class CharacterConnected extends Message<"CHARACTER_CONNECTED"> {},
   },
   // [MESSAGE_TYPES.HITPOINTS]: {
   //   binary: [
@@ -164,14 +160,14 @@ const SCHEMA = {
   // } as const;
 };
 
-const c = new CharacterConnected(123, {
-  characterId: 123,
-  characterName: "123",
-  type: 123,
-});
+// const c = new CharacterConnected(123, {
+//   characterId: 123,
+//   characterName: "123",
+//   characterType: 123,
+// });
 
-c.parsedMessage.characterId = 5;
-c.parsedMessage;
+// c.parsedMessage.characterId = 5;
+// c.parsedMessage;
 
 export default SCHEMA;
 
