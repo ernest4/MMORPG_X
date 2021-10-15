@@ -1,13 +1,3 @@
-// import CharacterDisconnected from "../components/message/CharacterDisconnected";
-import MapInit from "../components/message/MapInit";
-import Move from "../components/message/Move";
-// import Ping from "../components/message/Ping";
-// import Pong from "../components/message/Pong";
-import Position from "../components/message/Position";
-// import HitPoints from "../components/message/HitPoints";
-import { Vector3Hash } from "../ecs/utils/Vector3BufferView";
-import { ComponentClass, EntityId } from "../ecs/types";
-import Component from "../ecs/Component";
 import Message from "../components/Message";
 
 export const MESSAGE_TYPE_POSITION = 0;
@@ -29,11 +19,20 @@ export enum BinaryOrder {}
 const convertPositionToFieldType = <T>(binaryType: FIELD_TYPE, position: BinaryOrder) =>
   <T>(<unknown>[binaryType, position]);
 
-enum Int32 {}
 enum UInt8 {}
-const i32 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<Int32>("INT_32", binaryOrder);
+enum UInt16 {}
+enum Int32 {}
+enum Float32 {}
 const u8 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<UInt8>("UINT_8", binaryOrder);
+const u16 = (binaryOrder: BinaryOrder) =>
+  convertPositionToFieldType<UInt16>("UINT_16", binaryOrder);
+const i32 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<Int32>("INT_32", binaryOrder);
+const f32 = (binaryOrder: BinaryOrder) =>
+  convertPositionToFieldType<Float32>("FLOAT_32", binaryOrder);
+const u16a = (binaryOrder: BinaryOrder) =>
+  convertPositionToFieldType<Uint16Array>("UINT_16_ARRAY", binaryOrder);
 const s = (binaryOrder: BinaryOrder) => convertPositionToFieldType<string>("STRING", binaryOrder);
+const characterId = (binaryOrder: BinaryOrder) => ({ characterId: i32(binaryOrder) });
 
 export const MESSAGE_TYPES = {
   PING: 0,
@@ -52,10 +51,14 @@ export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
 // @ts-ignore
 export type ParsedMessage<K extends MESSAGE_TYPE> = typeof SCHEMA[K]["parsedMessage"];
 
+// component classes that act as 'tags' for engine to query for
 class Ping extends Message<typeof MESSAGE_TYPES.PING> {}
 class Pong extends Message<typeof MESSAGE_TYPES.PONG> {}
+class Position extends Message<typeof MESSAGE_TYPES.POSITION> {}
 class CharacterConnected extends Message<typeof MESSAGE_TYPES.CHARACTER_CONNECTED> {}
 class CharacterDisconnected extends Message<typeof MESSAGE_TYPES.CHARACTER_DISCONNECTED> {}
+class RoomInit extends Message<typeof MESSAGE_TYPES.ROOM_INIT> {}
+class Move extends Message<typeof MESSAGE_TYPES.MOVE> {}
 class HitPoints extends Message<typeof MESSAGE_TYPES.HITPOINTS> {}
 
 const SCHEMA = {
@@ -71,52 +74,53 @@ const SCHEMA = {
     },
     component: Pong,
   },
+  [MESSAGE_TYPES.POSITION]: {
+    parsedMessage: {
+      ...characterId(0),
+      x: f32(1),
+      y: f32(2),
+      z: f32(3),
+    },
+    component: Position,
+  },
   [MESSAGE_TYPES.CHARACTER_CONNECTED]: {
     parsedMessage: {
-      characterId: i32(0),
+      ...characterId(0),
       characterType: u8(1),
       characterName: s(2),
     },
     component: CharacterConnected,
   },
+  [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
+    parsedMessage: {
+      ...characterId(0),
+    },
+    component: CharacterDisconnected,
+  },
+  [MESSAGE_TYPES.ROOM_INIT]: {
+    parsedMessage: {
+      tileSizeInPx: u8(0),
+      widthInTiles: u16(1),
+      heightInTiles: u16(2),
+      tiles: u16a(3),
+    },
+    component: RoomInit,
+  },
+  [MESSAGE_TYPES.MOVE]: {
+    parseMessage: {
+      direction: u8(0),
+    },
+    component: Move,
+  },
   [MESSAGE_TYPES.HITPOINTS]: {
     parsedMessage: {
-      characterId: i32(0),
+      ...characterId(0),
       hitpoints: i32(1),
     },
     component: HitPoints,
   },
-  [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
-    parsedMessage: {
-      characterId: i32(0),
-    },
-    component: CharacterDisconnected,
-  },
-  // [MESSAGE_TYPES.ROOM_INIT]: {
-  //   binary: [
-  //     ["tileSizeInPx", FIELD_TYPE.UINT_8],
-  //     ["widthInTiles", FIELD_TYPE.UINT_16],
-  //     ["heightInTiles", FIELD_TYPE.UINT_16],
-  //     ["tiles", FIELD_TYPE.UINT_16_ARRAY],
-  //   ],
-  //   component: MapInit,
-  // },
-  // [MESSAGE_TYPES.MOVE]: {
-  //   binary: [["direction", FIELD_TYPE.UINT_8]],
-  //   component: Move,
-  // },
-  // [MESSAGE_TYPES.POSITION]: {
-  //   binary: [
-  //     ["characterId", FIELD_TYPE.INT_32],
-  //     ["x", FIELD_TYPE.FLOAT_32],
-  //     ["y", FIELD_TYPE.FLOAT_32],
-  //     ["z", FIELD_TYPE.FLOAT_32],
-  //   ],
-  //   component: Position,
-  // },
-  // };
-  // } as const;
 };
+// } as const;
 
 // const c = new CharacterConnected(123, {
 //   characterId: 123,
@@ -130,72 +134,3 @@ const SCHEMA = {
 export default SCHEMA;
 
 export const MESSAGE_COMPONENT_CLASSES = Object.values(SCHEMA).map(({ component }) => component);
-
-// type BinaryTypeToTypeScriptType<T> = T extends typeof FIELD_TYPE.INT_32
-//   ? number
-//   : T extends typeof FIELD_TYPE.UINT_8
-//   ? number
-//   : T extends typeof FIELD_TYPE.STRING
-//   ? string
-//   : never;
-
-// type keys = typeof binary[number]['field']
-// // type values = BinaryTypeToTypeScriptType<typeof binary[number]['binaryType']>
-
-// const arr = [
-//   { key: "foo", val: "bar" },
-//   { key: "hello", val: "world" },
-// ];
-
-// const result = arr.reduce(function (map, obj) {
-//   map[obj.key] = obj.val;
-//   return map;
-// }, {});
-
-// type t2 = typeof result;
-
-// type parsedMessage = {
-//   [key in typeof binary[number]["field"]]: typeof binary[number]["binaryType"];
-// };
-
-// const binary = [
-//   { field: "characterId", binaryType: FIELD_TYPE.INT_32 },
-//   { field: "characterName", binaryType: FIELD_TYPE.STRING },
-//   { field: "type", binaryType: FIELD_TYPE.UINT_8 },
-// ] as const;
-
-// type parsedMessage = { [key in typeof binary[number][0]]: typeof binary[number][1] };
-
-// const binary = [
-//   ["characterId", FIELD_TYPE.INT_32],
-//   ["type", FIELD_TYPE.UINT_8],
-//   ["characterName", FIELD_TYPE.STRING],
-// ] as const;
-
-// type BinaryTypeToTypeScriptType<T> = T extends typeof FIELD_TYPE.INT_32
-//   ? number
-//   : T extends typeof FIELD_TYPE.UINT_8
-//   ? number
-//   : T extends typeof FIELD_TYPE.STRING
-//   ? string
-//   : never;
-
-// type keys = keyof typeof binary;
-// // type values = BinaryTypeToTypeScriptType<typeof binary[number]["binaryType"]>;
-
-// type parsedMessage = {
-//   [key in keyof typeof binary]: typeof binary[keyof typeof binary][0];
-// };
-
-// // what a hack :D
-// const binary = {
-//   characterId: (<unknown>[FIELD_TYPE.INT_32, 0]) as BinaryTypeToTypeScriptType<
-//     typeof FIELD_TYPE.INT_32
-//   >,
-//   characterName: (<unknown>[FIELD_TYPE.STRING, 1]) as BinaryTypeToTypeScriptType<
-//     typeof FIELD_TYPE.STRING
-//   >,
-//   type: (<unknown>[FIELD_TYPE.UINT_8, 2]) as BinaryTypeToTypeScriptType<typeof FIELD_TYPE.UINT_8>,
-// };
-
-// type b = typeof binary;
