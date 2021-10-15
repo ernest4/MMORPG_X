@@ -1,4 +1,10 @@
-import { EntityId, EntityIdPoolParams } from "../types";
+import { EntityId } from "../types";
+
+export interface EntityIdPoolParams {
+  lastUsedEntityId: EntityId;
+  reclaimedEntityIdPool: EntityId[];
+  reclaimedEntityIdPoolSize: number;
+}
 
 // TODO: jest tests !!!!
 class EntityIdPool {

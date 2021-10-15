@@ -10,6 +10,7 @@ import OutgoingMessage from "../components/OutgoingMessage";
 import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
+import CharacterConnectedComponent from "../../shared/components/message/CharacterConnected";
 
 const queryComponents = [ConnectionEvent, Name, HitPoints, Transform, Room, NearbyCharacters];
 type ComponentsSet = [ConnectionEvent, Name, HitPoints, Transform, Room, NearbyCharacters];
@@ -79,11 +80,28 @@ class CharacterConnected extends System {
   };
 
   private createConnectedMessageComponent = (
-    { name: characterName, id: characterId }: Name,
+    { id: characterId_u32, name: characterName_s }: Name,
     toEntityId: EntityId
   ) => {
-    const parsedMessage = { characterId, characterName };
-    return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
+    // const parsedMessage = { characterId, characterName };
+    // return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
+    // return new CharacterConnectedComponent(
+    //   this.engine.generateEntityId(),
+    //   {
+    //     characterId_u32,
+    //     characterName_s,
+    //     type_u8: 99,
+    //   },
+    //   toEntityId
+    // );
+
+    const i = new CharacterConnectedComponent(
+      this.engine.generateEntityId(),
+      { characterId_u32, characterName_s, type_u8: 99 },
+      toEntityId
+    );
+
+    // i.parsedMessage.
   };
 
   private createPositionMessageComponent = (

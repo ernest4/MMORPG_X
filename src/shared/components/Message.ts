@@ -4,12 +4,12 @@ import { EntityId } from "../../shared/ecs/types";
 // TODO: optimize with ArrayBuffers ??
 class Message extends Component {
   parsedMessage: any; // hash...
-  fromEntityId?: EntityId;
+  from?: EntityId;
 
-  constructor(entityId: EntityId, parsedMessage, fromEntityId?: EntityId) {
+  constructor(entityId: EntityId, parsedMessage, from?: EntityId) {
     super(entityId);
     this.parsedMessage = parsedMessage;
-    this.fromEntityId = fromEntityId;
+    this.from = from;
   }
 }
 

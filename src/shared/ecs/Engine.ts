@@ -2,11 +2,10 @@ import {
   ComponentClass,
   DeltaTime,
   EntityId,
-  EntityIdPoolParams,
   QueryCallback,
   QuerySet,
 } from "./types";
-import EntityIdPool from "./engine/EntityIdPool";
+import EntityIdPool, { EntityIdPoolParams } from "./engine/EntityIdPool";
 import Component from "./Component";
 import SparseSet, { SparseSetItem } from "./utils/SparseSet";
 import System from "./System";

@@ -11,8 +11,13 @@ import Component from "./Component";
 //   weight: Pound;
 // };
 
-type DeltaTime = number; // ms
-type EntityId = number;
+// enum to number type hack, to force type hints to show the type, rather number, make it empty enum
+// which is any number, but only of type enum :)
+// https://stackoverflow.com/questions/43831683/can-i-declare-custom-number-types-in-typescript
+// type DeltaTime = number; // ms
+// type EntityId = number;
+enum DeltaTime {} // ms
+enum EntityId {}
 type QuerySet = Component[];
 type QueryCallback = (querySet: QuerySet) => void;
 type ComponentClass = {
@@ -55,9 +60,3 @@ type DraggableObject = { entityId: EntityId; dragX: number; dragY: number };
 type BoxColliderSize = { x: number; y: number; z: number };
 
 type URL = string;
-
-interface EntityIdPoolParams {
-  lastUsedEntityId: EntityId;
-  reclaimedEntityIdPool: EntityId[];
-  reclaimedEntityIdPoolSize: number;
-}

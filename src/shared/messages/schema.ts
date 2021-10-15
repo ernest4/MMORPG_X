@@ -109,56 +109,11 @@ const SCHEMA = {
   },
 } as const;
 
-const typeName = "number";
-const typeName2 = "boolean";
-const typeName3 = "string";
-
-type StringToType<T> = T extends "number"
-  ? number
-  : T extends "boolean"
-  ? boolean
-  : T extends "string"
-  ? string
-  : never;
-type myNumberType = StringToType<typeof typeName>;
-type myBooleanType = StringToType<typeof typeName2>;
-type myStringType = StringToType<typeof typeName3>;
-
-const x: myNumberType = 5;
-const y: myBooleanType = true;
-const z: myStringType = "5";
-
-type testy = typeof CharacterConnected.binary[number];
-// type values = testy[number][2];
-// type obj = {[key in testy[0]]: any}
-type obj = { [key in testy[0]]: StringToType<typeof testy[number][2]> };
-
-// type parsedMessage = { [key in typeof CharacterConnected.binary[number][0]]: any };
-// TODO: this ?
-
-type UInt8 = number;
-
-// const int32 = (string: string) => `${string}_Int32`;
 class CharacterConnected extends Component {
-  // parsedMessage: { thing: UInt8 };
-  // characterId: string;
   parsedMessage: typeof CharacterConnected.binary;
 
-  // constructor(entityId, [characterId, characterName, type]: [EntityId, string, number]) {
-  constructor(entityId, parsedMessage: typeof CharacterConnected.binary) {
-    // constructor(entityId, parsedMessage: { thing: UInt8 }) {
+  constructor(entityId: EntityId, parsedMessage: typeof CharacterConnected.binary) {
     super(entityId);
-    // this.characterId = params.characterId as string;
-    // this._id = id;
-    // this._name = name;
-    // this._hitpoints = hitpoints;
-    // this._x = x;
-    // this._y = y;
-    // this._z = z;
-    // CharacterConnected.wowser["123"];
-    // Object.entries(params).forEach(([field, value]) => {
-    //   this[field] = value;
-    // });
     this.parsedMessage = parsedMessage;
   }
 
@@ -169,36 +124,17 @@ class CharacterConnected extends Component {
   // ] as const;
 
   static binary = {
-    characterId_Int32: <BinaryTypeToTypeScriptType<typeof FIELD_TYPES.INT_32>>(
-      (<any>[FIELD_TYPES.INT_32, 0])
-    ),
-    characterName: <string>(<unknown>[FIELD_TYPES.STRING, 1]),
-    type: (<unknown>[FIELD_TYPES.UINT_8, 2]) as BinaryTypeToTypeScriptType<
-      typeof FIELD_TYPES.UINT_8
-    >,
-    something: <number>(<unknown>{ binaryType: FIELD_TYPES.UINT_8, position: 2 }),
+    characterId_u32: <number>(<any>0),
+    type_u8: <number>(<any>1),
+    characterName_s: <string>(<any>2),
   };
-
-  // static test = () => {
-  //   this.name
-  // }
-
-  // parseBinary = (binaryMessage: ArrayBuffer) => {
-  //   //
-  // };
-
-  // toBinary = (): ArrayBuffer => {
-  //   //
-  // };
 }
 
-const fieldType = CharacterConnected.binary.characterId[0];
-const fieldCardinality = CharacterConnected.binary.characterId[1];
-
-const testy = new CharacterConnected(123, { characterId: 123, characterName: "wowser", type: 123 });
-// const testy = new CharacterConnected(123, {});
-
-// const testy = new CharacterConnected(123, ["abcc", 123, { x: 1, y: 2, z: 3 }]);
+const c = new CharacterConnected(123, {
+  characterId: 5,
+  type: 1,
+  characterName_String: "wow",
+});
 
 export default SCHEMA;
 
@@ -223,13 +159,13 @@ export const MESSAGE_COMPONENT_CLASSES = Object.values(SCHEMA).map(({ component 
 //   { field: 'type', binaryType: FIELD_TYPES.UINT_8 }
 // ] as const
 
-type BinaryTypeToTypeScriptType<T> = T extends typeof FIELD_TYPES.INT_32
-  ? number
-  : T extends typeof FIELD_TYPES.UINT_8
-  ? number
-  : T extends typeof FIELD_TYPES.STRING
-  ? string
-  : never;
+// type BinaryTypeToTypeScriptType<T> = T extends typeof FIELD_TYPES.INT_32
+//   ? number
+//   : T extends typeof FIELD_TYPES.UINT_8
+//   ? number
+//   : T extends typeof FIELD_TYPES.STRING
+//   ? string
+//   : never;
 
 // type keys = keyof typeof binary;
 // // type values = BinaryTypeToTypeScriptType<typeof binary[number]["binaryType"]>;

@@ -37,7 +37,7 @@ class MovementControl extends System {
     physicsBody.linearVelocity.xyz = { x: 0, y: 0 };
   };
 
-  private applyMoveMessage = ([{ fromEntityId, parsedMessage }]: [Move]) => {
+  private applyMoveMessage = ([{ from: fromEntityId, parsedMessage }]: [Move]) => {
     // TODO: future 'Entity' API sample: ...
     // const entity = this.engine.getEntity(move.fromEntityId);
     // const [physicsBody, speed] = entity.getComponents(PhysicsBody, Speed) as [PhysicsBody, Speed];
