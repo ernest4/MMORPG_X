@@ -5,7 +5,7 @@ import Character from "../../shared/components/Character";
 import PhysicsBody from "../components/PhysicsBody";
 import Speed from "../components/Speed";
 import { QuerySet } from "../../shared/ecs/types";
-import { Move } from "../../shared/messages/schema";
+import { MoveMessage } from "../../shared/messages/schema";
 
 export const DIRECTIONS = {
   LEFT: 1,
@@ -29,7 +29,7 @@ class MovementControl extends System {
 
   update(): void {
     this.engine.query(this.stopMovement, Character, PhysicsBody);
-    this.engine.query(this.applyMoveMessage, Move);
+    this.engine.query(this.applyMoveMessage, MoveMessage);
   }
 
   destroy(): void {}
@@ -39,7 +39,7 @@ class MovementControl extends System {
   };
 
   private applyMoveMessage = (querySet: QuerySet) => {
-    const [{ sender: fromEntityId, parsedMessage }] = querySet as [Move];
+    const [{ sender: fromEntityId, parsedMessage }] = querySet as [MoveMessage];
     // TODO: future 'Entity' API sample: ...
     // const entity = this.engine.getEntity(move.fromEntityId);
     // const [physicsBody, speed] = entity.getComponents(PhysicsBody, Speed) as [PhysicsBody, Speed];

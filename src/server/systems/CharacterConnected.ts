@@ -7,7 +7,7 @@ import { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import Name from "../../shared/components/Name";
 import Type from "../../shared/components/Type";
 import NearbyCharacters from "../components/NearbyCharacters";
-import OutgoingMessage from "../../shared/components/OutgoingMessage";
+import OutMessage from "../../shared/components/OutgoingMessage";
 import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
@@ -41,14 +41,14 @@ class CharacterConnected extends System {
     // const components = entity.getComponents(...queryComponents) as ComponentsSet;
     // OR? const components = entity.getComponents<ComponentsSet>(...queryComponents);
 
-    let serverMessageComponents: OutgoingMessage<any>[] = [];
+    let serverMessageComponents: OutMessage<any>[] = [];
     const newCharacterId = connectionEvent.id;
 
     serverMessageComponents = [
       this.createRoomInitMessageComponent(room, newCharacterId),
       this.createConnectedMessageComponent(name, type, newCharacterId),
-      this.createHitPointsMessageComponent(hitPoints, newCharacterId),
-      this.createPositionMessageComponent(transform, newCharacterId),
+      this.newOutMessage(hitPoints, newCharacterId),
+      this.newOutMessage(transform, newCharacterId),
     ];
 
     nearbyCharacters.entityIdSet.stream(({ id: nearbyCharacterId }: SparseSetItem) => {
@@ -66,34 +66,32 @@ class CharacterConnected extends System {
       serverMessageComponents = [
         ...serverMessageComponents,
         this.createConnectedMessageComponent(name, type, nearbyCharacterId),
-        this.createPositionMessageComponent(transform, nearbyCharacterId),
-        this.createHitPointsMessageComponent(hitPoints, nearbyCharacterId),
+        this.newOutMessage(transform, nearbyCharacterId),
+        this.newOutMessage(hitPoints, nearbyCharacterId),
         this.createConnectedMessageComponent(
           nearbyCharacterName,
           nearbyCharacterType,
           newCharacterId
         ),
-        this.createPositionMessageComponent(nearbyCharacterTransform, newCharacterId),
-        this.createHitPointsMessageComponent(nearbyCharacterHitPoints, newCharacterId),
+        this.newOutMessage(nearbyCharacterTransform, newCharacterId),
+        this.newOutMessage(nearbyCharacterHitPoints, newCharacterId),
       ];
     });
-
-    // TODO: sketch
-    this.generateMessage(transform, newCharacterId);
 
     this.engine.addComponents(...serverMessageComponents);
   };
 
-  // TODO: sketch
-  private generateMessage = ({ messageType, parsedMessage }: Networked<any>, to: EntityId) => {
-    this.engine.addComponent(
-      new OutgoingMessage(this.newEntityId(), messageType, parsedMessage, to)
-    );
+  // TODO: sketch...
+  private newOutMessage = <T extends MESSAGE_TYPE>(
+    { messageType, parsedMessage }: Networked<T>,
+    to: EntityId
+  ) => {
+    return new OutMessage(this.newEntityId(), messageType, parsedMessage, to);
   };
 
   private createRoomInitMessageComponent = ({ roomName }: Room, toEntityId: EntityId) => {
     const { tileSizeInPx, widthInTiles, heightInTiles, tiles } = this._state.rooms[roomName];
-    return new OutgoingMessage(
+    return new OutMessage(
       this.newEntityId(),
       MESSAGE_TYPE.ROOM_INIT,
       { tileSizeInPx, widthInTiles, heightInTiles, tiles },
@@ -106,34 +104,10 @@ class CharacterConnected extends System {
     { type }: Type,
     toEntityId: EntityId
   ) => {
-    return new OutgoingMessage(
+    return new OutMessage(
       this.newEntityId(),
       MESSAGE_TYPE.CHARACTER_CONNECTED,
       { characterId, characterName, characterType: <number>type },
-      toEntityId
-    );
-  };
-
-  private createPositionMessageComponent = (
-    { position, id: characterId }: Transform,
-    toEntityId: EntityId
-  ) => {
-    return new OutgoingMessage(
-      this.newEntityId(),
-      MESSAGE_TYPE.TRANSFORM,
-      { characterId, ...position.xyz },
-      toEntityId
-    );
-  };
-
-  private createHitPointsMessageComponent = (
-    { hitPoints, id: characterId }: HitPoints,
-    toEntityId: EntityId
-  ) => {
-    return new OutgoingMessage(
-      this.newEntityId(),
-      MESSAGE_TYPE.HITPOINTS,
-      { characterId, hitPoints },
       toEntityId
     );
   };

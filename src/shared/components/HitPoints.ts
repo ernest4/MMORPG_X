@@ -1,14 +1,19 @@
-import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
-import { Int32 } from "../messages/schema";
+import { Int32, MESSAGE_TYPE } from "../messages/schema";
+import Networked from "./Networked";
 
 // TODO: optimize with ArrayBuffers ??
-class HitPoints extends Component {
+class HitPoints extends Networked<MESSAGE_TYPE.HITPOINTS> {
   hitPoints: Int32;
 
   constructor(entityId: EntityId, hitPoints: Int32) {
     super(entityId);
     this.hitPoints = hitPoints;
+  }
+
+  get parsedMessage(): { hitPoints: Int32; characterId: Int32 } {
+    const { hitPoints, id: characterId } = this;
+    return { hitPoints, characterId };
   }
 }
 

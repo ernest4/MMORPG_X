@@ -30,7 +30,7 @@ class Transform extends Networked<MESSAGE_TYPE.TRANSFORM> {
   }
 
   get parsedMessage(): { x: Float32; y: Float32; z: Float32; characterId: Int32 } {
-    throw new Error("Method not implemented.");
+    return { ...this.position.xyz, characterId: this.id };
   }
 }
 

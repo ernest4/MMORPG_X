@@ -77,14 +77,14 @@ export enum MESSAGE_TYPE {
 export type ParsedMessage<K extends MESSAGE_TYPE> = typeof SCHEMA[K]["parsedMessage"];
 
 // component classes that act as 'tags' for engine to query for
-export class Ping extends Message<MESSAGE_TYPE.PING> {}
-export class Pong extends Message<MESSAGE_TYPE.PONG> {}
-export class Position extends Message<MESSAGE_TYPE.TRANSFORM> {}
-export class CharacterConnected extends Message<MESSAGE_TYPE.CHARACTER_CONNECTED> {}
-export class CharacterDisconnected extends Message<MESSAGE_TYPE.CHARACTER_DISCONNECTED> {}
-export class RoomInit extends Message<MESSAGE_TYPE.ROOM_INIT> {}
-export class Move extends Message<MESSAGE_TYPE.MOVE> {}
-export class HitPoints extends Message<MESSAGE_TYPE.HITPOINTS> {}
+export class PingMessage extends Message<MESSAGE_TYPE.PING> {}
+export class PongMessage extends Message<MESSAGE_TYPE.PONG> {}
+export class TransformMessage extends Message<MESSAGE_TYPE.TRANSFORM> {}
+export class CharacterConnectedMessage extends Message<MESSAGE_TYPE.CHARACTER_CONNECTED> {}
+export class CharacterDisconnectedMessage extends Message<MESSAGE_TYPE.CHARACTER_DISCONNECTED> {}
+export class RoomInitMessage extends Message<MESSAGE_TYPE.ROOM_INIT> {}
+export class MoveMessage extends Message<MESSAGE_TYPE.MOVE> {}
+export class HitPointsMessage extends Message<MESSAGE_TYPE.HITPOINTS> {}
 
 // export type SchemaItem<T extends MESSAGE_TYPE> = {
 //   parsedMessage: ParsedMessage<T>;
@@ -98,13 +98,13 @@ const SCHEMA = {
     [parsedMessage]: {
       ping: s(0),
     },
-    [component]: Ping,
+    [component]: PingMessage,
   },
   [MESSAGE_TYPE.PONG]: {
     [parsedMessage]: {
       pong: s(0),
     },
-    [component]: Pong,
+    [component]: PongMessage,
   },
   [MESSAGE_TYPE.TRANSFORM]: {
     [parsedMessage]: {
@@ -113,7 +113,7 @@ const SCHEMA = {
       y: f32(2),
       z: f32(3),
     },
-    [component]: Position,
+    [component]: TransformMessage,
   },
   [MESSAGE_TYPE.CHARACTER_CONNECTED]: {
     [parsedMessage]: {
@@ -121,13 +121,13 @@ const SCHEMA = {
       characterType: u8(1),
       characterName: s(2),
     },
-    [component]: CharacterConnected,
+    [component]: CharacterConnectedMessage,
   },
   [MESSAGE_TYPE.CHARACTER_DISCONNECTED]: {
     [parsedMessage]: {
       ...characterId(0),
     },
-    [component]: CharacterDisconnected,
+    [component]: CharacterDisconnectedMessage,
   },
   [MESSAGE_TYPE.ROOM_INIT]: {
     [parsedMessage]: {
@@ -136,20 +136,20 @@ const SCHEMA = {
       heightInTiles: u16(2),
       tiles: u16a(3),
     },
-    [component]: RoomInit,
+    [component]: RoomInitMessage,
   },
   [MESSAGE_TYPE.MOVE]: {
     [parsedMessage]: {
       direction: u8(0),
     },
-    [component]: Move,
+    [component]: MoveMessage,
   },
   [MESSAGE_TYPE.HITPOINTS]: {
     [parsedMessage]: {
       ...characterId(0),
       hitPoints: i32(1),
     },
-    [component]: HitPoints,
+    [component]: HitPointsMessage,
   },
 };
 

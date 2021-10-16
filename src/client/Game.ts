@@ -65,8 +65,14 @@ class Game {
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new InputListener(this._engine, this._scene));
     this._engine.addSystem(new MovementControl(this._engine));
-    this._engine.addSystem(new CharacterDeserializer(this._engine));
-    this._engine.addSystem(new CharacterPosition(this._engine));
+    // this._engine.addSystem(new CharacterDeserializer(this._engine));
+    // TODO: more granular, system per received message. In each if entity (character) does not
+    // exist yet, just make on on the spot, so you dont need to worry about message order
+    this._engine.addSystem(new TransformMessage(this._engine));
+    this._engine.addSystem(new HitPointsMessage(this._engine));
+    // ... REST (combine them into on system generic enough?)
+
+    // this._engine.addSystem(new CharacterPosition(this._engine));
     // this._engine.addSystem(new AssetLoader(this._engine)); // TODO: async load in sprites / textures /sounds etc
     this._engine.addSystem(new SpriteLoader(this._engine, this._scene)); // TODO: refactor into asset loader?
     this._engine.addSystem(new SpriteRender(this._engine));
