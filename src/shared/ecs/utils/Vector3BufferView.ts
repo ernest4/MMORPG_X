@@ -1,8 +1,10 @@
+import { Float32 } from "../../messages/schema";
+
 const X_INDEX = 0;
 const Y_INDEX = 1;
 const Z_INDEX = 2;
 
-export type Vector3Hash = { x: number; y: number; z: number };
+export type Vector3Hash = { x: Float32; y: Float32; z: Float32 };
 class Vector3BufferView {
   private _values: Float32Array;
 

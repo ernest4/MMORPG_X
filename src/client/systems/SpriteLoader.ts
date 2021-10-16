@@ -57,7 +57,7 @@ class SpriteLoader extends System {
     );
 
     //
-    // const entityId = this.engine.generateEntityIdWithAlias(characterId);
+    // const entityId = this.engine.newEntityIdWithAlias(characterId);
     // const characterComponents = [
     //   new Character(entityId),
     //   new Name(entityId, characterName),

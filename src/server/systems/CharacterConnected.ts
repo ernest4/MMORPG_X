@@ -83,7 +83,7 @@ class CharacterConnected extends System {
   private createRoomInitMessageComponent = ({ roomName }: Room, toEntityId: EntityId) => {
     const { tileSizeInPx, widthInTiles, heightInTiles, tiles } = this._state.rooms[roomName];
     const parsedMessage = { tileSizeInPx, widthInTiles, heightInTiles, tiles };
-    return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
+    return new OutgoingMessage(this.newEntityId(), parsedMessage, toEntityId);
   };
 
   private createConnectedMessageComponent = (
@@ -92,7 +92,7 @@ class CharacterConnected extends System {
     toEntityId: EntityId
   ) => {
     return new OutgoingMessage<typeof MESSAGE_TYPES.CHARACTER_CONNECTED>(
-      this.engine.generateEntityId(),
+      this.newEntityId(),
       { characterId, characterName, characterType: <number>type },
       toEntityId
     );
@@ -102,19 +102,22 @@ class CharacterConnected extends System {
     { position, id: characterId }: Transform,
     toEntityId: EntityId
   ) => {
-    const parsedMessage = { characterId, ...position.xyz };
-
-    // TODO: typeof MESSAGE_TYPES.POSITION
-    return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
+    return new OutgoingMessage<typeof MESSAGE_TYPES.POSITION>(
+      this.newEntityId(),
+      { characterId, ...position.xyz },
+      toEntityId
+    );
   };
 
   private createHitPointsMessageComponent = (
     { hitPoints, id: characterId }: HitPoints,
     toEntityId: EntityId
   ) => {
-    const parsedMessage = { characterId, hitPoints };
-    // TODO: typeof MESSAGE_TYPES.HITPOINTS
-    return new OutgoingMessage(this.engine.generateEntityId(), parsedMessage, toEntityId);
+    return new OutgoingMessage<typeof MESSAGE_TYPES.HITPOINTS>(
+      this.newEntityId(),
+      { characterId, hitPoints },
+      toEntityId
+    );
   };
 }
 

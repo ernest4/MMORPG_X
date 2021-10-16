@@ -51,7 +51,7 @@ class SceneEditor extends System {
 
     if (!createEntity) return;
 
-    const entityId = this.engine.generateEntityId();
+    const entityId = this.newEntityId();
 
     let transform = new Transform(entityId);
     // transform.position.x = ...; // TODO: set to camera position ??
@@ -85,7 +85,7 @@ class SceneEditor extends System {
 
     const originalEntityComponents = this.engine.getComponents(originalEntityId);
 
-    const entityId = this.engine.generateEntityId();
+    const entityId = this.newEntityId();
 
     originalEntityComponents.forEach((component: Component) => {
       const clonedComponent = new (availableComponents as any)[component.constructor.name](
@@ -243,7 +243,7 @@ class SceneEditor extends System {
 
     if (!serialize) return;
 
-    const entityId = this.engine.generateEntityId();
+    const entityId = this.newEntityId();
 
     let serializeEvent = new SerializeEvent(entityId);
     this.engine.addComponent(serializeEvent);

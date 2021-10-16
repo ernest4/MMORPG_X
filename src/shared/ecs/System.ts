@@ -17,6 +17,8 @@ abstract class System {
   // TODO: clean up before system shutdown, engine should call this before removing system
   abstract destroy(): void;
 
+  newEntityId = () => this._engine.newEntityId();
+
   get engine() {
     return this._engine;
   }

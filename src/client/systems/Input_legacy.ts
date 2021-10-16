@@ -72,7 +72,7 @@ class Input extends System {
     // is past that point !!!
 
     this._inputEventObjectBuffer.forEach(({ type, key }) => {
-      const entityId = this.engine.generateEntityId();
+      const entityId = this.newEntityId();
       const inputEvent = new InputEvent(entityId);
       inputEvent.type = type;
       inputEvent.key = key;

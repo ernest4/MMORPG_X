@@ -20,7 +20,7 @@ describe(Movement, () => {
 
   describe("#addSystem", () => {
     beforeEach(() => {
-      let entityId = engine.generateEntityId();
+      let entityId = engine.newEntityId();
       let transform = new Transform(entityId);
       transform.position.x = 5;
       transform.position.y = 6;

@@ -46,7 +46,7 @@ class MessageListener extends System {
 
   private createMessageEvents = () => {
     this._messagesBuffer.process(({ fromEntityId, binaryMessage }) => {
-      const entityId = this.engine.generateEntityId();
+      const entityId = this.newEntityId();
       const clientMessageEvent = new MessageEvent(entityId, binaryMessage, fromEntityId);
       this.engine.addComponents(clientMessageEvent);
     });

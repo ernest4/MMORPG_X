@@ -29,7 +29,7 @@ class ConnectionListener extends System {
 
   private createConnectionEvents = () => {
     this._connectionsBuffer.process(isConnected => {
-      const entityId = this.engine.generateEntityId();
+      const entityId = this.newEntityId();
       const connectionEvent = new ConnectionEvent(entityId);
       const webSocket = new WebSocketComponent(entityId, this._webSocket);
       this.engine.addComponents(connectionEvent, webSocket);

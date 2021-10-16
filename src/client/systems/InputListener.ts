@@ -78,7 +78,7 @@ class InputListener extends System {
 
   private createInputEvents = () => {
     this._inputsBuffer.process(([type, key]) => {
-      const inputEvent = new InputEvent(this.engine.generateEntityId(), type, key);
+      const inputEvent = new InputEvent(this.newEntityId(), type, key);
       this.engine.addComponent(inputEvent);
     });
   };

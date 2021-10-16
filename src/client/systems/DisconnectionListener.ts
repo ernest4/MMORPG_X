@@ -29,7 +29,7 @@ class DisconnectionListener extends System {
 
   private createDisconnectionEvents = () => {
     this._disconnectionsBuffer.process(isDisconnected => {
-      const entityId = this.engine.generateEntityId();
+      const entityId = this.newEntityId();
       const disconnectionEvent = new DisconnectionEvent(entityId);
       this.engine.addComponent(disconnectionEvent);
       // this.engine.generateComponent(DisconnectionEvent) // could do all 3 steps above (and return component) // TODO

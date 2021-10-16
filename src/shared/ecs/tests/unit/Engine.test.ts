@@ -84,7 +84,7 @@ describe(Engine, () => {
 
   describe("#addComponent", () => {
     beforeEach(() => {
-      entityId = engine.generateEntityId();
+      entityId = engine.newEntityId();
       component = new NumberComponent(entityId);
     });
 
@@ -156,7 +156,7 @@ describe(Engine, () => {
 
   describe("#removeComponent", () => {
     beforeEach(() => {
-      entityId = engine.generateEntityId();
+      entityId = engine.newEntityId();
       component = new NumberComponent(entityId);
     });
 
@@ -184,16 +184,16 @@ describe(Engine, () => {
 
       context("when no other component has the same entity Id", () => {
         it("reclaims the id", () => {
-          expect(engine.generateEntityId()).toEqual(component.id);
+          expect(engine.newEntityId()).toEqual(component.id);
         });
       });
 
       context("when another component has the same entity Id", () => {
         beforeEach(() => {
-          engine.generateEntityId();
-          engine.generateEntityId();
-          engine.generateEntityId();
-          entityId = engine.generateEntityId();
+          engine.newEntityId();
+          engine.newEntityId();
+          engine.newEntityId();
+          entityId = engine.newEntityId();
           component = new NumberComponent(entityId);
           engine.addComponent(component);
           engine.addComponent(new StringComponent(component.id));
@@ -201,7 +201,7 @@ describe(Engine, () => {
         });
 
         it("does not reclaim the id", () => {
-          expect(engine.generateEntityId()).not.toEqual(component.id);
+          expect(engine.newEntityId()).not.toEqual(component.id);
         });
       });
     });
@@ -314,7 +314,7 @@ describe(Engine, () => {
 
   describe("#removeComponentById", () => {
     beforeEach(() => {
-      entityId = engine.generateEntityId();
+      entityId = engine.newEntityId();
       component = new NumberComponent(entityId);
     });
 
@@ -342,16 +342,16 @@ describe(Engine, () => {
 
       context("when no other component has the same entity Id", () => {
         it("reclaims the id", () => {
-          expect(engine.generateEntityId()).toEqual(component.id);
+          expect(engine.newEntityId()).toEqual(component.id);
         });
       });
 
       context("when another component has the same entity Id", () => {
         beforeEach(() => {
-          engine.generateEntityId();
-          engine.generateEntityId();
-          engine.generateEntityId();
-          entityId = engine.generateEntityId();
+          engine.newEntityId();
+          engine.newEntityId();
+          engine.newEntityId();
+          entityId = engine.newEntityId();
           component = new NumberComponent(entityId);
           engine.addComponent(component);
           engine.addComponent(new StringComponent(component.id));
@@ -359,7 +359,7 @@ describe(Engine, () => {
         });
 
         it("does not reclaim the id", () => {
-          expect(engine.generateEntityId()).not.toEqual(component.id);
+          expect(engine.newEntityId()).not.toEqual(component.id);
         });
       });
     });
@@ -403,7 +403,7 @@ describe(Engine, () => {
 
   describe("#getComponent", () => {
     beforeEach(() => {
-      entityId = engine.generateEntityId();
+      entityId = engine.newEntityId();
       component = new NumberComponent(entityId);
       engine.addComponent(component);
     });
@@ -433,7 +433,7 @@ describe(Engine, () => {
 
   describe("#getComponents", () => {
     beforeEach(() => {
-      entityId = engine.generateEntityId();
+      entityId = engine.newEntityId();
       component = new NumberComponent(entityId);
       engine.addComponent(component);
       component2 = new StringComponent(entityId);
@@ -457,17 +457,17 @@ describe(Engine, () => {
     });
   });
 
-  describe("#generateEntityId", () => {
+  describe("#newEntityId", () => {
     it("returns entityId", () => {
-      expect(engine.generateEntityId()).toBeNumber();
+      expect(engine.newEntityId()).toBeNumber();
     });
   });
 
-  describe("#generateEntityIdWithAlias", () => {
+  describe("#newEntityIdWithAlias", () => {
     const aliasId = 123456;
 
     beforeEach(() => {
-      entityId = engine.generateEntityIdWithAlias(aliasId);
+      entityId = engine.newEntityIdWithAlias(aliasId);
     });
 
     it("adds alias to entityId", () => {
@@ -482,7 +482,7 @@ describe(Engine, () => {
     const aliasId = 123;
 
     beforeEach(() => {
-      entityId = engine.generateEntityId();
+      entityId = engine.newEntityId();
       engine.addEntityIdAlias(entityId, aliasId);
     });
 
@@ -493,7 +493,7 @@ describe(Engine, () => {
 
   describe("#removeEntity", () => {
     beforeEach(() => {
-      entityId = engine.generateEntityId();
+      entityId = engine.newEntityId();
 
       engine.addComponent(new NumberComponent(entityId));
       engine.addComponent(new StringComponent(entityId));
@@ -510,14 +510,14 @@ describe(Engine, () => {
     });
 
     it("makes returns the entityId again when generating new entityId", () => {
-      expect(engine.generateEntityId()).toEqual(entityId);
+      expect(engine.newEntityId()).toEqual(entityId);
     });
   });
 
   describe("#removeAllEntities", () => {
     beforeEach(() => {
-      entityId = engine.generateEntityId();
-      entityId2 = engine.generateEntityId();
+      entityId = engine.newEntityId();
+      entityId2 = engine.newEntityId();
 
       engine.addComponent(new NumberComponent(entityId));
       engine.addComponent(new StringComponent(entityId));
@@ -537,7 +537,7 @@ describe(Engine, () => {
     });
 
     it("starts entityId count from zero", () => {
-      expect(engine.generateEntityId()).toEqual(0);
+      expect(engine.newEntityId()).toEqual(0);
     });
   });
 
@@ -573,9 +573,9 @@ describe(Engine, () => {
   // TODO: ... more cases ??
   describe("#query", () => {
     beforeEach(() => {
-      entityId = engine.generateEntityId();
-      entityId2 = engine.generateEntityId();
-      entityId3 = engine.generateEntityId();
+      entityId = engine.newEntityId();
+      entityId2 = engine.newEntityId();
+      entityId3 = engine.newEntityId();
     });
 
     context("when there are no components", () => {

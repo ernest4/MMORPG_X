@@ -19,10 +19,10 @@ export enum BinaryOrder {}
 const convertPositionToFieldType = <T>(binaryType: FIELD_TYPE, position: BinaryOrder) =>
   <T>(<unknown>[binaryType, position]);
 
-enum UInt8 {}
-enum UInt16 {}
-enum Int32 {}
-enum Float32 {}
+export enum UInt8 {}
+export enum UInt16 {}
+export enum Int32 {}
+export enum Float32 {}
 const u8 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<UInt8>("UINT_8", binaryOrder);
 const u16 = (binaryOrder: BinaryOrder) =>
   convertPositionToFieldType<UInt16>("UINT_16", binaryOrder);
@@ -115,7 +115,7 @@ const SCHEMA = {
   [MESSAGE_TYPES.HITPOINTS]: {
     parsedMessage: {
       ...characterId(0),
-      hitpoints: i32(1),
+      hitPoints: i32(1),
     },
     component: HitPoints,
   },
@@ -133,4 +133,16 @@ const SCHEMA = {
 
 export default SCHEMA;
 
-export const MESSAGE_COMPONENT_CLASSES = Object.values(SCHEMA).map(({ component }) => component);
+export const MESSAGE_COMPONENT_CLASSES_LIST = Object.values(SCHEMA).map(
+  ({ component }) => component
+);
+
+// export const MAPPiNG = {
+//   Ping,
+//   Pong,
+// };
+
+// export const MESSAGE_COMPONENT_CLASSES_INDEX = MESSAGE_COMPONENT_CLASSES_LIST.reduce((map, obj) => {
+//   map[obj.name] = obj;
+//   return map;
+// }, {});

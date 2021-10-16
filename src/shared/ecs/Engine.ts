@@ -1,10 +1,4 @@
-import {
-  ComponentClass,
-  DeltaTime,
-  EntityId,
-  QueryCallback,
-  QuerySet,
-} from "./types";
+import { ComponentClass, DeltaTime, EntityId, QueryCallback, QuerySet } from "./types";
 import EntityIdPool, { EntityIdPoolParams } from "./engine/EntityIdPool";
 import Component from "./Component";
 import SparseSet, { SparseSetItem } from "./utils/SparseSet";
@@ -149,7 +143,7 @@ class Engine {
   };
 
   // createEntity = (): Entity => {
-  //   return new Entity(this.generateEntityId(), this);
+  //   return new Entity(this.newEntityId(), this);
 
   //   // TODO: every single entity have PositionComponent and TagComponent by default ????
   //   // entity.addComponent(new PositionComponent(...))
@@ -157,10 +151,10 @@ class Engine {
   //   // return entity;
   // };
 
-  generateEntityId = (): EntityId => this._entityIdPool.getId();
+  newEntityId = (): EntityId => this._entityIdPool.getId();
 
-  generateEntityIdWithAlias = (aliasId: EntityId): EntityId => {
-    const entityId = this.generateEntityId();
+  newEntityIdWithAlias = (aliasId: EntityId): EntityId => {
+    const entityId = this.newEntityId();
     this.addEntityIdAlias(entityId, aliasId);
     return entityId;
   };

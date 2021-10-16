@@ -46,7 +46,7 @@ class MovementControl extends System {
   private applyMovementInputEvent = (inputEvent: InputEvent) => {
     const direction = this.getDirection(inputEvent);
     const parsedMessage = { direction };
-    const outgoingMessage = new OutgoingMessage(this.engine.generateEntityId(), parsedMessage);
+    const outgoingMessage = new OutgoingMessage(this.newEntityId(), parsedMessage);
     this.engine.addComponent(outgoingMessage);
   };
 

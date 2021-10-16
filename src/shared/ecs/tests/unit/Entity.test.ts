@@ -26,7 +26,7 @@ describe(Entity, () => {
 
   // describe("Entity initialization", () => {
   //   beforeEach(() => {
-  //     entityId = engine.generateEntityId();
+  //     entityId = engine.newEntityId();
   //     component = new NumberComponent(entityId, 89);
   //     component2 = new StringComponent(entityId, "wowser");
   //     engine.addComponents(component, component2);
@@ -69,7 +69,7 @@ describe(Entity, () => {
 
   // describe("#addComponent", () => {
   //   beforeEach(() => {
-  //     entityId = engine.generateEntityId();
+  //     entityId = engine.newEntityId();
   //     component = new NumberComponent(entityId);
   //   });
 
@@ -141,7 +141,7 @@ describe(Entity, () => {
 
   // describe("#removeComponent", () => {
   //   beforeEach(() => {
-  //     entityId = engine.generateEntityId();
+  //     entityId = engine.newEntityId();
   //     component = new NumberComponent(entityId);
   //   });
 
@@ -169,16 +169,16 @@ describe(Entity, () => {
 
   //     context("when no other component has the same entity Id", () => {
   //       it("reclaims the id", () => {
-  //         expect(engine.generateEntityId()).toEqual(component.id);
+  //         expect(engine.newEntityId()).toEqual(component.id);
   //       });
   //     });
 
   //     context("when another component has the same entity Id", () => {
   //       beforeEach(() => {
-  //         engine.generateEntityId();
-  //         engine.generateEntityId();
-  //         engine.generateEntityId();
-  //         entityId = engine.generateEntityId();
+  //         engine.newEntityId();
+  //         engine.newEntityId();
+  //         engine.newEntityId();
+  //         entityId = engine.newEntityId();
   //         component = new NumberComponent(entityId);
   //         engine.addComponent(component);
   //         engine.addComponent(new StringComponent(component.id));
@@ -186,7 +186,7 @@ describe(Entity, () => {
   //       });
 
   //       it("does not reclaim the id", () => {
-  //         expect(engine.generateEntityId()).not.toEqual(component.id);
+  //         expect(engine.newEntityId()).not.toEqual(component.id);
   //       });
   //     });
   //   });
@@ -234,7 +234,7 @@ describe(Entity, () => {
 
   // describe("#getComponent", () => {
   //   beforeEach(() => {
-  //     entityId = engine.generateEntityId();
+  //     entityId = engine.newEntityId();
   //     component = new NumberComponent(entityId, 89);
   //     engine.addComponents(component);
   //     entity = new Entity(entityId, engine);
@@ -263,7 +263,7 @@ describe(Entity, () => {
 
   describe("#components", () => {
     beforeEach(() => {
-      entityId = engine.generateEntityId();
+      entityId = engine.newEntityId();
       component = new NumberComponent(entityId);
       component2 = new StringComponent(entityId);
       engine.addComponents(component, component2);
@@ -308,7 +308,7 @@ describe(Entity, () => {
 
   // describe("#getComponents", () => {
   //   beforeEach(() => {
-  //     entityId = engine.generateEntityId();
+  //     entityId = engine.newEntityId();
   //     component = new NumberComponent(entityId);
   //     component2 = new StringComponent(entityId);
   //     engine.addComponents(component, component2);

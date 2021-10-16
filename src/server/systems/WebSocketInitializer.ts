@@ -12,7 +12,7 @@ class WebSocketInitializer extends System {
   }
 
   start(): void {
-    const entityId = this.engine.generateEntityId();
+    const entityId = this.newEntityId();
     this.engine.addComponent(new WebSocketInitEvent(entityId));
     // this.engine.generateComponent(WebSocketInitEvent) // TODO: engine helper
   }

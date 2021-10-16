@@ -23,9 +23,10 @@ class CharacterDeserializer extends System {
 
   private createCharacterComponents = (querySet: QuerySet) => {
     const [characterConnected, webSocket] = querySet as [CharacterConnected, WebSocket];
-    const { characterId, characterName, x, y, z, hitpoints, type } = characterConnected.parsedMessage;
+    const { characterId, characterName, x, y, z, hitpoints, type } =
+      characterConnected.parsedMessage;
 
-    const newCharacterEntityId = this.engine.generateEntityIdWithAlias(characterId);
+    const newCharacterEntityId = this.engine.newEntityIdWithAlias(characterId);
     const characterComponents = [
       new Character(newCharacterEntityId),
       new Name(newCharacterEntityId, characterName),
