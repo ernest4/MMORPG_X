@@ -5,7 +5,7 @@ import System from "../../shared/ecs/System";
 import { EntityId, QuerySet } from "../../shared/ecs/types";
 import { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import NearbyCharacters from "../components/NearbyCharacters";
-import OutgoingMessage from "../components/OutgoingMessage";
+import OutgoingMessage from "../../shared/components/OutgoingMessage";
 
 class CharacterMove extends System {
   constructor(engine: Engine) {

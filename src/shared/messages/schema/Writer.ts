@@ -1,10 +1,17 @@
 import { Buffer } from "buffer";
-import Message from "../../components/Message";
+// import Message from "../../components/Message";
 import { isNumber } from "../../ecs/utils/Number";
 import { SERVER } from "../../utils/environment";
 import { prettyPrintArray } from "../../utils/logging";
 import Validator from "./Validator";
-import SCHEMA, { LITTLE_ENDIAN, MESSAGE_TYPE_POSITION, FIELD_TYPES, FIELD_TYPE } from "../schema";
+import SCHEMA, {
+  LITTLE_ENDIAN,
+  MESSAGE_TYPE_POSITION,
+  FIELD_TYPES,
+  FIELD_TYPE,
+  MESSAGE_TYPE,
+} from "../schema";
+import OutgoingMessage from "../../components/OutgoingMessage";
 
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
@@ -30,11 +37,14 @@ class Writer {
     };
   }
 
-  messageComponentToBinary = (messageComponent: Message<any>): ArrayBuffer => {
-    return this.toBinary(messageComponent.parsedMessage);
+  messageComponentToBinary = ({
+    messageType,
+    parsedMessage,
+  }: OutgoingMessage<any>): ArrayBuffer => {
+    return this.toBinary(messageType, parsedMessage);
   };
 
-  private toBinary = (parsedMessage): ArrayBuffer => {
+  private toBinary = (messageType: MESSAGE_TYPE, parsedMessage): ArrayBuffer => {
     const errors = Validator.validate(parsedMessage);
     if (0 < errors.length) throw Error(`Invalid Message Format: ${prettyPrintArray(errors)}`);
 

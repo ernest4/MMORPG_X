@@ -7,7 +7,7 @@ import { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import Name from "../../shared/components/Name";
 import Type from "../../shared/components/Type";
 import NearbyCharacters from "../components/NearbyCharacters";
-import OutgoingMessage from "../components/OutgoingMessage";
+import OutgoingMessage from "../../shared/components/OutgoingMessage";
 import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";

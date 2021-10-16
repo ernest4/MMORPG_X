@@ -18,7 +18,7 @@
     "types": ["node"],
     "incremental": true
   },
-  "include": ["**/*.ts", "../shared/components/HitPoints.ts", "../shared/components/Name.ts", "../shared/components/Character.ts", "../shared/components/Character.ts", "../shared/systems/MessageDeserializer.ts"],
+  "include": ["**/*.ts", "../shared/components/HitPoints.ts", "../shared/components/Name.ts", "../shared/components/Character.ts", "../shared/components/Character.ts", "../shared/systems/MessageDeserializer.ts", "../shared/components/OutgoingMessage.ts"],
   "exclude": ["**/*.test.ts"],
   "references": [{ "path": "../shared" }]
 }
