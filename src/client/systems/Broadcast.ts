@@ -1,8 +1,8 @@
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import OutgoingMessage from "../components/OutgoingMessage";
 import Writer from "../../shared/messages/schema/Writer";
 import { QuerySet } from "../../shared/ecs/types";
+import OutgoingMessage from "../../shared/components/OutgoingMessage";
 
 class Broadcast extends System {
   private _webSocket: WebSocket;

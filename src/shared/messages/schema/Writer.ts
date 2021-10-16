@@ -10,6 +10,9 @@ import SCHEMA, {
   FIELD_TYPES,
   FIELD_TYPE,
   MESSAGE_TYPE,
+  BinaryOrder,
+  FieldName,
+  UNKNOWN,
 } from "../schema";
 import OutgoingMessage from "../../components/OutgoingMessage";
 
@@ -27,12 +30,12 @@ class Writer {
     // NOTE: the [K in FIELD_TYPE]: ... above enforces that ALL field types are present in the hash
     // and thus will have a decoder function !!
     this._fieldEncoders = {
-      UINT_8: this.writeUInt8,
-      UINT_16: this.writeUInt16,
-      INT_32: this.writeInt32,
-      FLOAT_32: this.writeFloat32,
-      STRING: this.writeString,
-      UINT_16_ARRAY: this.writeUInt16Array,
+      [FIELD_TYPE.UINT_8]: this.writeUInt8,
+      [FIELD_TYPE.UINT_16]: this.writeUInt16,
+      [FIELD_TYPE.INT_32]: this.writeInt32,
+      [FIELD_TYPE.FLOAT_32]: this.writeFloat32,
+      [FIELD_TYPE.STRING]: this.writeString,
+      [FIELD_TYPE.UINT_16_ARRAY]: this.writeUInt16Array,
       // TODO: ...more?
     };
   }
@@ -45,12 +48,14 @@ class Writer {
   };
 
   private toBinary = (messageType: MESSAGE_TYPE, parsedMessage): ArrayBuffer => {
-    const errors = Validator.validate(parsedMessage);
-    if (0 < errors.length) throw Error(`Invalid Message Format: ${prettyPrintArray(errors)}`);
+    // // TODO: re-enablee validation...
+    // const errors = Validator.validate(messageType, parsedMessage);
+    // // TODO: console log only? rollbar?
+    // if (0 < errors.length) throw Error(`Invalid Message Format: ${prettyPrintArray(errors)}`);
 
-    const byteCount = this.getByteCount(parsedMessage);
+    const byteCount = this.getByteCount(messageType, parsedMessage);
     const binaryMessage = new ArrayBuffer(byteCount);
-    this.populateBinaryMessage(binaryMessage, parsedMessage);
+    this.populateBinaryMessage(binaryMessage, messageType, parsedMessage);
     return binaryMessage;
   };
 
@@ -59,7 +64,7 @@ class Writer {
 
   //   SCHEMA[parsedMessage.messageType].binary.forEach(
   //     ([fieldName, fieldType]: [string, FIELD_TYPE]) => {
-  //       let fieldTypeBytes = FIELD_TYPE_BYTES[fieldType]; // try access available
+  //       let fieldTypeBytes = FIELD_TYPES[fieldTyEFIELD_TYPE]; .bytes// try access available
   //       if (!isNumber(fieldTypeBytes)) {
   //         // must be one of the unknown in advance types...
   //         switch (fieldType) {
@@ -69,7 +74,7 @@ class Writer {
   //           case FIELD_TYPES.UINT_16_ARRAY:
   //             byteCount = this.getNumberArrayByteCount(
   //               parsedMessage[fieldName],
-  //               FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]
+  //               FIELD_TYPES[FIELD_TYPE.UINT_16].bytes
   //             );
   //             break;
   //           default:
@@ -82,25 +87,27 @@ class Writer {
   //   return byteCount;
   // };
 
-  private getByteCount = (parsedMessage): number => {
+  private getByteCount = (messageType: MESSAGE_TYPE, parsedMessage): number => {
     let byteCount = 1; // message type
 
-    SCHEMA[parsedMessage.messageType].binary.forEach(
-      ([fieldName, fieldType]: [string, FIELD_TYPE]) => {
-        let fieldTypeBytes = FIELD_TYPE_BYTES[fieldType]; // try access available
-        if (!isNumber(fieldTypeBytes)) {
+    const parsedMessageEntries = this.messageTypeToParsedMessageEntries(messageType);
+    parsedMessageEntries.forEach(
+      ([fieldName, [fieldType, binaryOrder]]: [FieldName, [FIELD_TYPE, BinaryOrder]]) => {
+        let fieldTypeBytes = FIELD_TYPES[fieldType].bytes; // try access available
+        if (fieldTypeBytes === UNKNOWN) {
           // must be one of the unknown in advance types...
           switch (fieldType) {
-            case FIELD_TYPES.STRING:
+            case FIELD_TYPE.STRING:
               byteCount = this.getStringByteCount(parsedMessage[fieldName]);
               break;
-            case FIELD_TYPES.UINT_16_ARRAY:
+            case FIELD_TYPE.UINT_16_ARRAY:
               byteCount = this.getNumberArrayByteCount(
                 parsedMessage[fieldName],
-                FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16]
+                FIELD_TYPES[FIELD_TYPE.UINT_16].bytes
               );
               break;
             default:
+              // TODO: console log only? rollbar?
               throw Error(this.getByteCountErrorMessage(fieldType));
           }
         }
@@ -108,6 +115,26 @@ class Writer {
       }
     );
     return byteCount;
+  };
+
+  private messageTypeToParsedMessageEntries = (
+    messageType: MESSAGE_TYPE
+  ): [FieldName, [FIELD_TYPE, BinaryOrder]][] => {
+    // return Object.entries(
+    //   (<SchemaItem<typeof messageType>>(<any>SCHEMA[messageType])).parsedMessage
+    // );
+    return Object.entries((<any>SCHEMA[messageType]).parsedMessage);
+  };
+
+  // TODO: extract? same method as on Reader...
+  private toBinaryOrder = (
+    parsedMessageEntries: [FieldName, [FIELD_TYPE, BinaryOrder]][]
+  ): [FieldName, FIELD_TYPE][] => {
+    const binaryOrderedParsedMessageEntries = [];
+    parsedMessageEntries.forEach(([fieldName, [fieldType, binaryOrder]]) => {
+      binaryOrderedParsedMessageEntries[binaryOrder] = [fieldName, fieldType];
+    });
+    return binaryOrderedParsedMessageEntries;
   };
 
   private getStringByteCount = (string: string): number => {
@@ -134,12 +161,25 @@ class Writer {
     Make sure all methods are updated!`;
   };
 
-  private populateBinaryMessage = (binaryMessage: ArrayBuffer, parsedMessage) => {
+  private populateBinaryMessage = (
+    binaryMessage: ArrayBuffer,
+    messageType: MESSAGE_TYPE,
+    parsedMessage
+  ) => {
     const messageDataView = new DataView(binaryMessage);
-    const { messageType } = parsedMessage;
+    // const { messageType } = parsedMessage;
     let currentByteOffset = this.writeUInt8(MESSAGE_TYPE_POSITION, messageDataView, messageType);
 
-    SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
+    // SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
+    //   const data = parsedMessage[fieldName];
+    //   const fieldEncoder = this._fieldEncoders[fieldType];
+    //   const nextByteOffset = fieldEncoder(currentByteOffset, messageDataView, data);
+    //   currentByteOffset = nextByteOffset;
+    // });
+
+    const parsedMessageEntries = this.messageTypeToParsedMessageEntries(messageType);
+    const binaryOrderedParsedMessageEntries = this.toBinaryOrder(parsedMessageEntries);
+    binaryOrderedParsedMessageEntries.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
       const data = parsedMessage[fieldName];
       const fieldEncoder = this._fieldEncoders[fieldType];
       const nextByteOffset = fieldEncoder(currentByteOffset, messageDataView, data);
@@ -149,22 +189,22 @@ class Writer {
 
   private writeUInt8 = (currentByteOffset: number, dataView: DataView, data: number): number => {
     dataView.setUint8(currentByteOffset, data);
-    return currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_8];
+    return currentByteOffset + FIELD_TYPES[FIELD_TYPE.UINT_8].bytes;
   };
 
   private writeUInt16 = (currentByteOffset: number, dataView: DataView, data: number): number => {
     dataView.setUint16(currentByteOffset, data, LITTLE_ENDIAN);
-    return currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.UINT_16];
+    return currentByteOffset + FIELD_TYPES[FIELD_TYPE.UINT_16].bytes;
   };
 
   private writeInt32 = (currentByteOffset: number, dataView: DataView, data: number): number => {
     dataView.setInt32(currentByteOffset, data, LITTLE_ENDIAN);
-    return currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.INT_32];
+    return currentByteOffset + FIELD_TYPES[FIELD_TYPE.INT_32].bytes;
   };
 
   private writeFloat32 = (currentByteOffset: number, dataView: DataView, data: number): number => {
     dataView.setFloat32(currentByteOffset, data, LITTLE_ENDIAN);
-    return currentByteOffset + FIELD_TYPE_BYTES[FIELD_TYPES.FLOAT_32];
+    return currentByteOffset + FIELD_TYPES[FIELD_TYPE.FLOAT_32].bytes;
   };
 
   private writeString = (currentByteOffset: number, dataView: DataView, data: string): number => {

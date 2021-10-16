@@ -1,6 +1,0 @@
-import Message from "../Message";
-
-// TODO: optimize with ArrayBuffers ??
-class MapInit extends Message {}
-
-export default MapInit;

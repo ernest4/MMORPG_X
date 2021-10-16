@@ -1,7 +1,7 @@
 import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
 
-enum CharacterType {
+export enum CharacterType {
   Hunter, // default
   Hacker,
   // TODO: rest

@@ -1,19 +1,28 @@
 import Message from "../components/Message";
-import Component from "../ecs/Component";
 
 export const MESSAGE_TYPE_POSITION = 0;
 export const LITTLE_ENDIAN = true;
 
+export enum FIELD_TYPE {
+  UINT_8,
+  UINT_16,
+  INT_32,
+  FLOAT_32,
+  STRING,
+  UINT_16_ARRAY,
+}
+
+export const UNKNOWN = -1;
 export const FIELD_TYPES = {
-  UINT_8: { bytes: 1, min: 0, max: 255 },
-  UINT_16: { bytes: 2, min: 0, max: 65535 },
-  INT_32: { bytes: 4, min: -2147483648, max: 2147483647 },
-  FLOAT_32: { bytes: 4, min: -3.40282347e38, max: 3.40282347e38 },
-  STRING: {},
-  UINT_16_ARRAY: {},
+  [FIELD_TYPE.UINT_8]: { bytes: 1, min: 0, max: 255 },
+  [FIELD_TYPE.UINT_16]: { bytes: 2, min: 0, max: 65535 },
+  [FIELD_TYPE.INT_32]: { bytes: 4, min: -2147483648, max: 2147483647 },
+  [FIELD_TYPE.FLOAT_32]: { bytes: 4, min: -3.40282347e38, max: 3.40282347e38 },
+  [FIELD_TYPE.STRING]: { bytes: UNKNOWN, min: UNKNOWN, max: UNKNOWN },
+  [FIELD_TYPE.UINT_16_ARRAY]: { bytes: UNKNOWN, min: UNKNOWN, max: UNKNOWN },
 } as const;
 
-export type FIELD_TYPE = keyof typeof FIELD_TYPES;
+// export type FIELD_TYPE = keyof typeof FIELD_TYPES;
 
 export type FieldName = string;
 export enum BinaryOrder {}
@@ -24,15 +33,19 @@ export enum UInt8 {}
 export enum UInt16 {}
 export enum Int32 {}
 export enum Float32 {}
-const u8 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<UInt8>("UINT_8", binaryOrder);
+const u8 = (binaryOrder: BinaryOrder) =>
+  convertPositionToFieldType<UInt8>(FIELD_TYPE.UINT_8, binaryOrder);
 const u16 = (binaryOrder: BinaryOrder) =>
-  convertPositionToFieldType<UInt16>("UINT_16", binaryOrder);
-const i32 = (binaryOrder: BinaryOrder) => convertPositionToFieldType<Int32>("INT_32", binaryOrder);
+  convertPositionToFieldType<UInt16>(FIELD_TYPE.UINT_16, binaryOrder);
+const i32 = (binaryOrder: BinaryOrder) =>
+  convertPositionToFieldType<Int32>(FIELD_TYPE.INT_32, binaryOrder);
 const f32 = (binaryOrder: BinaryOrder) =>
-  convertPositionToFieldType<Float32>("FLOAT_32", binaryOrder);
+  convertPositionToFieldType<Float32>(FIELD_TYPE.FLOAT_32, binaryOrder);
 const u16a = (binaryOrder: BinaryOrder) =>
-  convertPositionToFieldType<Uint16Array>("UINT_16_ARRAY", binaryOrder);
-const s = (binaryOrder: BinaryOrder) => convertPositionToFieldType<string>("STRING", binaryOrder);
+  convertPositionToFieldType<Uint16Array>(FIELD_TYPE.UINT_16_ARRAY, binaryOrder);
+const s = (binaryOrder: BinaryOrder) =>
+  convertPositionToFieldType<string>(FIELD_TYPE.STRING, binaryOrder);
+
 const characterId = (binaryOrder: BinaryOrder) => ({ characterId: i32(binaryOrder) });
 
 // export const MESSAGE_TYPES = {
@@ -64,77 +77,79 @@ export enum MESSAGE_TYPE {
 export type ParsedMessage<K extends MESSAGE_TYPE> = typeof SCHEMA[K]["parsedMessage"];
 
 // component classes that act as 'tags' for engine to query for
-class Ping extends Message<MESSAGE_TYPE.PING> {}
-class Pong extends Message<MESSAGE_TYPE.PONG> {}
-class Position extends Message<MESSAGE_TYPE.POSITION> {}
-class CharacterConnected extends Message<MESSAGE_TYPE.CHARACTER_CONNECTED> {}
-class CharacterDisconnected extends Message<MESSAGE_TYPE.CHARACTER_DISCONNECTED> {}
-class RoomInit extends Message<MESSAGE_TYPE.ROOM_INIT> {}
-class Move extends Message<MESSAGE_TYPE.MOVE> {}
-class HitPoints extends Message<MESSAGE_TYPE.HITPOINTS> {}
+export class Ping extends Message<MESSAGE_TYPE.PING> {}
+export class Pong extends Message<MESSAGE_TYPE.PONG> {}
+export class Position extends Message<MESSAGE_TYPE.POSITION> {}
+export class CharacterConnected extends Message<MESSAGE_TYPE.CHARACTER_CONNECTED> {}
+export class CharacterDisconnected extends Message<MESSAGE_TYPE.CHARACTER_DISCONNECTED> {}
+export class RoomInit extends Message<MESSAGE_TYPE.ROOM_INIT> {}
+export class Move extends Message<MESSAGE_TYPE.MOVE> {}
+export class HitPoints extends Message<MESSAGE_TYPE.HITPOINTS> {}
 
 // export type SchemaItem<T extends MESSAGE_TYPE> = {
 //   parsedMessage: ParsedMessage<T>;
 //   component: Message<T>;
 // };
 
+const parsedMessage = "parsedMessage"; // To prevent typos in schema
+const component = "component"; // To prevent typos in schema
 const SCHEMA = {
   [MESSAGE_TYPE.PING]: {
-    parsedMessage: {
+    [parsedMessage]: {
       ping: s(0),
     },
-    component: Ping,
+    [component]: Ping,
   },
   [MESSAGE_TYPE.PONG]: {
-    parsedMessage: {
+    [parsedMessage]: {
       pong: s(0),
     },
-    component: Pong,
+    [component]: Pong,
   },
   [MESSAGE_TYPE.POSITION]: {
-    parsedMessage: {
+    [parsedMessage]: {
       ...characterId(0),
       x: f32(1),
       y: f32(2),
       z: f32(3),
     },
-    component: Position,
+    [component]: Position,
   },
   [MESSAGE_TYPE.CHARACTER_CONNECTED]: {
-    parsedMessage: {
+    [parsedMessage]: {
       ...characterId(0),
       characterType: u8(1),
       characterName: s(2),
     },
-    component: CharacterConnected,
+    [component]: CharacterConnected,
   },
   [MESSAGE_TYPE.CHARACTER_DISCONNECTED]: {
-    parsedMessage: {
+    [parsedMessage]: {
       ...characterId(0),
     },
-    component: CharacterDisconnected,
+    [component]: CharacterDisconnected,
   },
   [MESSAGE_TYPE.ROOM_INIT]: {
-    parsedMessage: {
+    [parsedMessage]: {
       tileSizeInPx: u8(0),
       widthInTiles: u16(1),
       heightInTiles: u16(2),
       tiles: u16a(3),
     },
-    component: RoomInit,
+    [component]: RoomInit,
   },
   [MESSAGE_TYPE.MOVE]: {
-    parseMessage: {
+    [parsedMessage]: {
       direction: u8(0),
     },
-    component: Move,
+    [component]: Move,
   },
   [MESSAGE_TYPE.HITPOINTS]: {
-    parsedMessage: {
+    [parsedMessage]: {
       ...characterId(0),
       hitPoints: i32(1),
     },
-    component: HitPoints,
+    [component]: HitPoints,
   },
 };
 
@@ -154,13 +169,3 @@ export default SCHEMA;
 export const MESSAGE_COMPONENT_CLASSES_LIST = Object.values(SCHEMA).map(
   ({ component }) => component
 );
-
-// export const MAPPiNG = {
-//   Ping,
-//   Pong,
-// };
-
-// export const MESSAGE_COMPONENT_CLASSES_INDEX = MESSAGE_COMPONENT_CLASSES_LIST.reduce((map, obj) => {
-//   map[obj.name] = obj;
-//   return map;
-// }, {});

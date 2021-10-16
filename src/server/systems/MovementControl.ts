@@ -1,10 +1,11 @@
-import Move from "../../shared/components/message/Move";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { Vector3Hash } from "../../shared/ecs/utils/Vector3BufferView";
 import Character from "../../shared/components/Character";
 import PhysicsBody from "../components/PhysicsBody";
 import Speed from "../components/Speed";
+import { QuerySet } from "../../shared/ecs/types";
+import { Move } from "../../shared/messages/schema";
 
 export const DIRECTIONS = {
   LEFT: 1,
@@ -34,10 +35,11 @@ class MovementControl extends System {
   destroy(): void {}
 
   private stopMovement = ([_, physicsBody]: [Character, PhysicsBody]) => {
-    physicsBody.linearVelocity.xyz = { x: 0, y: 0 };
+    physicsBody.linearVelocity.xyz = { x: 0, y: 0, z: 0 };
   };
 
-  private applyMoveMessage = ([{ from: fromEntityId, parsedMessage }]: [Move]) => {
+  private applyMoveMessage = (querySet: QuerySet) => {
+    const [{ sender: fromEntityId, parsedMessage }] = querySet as [Move];
     // TODO: future 'Entity' API sample: ...
     // const entity = this.engine.getEntity(move.fromEntityId);
     // const [physicsBody, speed] = entity.getComponents(PhysicsBody, Speed) as [PhysicsBody, Speed];
@@ -50,32 +52,32 @@ class MovementControl extends System {
   };
 
   private calculateNewLinearVelocity = (speed: number, direction: number): Vector3Hash => {
-    let newLinearVelocity: Vector3Hash = { x: 0, y: 0 };
+    let newLinearVelocity: Vector3Hash = { x: 0, y: 0, z: 0 };
 
     switch (direction) {
       case DIRECTIONS.LEFT:
-        newLinearVelocity = { x: -speed, y: 0 };
+        newLinearVelocity = { x: -speed, y: 0, z: 0 };
         break;
       case DIRECTIONS.LEFT_UP:
-        newLinearVelocity = { x: -speed, y: -speed };
+        newLinearVelocity = { x: -speed, y: -speed, z: 0 };
         break;
       case DIRECTIONS.UP:
-        newLinearVelocity = { x: 0, y: -speed };
+        newLinearVelocity = { x: 0, y: -speed, z: 0 };
         break;
       case DIRECTIONS.RIGHT_UP:
-        newLinearVelocity = { x: speed, y: -speed };
+        newLinearVelocity = { x: speed, y: -speed, z: 0 };
         break;
       case DIRECTIONS.RIGHT:
-        newLinearVelocity = { x: speed, y: 0 };
+        newLinearVelocity = { x: speed, y: 0, z: 0 };
         break;
       case DIRECTIONS.RIGHT_DOWN:
-        newLinearVelocity = { x: speed, y: speed };
+        newLinearVelocity = { x: speed, y: speed, z: 0 };
         break;
       case DIRECTIONS.DOWN:
-        newLinearVelocity = { x: 0, y: speed };
+        newLinearVelocity = { x: 0, y: speed, z: 0 };
         break;
       case DIRECTIONS.LEFT_DOWN:
-        newLinearVelocity = { x: -speed, y: speed };
+        newLinearVelocity = { x: -speed, y: speed, z: 0 };
         break;
     }
 

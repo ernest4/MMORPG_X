@@ -32,11 +32,11 @@ class Validator {
   }
 
   // TODO: validate against schema
-  validate = (parsedMessage): validationError[] => {
-    const { messageType } = parsedMessage;
-    const messageTypeErrors = this.validateMessageType(messageType);
-    // Return early since you can't access SCHEMA without proper messageType
-    if (0 < messageTypeErrors.length) return messageTypeErrors;
+  validate = (messageType: MESSAGE_TYPE, parsedMessage): validationError[] => {
+    // const { messageType } = parsedMessage;
+    // const messageTypeErrors = this.validateMessageType(messageType);
+    // // Return early since you can't access SCHEMA without proper messageType
+    // if (0 < messageTypeErrors.length) return messageTypeErrors;
 
     let errors: validationError[] = [];
     SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {

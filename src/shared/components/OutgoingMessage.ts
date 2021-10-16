@@ -5,13 +5,13 @@ import { MESSAGE_TYPE, ParsedMessage } from "../messages/schema";
 class OutgoingMessage<T extends MESSAGE_TYPE> extends Component {
   messageType: T;
   parsedMessage: ParsedMessage<T>;
-  recipient: EntityId;
+  recipient?: EntityId;
 
   constructor(
     entityId: EntityId,
     messageType: T,
     parsedMessage: ParsedMessage<T>,
-    recipient: EntityId
+    recipient?: EntityId
   ) {
     super(entityId);
     this.messageType = messageType;

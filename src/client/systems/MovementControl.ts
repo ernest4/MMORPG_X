@@ -1,9 +1,10 @@
 import { DIRECTION, DIRECTIONS } from "../../server/systems/MovementControl";
+import OutgoingMessage from "../../shared/components/OutgoingMessage";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { QuerySet } from "../../shared/ecs/types";
+import { MESSAGE_TYPE } from "../../shared/messages/schema";
 import InputEvent from "../components/InputEvent";
-import OutgoingMessage from "../components/OutgoingMessage";
 import { INPUT_EVENT_TYPES, INPUT_KEYS } from "./InputListener";
 
 const MOVEMENT_INPUTS = [
@@ -45,9 +46,11 @@ class MovementControl extends System {
 
   private applyMovementInputEvent = (inputEvent: InputEvent) => {
     const direction = this.getDirection(inputEvent);
-    const parsedMessage = { direction };
-    const outgoingMessage = new OutgoingMessage(this.newEntityId(), parsedMessage);
-    this.engine.addComponent(outgoingMessage);
+    if (!direction) return;
+
+    this.engine.addComponent(
+      new OutgoingMessage(this.newEntityId(), MESSAGE_TYPE.MOVE, { direction })
+    );
   };
 
   private getDirection = ({ type, key }: InputEvent): DIRECTION | null => {

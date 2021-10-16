@@ -11,7 +11,6 @@ import OutgoingMessage from "../../shared/components/OutgoingMessage";
 import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
-import CharacterConnectedComponent from "../../shared/components/message/CharacterConnected";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
 
 const queryComponents = [ConnectionEvent, Name, Type, HitPoints, Transform, Room, NearbyCharacters];

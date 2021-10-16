@@ -27,12 +27,12 @@ class Reader {
     // NOTE: the [K in FIELD_TYPE]: ... above enforces that ALL field types are present in the hash
     // and thus will have a decoder function !!
     this._fieldDecoders = {
-      UINT_8: this.parseUInt8,
-      UINT_16: this.parseUInt16,
-      INT_32: this.parseInt32,
-      FLOAT_32: this.parseFloat32,
-      STRING: this.parseString,
-      UINT_16_ARRAY: this.parseUInt16Array,
+      [FIELD_TYPE.UINT_8]: this.parseUInt8,
+      [FIELD_TYPE.UINT_16]: this.parseUInt16,
+      [FIELD_TYPE.INT_32]: this.parseInt32,
+      [FIELD_TYPE.FLOAT_32]: this.parseFloat32,
+      [FIELD_TYPE.STRING]: this.parseString,
+      [FIELD_TYPE.UINT_16_ARRAY]: this.parseUInt16Array,
       // TODO: ...more?
     };
   }
@@ -80,22 +80,22 @@ class Reader {
 
   private parseUInt8 = (currentByteOffset: number, dataView: DataView) => {
     const data = dataView.getUint8(currentByteOffset);
-    return [data, currentByteOffset + FIELD_TYPES.UINT_8.bytes];
+    return [data, currentByteOffset + FIELD_TYPES[FIELD_TYPE.UINT_8].bytes];
   };
 
   private parseUInt16 = (currentByteOffset: number, dataView: DataView) => {
     const data = dataView.getUint16(currentByteOffset, LITTLE_ENDIAN);
-    return [data, currentByteOffset + FIELD_TYPES.UINT_16.bytes];
+    return [data, currentByteOffset + FIELD_TYPES[FIELD_TYPE.UINT_16].bytes];
   };
 
   private parseInt32 = (currentByteOffset: number, dataView: DataView) => {
     const data = dataView.getInt32(currentByteOffset, LITTLE_ENDIAN);
-    return [data, currentByteOffset + FIELD_TYPES.INT_32.bytes];
+    return [data, currentByteOffset + FIELD_TYPES[FIELD_TYPE.INT_32].bytes];
   };
 
   private parseFloat32 = (currentByteOffset: number, dataView: DataView) => {
     const data = dataView.getFloat32(currentByteOffset, LITTLE_ENDIAN);
-    return [data, currentByteOffset + FIELD_TYPES.FLOAT_32.bytes];
+    return [data, currentByteOffset + FIELD_TYPES[FIELD_TYPE.FLOAT_32].bytes];
   };
 
   private parseString = (currentByteOffset: number, dataView: DataView) => {
