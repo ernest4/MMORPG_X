@@ -30,7 +30,11 @@ class Writer {
     };
   }
 
-  toBinary = (parsedMessage): ArrayBuffer => {
+  messageComponentToBinary = (messageComponent: Message<any>): ArrayBuffer => {
+    return this.toBinary(messageComponent.parsedMessage);
+  };
+
+  private toBinary = (parsedMessage): ArrayBuffer => {
     const errors = Validator.validate(parsedMessage);
     if (0 < errors.length) throw Error(`Invalid Message Format: ${prettyPrintArray(errors)}`);
 
@@ -38,10 +42,6 @@ class Writer {
     const binaryMessage = new ArrayBuffer(byteCount);
     this.populateBinaryMessage(binaryMessage, parsedMessage);
     return binaryMessage;
-  };
-
-  messageComponentToBinary = (messageComponent: Message<any>): ArrayBuffer => {
-    return this.toBinary(messageComponent.parsedMessage);
   };
 
   // private getByteCount = (parsedMessage): number => {

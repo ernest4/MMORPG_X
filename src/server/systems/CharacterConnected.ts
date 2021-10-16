@@ -82,8 +82,12 @@ class CharacterConnected extends System {
 
   private createRoomInitMessageComponent = ({ roomName }: Room, toEntityId: EntityId) => {
     const { tileSizeInPx, widthInTiles, heightInTiles, tiles } = this._state.rooms[roomName];
-    const parsedMessage = { tileSizeInPx, widthInTiles, heightInTiles, tiles };
-    return new OutgoingMessage(this.newEntityId(), parsedMessage, toEntityId);
+    return new OutgoingMessage(
+      this.newEntityId(),
+      MESSAGE_TYPE.ROOM_INIT,
+      { tileSizeInPx, widthInTiles, heightInTiles, tiles },
+      toEntityId
+    );
   };
 
   private createConnectedMessageComponent = (
@@ -91,8 +95,9 @@ class CharacterConnected extends System {
     { type }: Type,
     toEntityId: EntityId
   ) => {
-    return new OutgoingMessage<MESSAGE_TYPE.CHARACTER_CONNECTED>(
+    return new OutgoingMessage(
       this.newEntityId(),
+      MESSAGE_TYPE.CHARACTER_CONNECTED,
       { characterId, characterName, characterType: <number>type },
       toEntityId
     );
@@ -102,8 +107,9 @@ class CharacterConnected extends System {
     { position, id: characterId }: Transform,
     toEntityId: EntityId
   ) => {
-    return new OutgoingMessage<MESSAGE_TYPE.POSITION>(
+    return new OutgoingMessage(
       this.newEntityId(),
+      MESSAGE_TYPE.POSITION,
       { characterId, ...position.xyz },
       toEntityId
     );
@@ -113,8 +119,9 @@ class CharacterConnected extends System {
     { hitPoints, id: characterId }: HitPoints,
     toEntityId: EntityId
   ) => {
-    return new OutgoingMessage<MESSAGE_TYPE.HITPOINTS>(
+    return new OutgoingMessage(
       this.newEntityId(),
+      MESSAGE_TYPE.HITPOINTS,
       { characterId, hitPoints },
       toEntityId
     );

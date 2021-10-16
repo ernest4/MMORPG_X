@@ -13,7 +13,8 @@ class Room {
   name: string;
   widthInTiles: number;
   heightInTiles: number;
-  tiles: number[][];
+  // tiles: number[][];
+  tiles: Uint16Array;
 
   constructor() {
     this.tileSizeInPx = 32; // 32 px
@@ -23,7 +24,7 @@ class Room {
     this.maxWorldSizeInCells = this.maxWorldSizeInPx; // cellSizeInPx
 
     // TODO: testing... will load from config files later...
-    this.tiles = [
+    const tiles = [
       [1, 1, 1, 1, 1, 1],
       [1, 2, 1, 1, 2, 1],
       [1, 1, 4, 4, 1, 1],
@@ -31,6 +32,8 @@ class Room {
       [1, 1, 1, 1, 1, 1],
       [1, 1, 1, 1, 1, 1],
     ];
+
+    this.tiles = new Uint16Array(tiles.flat());
 
     this.name = DEFAULT_ROOM_NAME;
     this.widthInTiles = 6;

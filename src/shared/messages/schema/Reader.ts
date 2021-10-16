@@ -37,7 +37,17 @@ class Reader {
     };
   }
 
-  parseBinary = (binaryMessage: ArrayBuffer): ParsedMessage<any> => {
+  binaryToMessageComponent = (
+    messageComponentEntityId: EntityId,
+    binaryMessage: ArrayBuffer,
+    from?: EntityId
+  ): Message<any> => {
+    const parsedMessage = this.parseBinary(binaryMessage);
+    const messageComponentClass = SCHEMA[parsedMessage.messageType].component;
+    return new messageComponentClass(messageComponentEntityId, parsedMessage, from);
+  };
+
+  private parseBinary = (binaryMessage: ArrayBuffer): ParsedMessage<any> => {
     const messageDataView = new DataView(binaryMessage);
     let [messageType, currentByteOffset] = <[MESSAGE_TYPE, number]>(
       this.parseUInt8(MESSAGE_TYPE_POSITION, messageDataView)
@@ -56,16 +66,6 @@ class Reader {
       currentByteOffset = nextByteOffset;
     });
     return messageObject;
-  };
-
-  binaryToMessageComponent = (
-    messageComponentEntityId: EntityId,
-    binaryMessage: ArrayBuffer,
-    from?: EntityId
-  ): Message<any> => {
-    const parsedMessage = this.parseBinary(binaryMessage);
-    const messageComponentClass = SCHEMA[parsedMessage.messageType].component;
-    return new messageComponentClass(messageComponentEntityId, parsedMessage, from);
   };
 
   private toBinaryOrder = (
