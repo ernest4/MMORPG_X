@@ -62,7 +62,7 @@ const characterId = (binaryOrder: BinaryOrder) => ({ characterId: i32(binaryOrde
 export enum MESSAGE_TYPE {
   PING,
   PONG,
-  POSITION,
+  TRANSFORM,
   CHARACTER_CONNECTED,
   CHARACTER_DISCONNECTED,
   ROOM_INIT,
@@ -79,7 +79,7 @@ export type ParsedMessage<K extends MESSAGE_TYPE> = typeof SCHEMA[K]["parsedMess
 // component classes that act as 'tags' for engine to query for
 export class Ping extends Message<MESSAGE_TYPE.PING> {}
 export class Pong extends Message<MESSAGE_TYPE.PONG> {}
-export class Position extends Message<MESSAGE_TYPE.POSITION> {}
+export class Position extends Message<MESSAGE_TYPE.TRANSFORM> {}
 export class CharacterConnected extends Message<MESSAGE_TYPE.CHARACTER_CONNECTED> {}
 export class CharacterDisconnected extends Message<MESSAGE_TYPE.CHARACTER_DISCONNECTED> {}
 export class RoomInit extends Message<MESSAGE_TYPE.ROOM_INIT> {}
@@ -106,7 +106,7 @@ const SCHEMA = {
     },
     [component]: Pong,
   },
-  [MESSAGE_TYPE.POSITION]: {
+  [MESSAGE_TYPE.TRANSFORM]: {
     [parsedMessage]: {
       ...characterId(0),
       x: f32(1),

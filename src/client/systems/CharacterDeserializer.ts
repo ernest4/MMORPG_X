@@ -4,9 +4,10 @@ import WebSocket from "../components/WebSocket";
 import { QuerySet } from "../../shared/ecs/types";
 import Transform from "../../shared/components/Transform";
 import Character from "../../shared/components/Character";
-import CharacterConnected from "../../shared/components/message/CharacterConnected";
 import Name from "../../shared/components/Name";
 import HitPoints from "../../shared/components/HitPoints";
+import Type, { CharacterType } from "../../shared/components/Type";
+import { CharacterConnected } from "../../shared/messages/schema";
 
 class CharacterDeserializer extends System {
   constructor(engine: Engine) {
@@ -23,15 +24,15 @@ class CharacterDeserializer extends System {
 
   private createCharacterComponents = (querySet: QuerySet) => {
     const [characterConnected, webSocket] = querySet as [CharacterConnected, WebSocket];
-    const { characterId, characterName, x, y, z, hitpoints, type } =
-      characterConnected.parsedMessage;
+    const { characterId, characterName, characterType } = characterConnected.parsedMessage;
 
-    const newCharacterEntityId = this.engine.newEntityIdWithAlias(characterId);
+    const newCharacterEntityId = this.engine.newEntityIdWithAlias(<number>characterId);
     const characterComponents = [
       new Character(newCharacterEntityId),
       new Name(newCharacterEntityId, characterName),
       new HitPoints(newCharacterEntityId, hitpoints),
       new Transform(newCharacterEntityId, { x, y, z }),
+      new Type(newCharacterEntityId, <CharacterType>(<any>characterType)),
     ];
     this.engine.addComponents(...characterComponents);
   };

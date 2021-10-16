@@ -12,6 +12,8 @@ import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
+import Component from "../../shared/ecs/Component";
+import Networked from "../../shared/components/Networked";
 
 const queryComponents = [ConnectionEvent, Name, Type, HitPoints, Transform, Room, NearbyCharacters];
 type ComponentsSet = [ConnectionEvent, Name, Type, HitPoints, Transform, Room, NearbyCharacters];
@@ -76,7 +78,17 @@ class CharacterConnected extends System {
       ];
     });
 
+    // TODO: sketch
+    this.generateMessage(transform, newCharacterId);
+
     this.engine.addComponents(...serverMessageComponents);
+  };
+
+  // TODO: sketch
+  private generateMessage = ({ messageType, parsedMessage }: Networked<any>, to: EntityId) => {
+    this.engine.addComponent(
+      new OutgoingMessage(this.newEntityId(), messageType, parsedMessage, to)
+    );
   };
 
   private createRoomInitMessageComponent = ({ roomName }: Room, toEntityId: EntityId) => {
@@ -108,7 +120,7 @@ class CharacterConnected extends System {
   ) => {
     return new OutgoingMessage(
       this.newEntityId(),
-      MESSAGE_TYPE.POSITION,
+      MESSAGE_TYPE.TRANSFORM,
       { characterId, ...position.xyz },
       toEntityId
     );
