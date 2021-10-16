@@ -9,6 +9,7 @@ import SCHEMA, {
   BinaryOrder,
   FieldName,
   MESSAGE_TYPE,
+  ParsedMessage,
 } from "../schema";
 import Message from "../../components/Message";
 
@@ -36,7 +37,7 @@ class Reader {
     };
   }
 
-  parseBinary = (binaryMessage: ArrayBuffer) => {
+  parseBinary = (binaryMessage: ArrayBuffer): ParsedMessage<any> => {
     const messageDataView = new DataView(binaryMessage);
     let [messageType, currentByteOffset] = <[MESSAGE_TYPE, number]>(
       this.parseUInt8(MESSAGE_TYPE_POSITION, messageDataView)
@@ -44,7 +45,8 @@ class Reader {
 
     const messageObject = { messageType };
     const parsedMessageEntries = <[FieldName, [FIELD_TYPE, BinaryOrder]][]>(
-      Object.entries(SCHEMA[messageType].parsedMessage)
+      // Object.entries((<SchemaItem<typeof messageType>>(<any>SCHEMA[messageType])).parsedMessage)
+      Object.entries((<any>SCHEMA[messageType]).parsedMessage)
     );
     const binaryOrderedParsedMessageEntries = this.toBinaryOrder(parsedMessageEntries);
     binaryOrderedParsedMessageEntries.forEach(([fieldName, fieldType]) => {
@@ -59,15 +61,11 @@ class Reader {
   binaryToMessageComponent = (
     messageComponentEntityId: EntityId,
     binaryMessage: ArrayBuffer,
-    fromEntityId?: EntityId
+    from?: EntityId
   ): Message<any> => {
     const parsedMessage = this.parseBinary(binaryMessage);
-    const messageComponent = new SCHEMA[parsedMessage.messageType].component(
-      messageComponentEntityId,
-      parsedMessage,
-      fromEntityId
-    );
-    return messageComponent;
+    const messageComponentClass = SCHEMA[parsedMessage.messageType].component;
+    return new messageComponentClass(messageComponentEntityId, parsedMessage, from);
   };
 
   private toBinaryOrder = (

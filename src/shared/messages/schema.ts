@@ -1,4 +1,5 @@
 import Message from "../components/Message";
+import Component from "../ecs/Component";
 
 export const MESSAGE_TYPE_POSITION = 0;
 export const LITTLE_ENDIAN = true;
@@ -34,47 +35,63 @@ const u16a = (binaryOrder: BinaryOrder) =>
 const s = (binaryOrder: BinaryOrder) => convertPositionToFieldType<string>("STRING", binaryOrder);
 const characterId = (binaryOrder: BinaryOrder) => ({ characterId: i32(binaryOrder) });
 
-export const MESSAGE_TYPES = {
-  PING: 0,
-  PONG: 1,
-  POSITION: 2,
-  CHARACTER_CONNECTED: 3,
-  CHARACTER_DISCONNECTED: 4,
-  ROOM_INIT: 5,
-  MOVE: 6,
-  HITPOINTS: 7,
-} as const;
+// export const MESSAGE_TYPES = {
+//   PING: 0,
+//   PONG: 1,
+//   POSITION: 2,
+//   CHARACTER_CONNECTED: 3,
+//   CHARACTER_DISCONNECTED: 4,
+//   ROOM_INIT: 5,
+//   MOVE: 6,
+//   HITPOINTS: 7,
+// } as const;
 
-export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
+export enum MESSAGE_TYPE {
+  PING,
+  PONG,
+  POSITION,
+  CHARACTER_CONNECTED,
+  CHARACTER_DISCONNECTED,
+  ROOM_INIT,
+  MOVE,
+  HITPOINTS,
+}
+
+// export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
 
 // type ParsedMessage<T extends "CHARACTER_CONNECTED" | "HITPOINTS"> = typeof SCHEMA[typeof MESSAGE_TYPES[T]]["binary"];
 // @ts-ignore
 export type ParsedMessage<K extends MESSAGE_TYPE> = typeof SCHEMA[K]["parsedMessage"];
 
 // component classes that act as 'tags' for engine to query for
-class Ping extends Message<typeof MESSAGE_TYPES.PING> {}
-class Pong extends Message<typeof MESSAGE_TYPES.PONG> {}
-class Position extends Message<typeof MESSAGE_TYPES.POSITION> {}
-class CharacterConnected extends Message<typeof MESSAGE_TYPES.CHARACTER_CONNECTED> {}
-class CharacterDisconnected extends Message<typeof MESSAGE_TYPES.CHARACTER_DISCONNECTED> {}
-class RoomInit extends Message<typeof MESSAGE_TYPES.ROOM_INIT> {}
-class Move extends Message<typeof MESSAGE_TYPES.MOVE> {}
-class HitPoints extends Message<typeof MESSAGE_TYPES.HITPOINTS> {}
+class Ping extends Message<MESSAGE_TYPE.PING> {}
+class Pong extends Message<MESSAGE_TYPE.PONG> {}
+class Position extends Message<MESSAGE_TYPE.POSITION> {}
+class CharacterConnected extends Message<MESSAGE_TYPE.CHARACTER_CONNECTED> {}
+class CharacterDisconnected extends Message<MESSAGE_TYPE.CHARACTER_DISCONNECTED> {}
+class RoomInit extends Message<MESSAGE_TYPE.ROOM_INIT> {}
+class Move extends Message<MESSAGE_TYPE.MOVE> {}
+class HitPoints extends Message<MESSAGE_TYPE.HITPOINTS> {}
+
+// export type SchemaItem<T extends MESSAGE_TYPE> = {
+//   parsedMessage: ParsedMessage<T>;
+//   component: Message<T>;
+// };
 
 const SCHEMA = {
-  [MESSAGE_TYPES.PING]: {
+  [MESSAGE_TYPE.PING]: {
     parsedMessage: {
       ping: s(0),
     },
     component: Ping,
   },
-  [MESSAGE_TYPES.PONG]: {
+  [MESSAGE_TYPE.PONG]: {
     parsedMessage: {
       pong: s(0),
     },
     component: Pong,
   },
-  [MESSAGE_TYPES.POSITION]: {
+  [MESSAGE_TYPE.POSITION]: {
     parsedMessage: {
       ...characterId(0),
       x: f32(1),
@@ -83,7 +100,7 @@ const SCHEMA = {
     },
     component: Position,
   },
-  [MESSAGE_TYPES.CHARACTER_CONNECTED]: {
+  [MESSAGE_TYPE.CHARACTER_CONNECTED]: {
     parsedMessage: {
       ...characterId(0),
       characterType: u8(1),
@@ -91,13 +108,13 @@ const SCHEMA = {
     },
     component: CharacterConnected,
   },
-  [MESSAGE_TYPES.CHARACTER_DISCONNECTED]: {
+  [MESSAGE_TYPE.CHARACTER_DISCONNECTED]: {
     parsedMessage: {
       ...characterId(0),
     },
     component: CharacterDisconnected,
   },
-  [MESSAGE_TYPES.ROOM_INIT]: {
+  [MESSAGE_TYPE.ROOM_INIT]: {
     parsedMessage: {
       tileSizeInPx: u8(0),
       widthInTiles: u16(1),
@@ -106,13 +123,13 @@ const SCHEMA = {
     },
     component: RoomInit,
   },
-  [MESSAGE_TYPES.MOVE]: {
+  [MESSAGE_TYPE.MOVE]: {
     parseMessage: {
       direction: u8(0),
     },
     component: Move,
   },
-  [MESSAGE_TYPES.HITPOINTS]: {
+  [MESSAGE_TYPE.HITPOINTS]: {
     parsedMessage: {
       ...characterId(0),
       hitPoints: i32(1),
@@ -120,7 +137,8 @@ const SCHEMA = {
     component: HitPoints,
   },
 };
-// } as const;
+
+// export type MESSAGE_COMPONENT_CLASSES_INDEX = keyof typeof SCHEMA;
 
 // const c = new CharacterConnected(123, {
 //   characterId: 123,

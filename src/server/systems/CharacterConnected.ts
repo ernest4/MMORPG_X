@@ -12,7 +12,7 @@ import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
 import CharacterConnectedComponent from "../../shared/components/message/CharacterConnected";
-import { MESSAGE_TYPES } from "../../shared/messages/schema";
+import { MESSAGE_TYPE } from "../../shared/messages/schema";
 
 const queryComponents = [ConnectionEvent, Name, Type, HitPoints, Transform, Room, NearbyCharacters];
 type ComponentsSet = [ConnectionEvent, Name, Type, HitPoints, Transform, Room, NearbyCharacters];
@@ -91,7 +91,7 @@ class CharacterConnected extends System {
     { type }: Type,
     toEntityId: EntityId
   ) => {
-    return new OutgoingMessage<typeof MESSAGE_TYPES.CHARACTER_CONNECTED>(
+    return new OutgoingMessage<MESSAGE_TYPE.CHARACTER_CONNECTED>(
       this.newEntityId(),
       { characterId, characterName, characterType: <number>type },
       toEntityId
@@ -102,7 +102,7 @@ class CharacterConnected extends System {
     { position, id: characterId }: Transform,
     toEntityId: EntityId
   ) => {
-    return new OutgoingMessage<typeof MESSAGE_TYPES.POSITION>(
+    return new OutgoingMessage<MESSAGE_TYPE.POSITION>(
       this.newEntityId(),
       { characterId, ...position.xyz },
       toEntityId
@@ -113,7 +113,7 @@ class CharacterConnected extends System {
     { hitPoints, id: characterId }: HitPoints,
     toEntityId: EntityId
   ) => {
-    return new OutgoingMessage<typeof MESSAGE_TYPES.HITPOINTS>(
+    return new OutgoingMessage<MESSAGE_TYPE.HITPOINTS>(
       this.newEntityId(),
       { characterId, hitPoints },
       toEntityId

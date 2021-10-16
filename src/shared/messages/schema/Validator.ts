@@ -5,7 +5,7 @@ import SCHEMA, {
   FIELD_TYPE_BYTES,
   FIELD_TYPE_RANGES,
   FIELD_TYPE,
-  MESSAGE_TYPES,
+  MESSAGE_TYPE,
 } from "../schema";
 
 type validationError = { [fieldName: string]: string };
@@ -56,8 +56,8 @@ class Validator {
   private validateMessageType = (messageType: MESSAGE_TYPE): validationError[] => {
     let errors: validationError[] = [];
 
-    const validType = Object.values(MESSAGE_TYPES).some(validMessageType => {
-      validMessageType === MESSAGE_TYPES[messageType];
+    const validType = Object.values(MESSAGE_TYPE).some(validMessageType => {
+      validMessageType === MESSAGE_TYPE[messageType];
     });
     if (!validType) errors.push({ messageType: `Not a recognized messageType: ${messageType}` });
 
