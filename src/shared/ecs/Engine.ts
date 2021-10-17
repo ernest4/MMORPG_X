@@ -202,8 +202,15 @@ class Engine {
     entityId: EntityId,
     componentClass: ComponentClass<T>
   ): T => {
-    let networkedComponent = this.getComponentById(entityId, componentClass);
-    return networkedComponent ? networkedComponent : Component.createNull(entityId, componentClass);
+    let component = this.getComponentById(entityId, componentClass);
+    return component ? component : Component.createNull(entityId, componentClass);
+  };
+
+  getOrAddNullComponentById = <T extends Component>(
+    entityId: EntityId,
+    componentClass: ComponentClass<T>
+  ): T => {
+    return this.addComponent(this.getOrCreateNullComponentById(entityId, componentClass));
   };
 
   removeEntity = (entityId: EntityId) => {

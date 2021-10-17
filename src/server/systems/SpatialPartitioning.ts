@@ -1,7 +1,7 @@
 import Transform from "../../shared/components/Transform";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import { EntityId, QuerySet } from "../../shared/ecs/types";
+import { EntityId } from "../../shared/ecs/types";
 import SparseSet, { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import NearbyCharacters from "../components/NearbyCharacters";
 import RoomComponent from "../components/Room";
@@ -36,7 +36,10 @@ class SpatialPartitioning extends System {
     currentRoom: Room,
     { position: { x, y }, id: currentEntityId }: Transform
   ) => {
-    const nearbyCharacters = this.getOrCreateNearbyCharactersComponent(currentEntityId);
+    const nearbyCharacters = this.engine.getOrAddNullComponentById(
+      currentEntityId,
+      NearbyCharacters
+    );
     const newEntityIdsSet = new SparseSet();
     // NOTE: memoizing
     const checkNearbyCharacterEntityId = (nearbyEntityId: EntityId) => {
@@ -45,12 +48,6 @@ class SpatialPartitioning extends System {
     };
     currentRoom.streamNearbyCharacterEntityIds(x, y, checkNearbyCharacterEntityId);
     nearbyCharacters.entityIdSet = newEntityIdsSet;
-  };
-
-  private getOrCreateNearbyCharactersComponent = (entityId: EntityId): NearbyCharacters => {
-    const nearbyCharacters = this.engine.getComponentById(entityId, NearbyCharacters);
-    if (!nearbyCharacters) return this.engine.addComponent(new NearbyCharacters(entityId));
-    return nearbyCharacters;
   };
 }
 

@@ -2,6 +2,7 @@ import { context } from "../../../../../tests/testAliases";
 import Component from "../../Component";
 import Engine from "../../Engine";
 import System from "../../System";
+import SparseSet from "../../utils/SparseSet";
 import NumberComponent from "../helpers/components/NumberComponent";
 import StrictNumberComponent from "../helpers/components/StrictNumberComponent";
 import StringComponent from "../helpers/components/StringComponent";
@@ -608,12 +609,37 @@ describe(Engine, () => {
 
         expect(component2).toBeInstanceOf(StrictNumberComponent);
         expect((<any>component2).testNumber).toEqual(undefined);
+        expect((<any>component2).sparseSet).toBeInstanceOf(SparseSet);
+        expect((<any>component2).sparseSet.size).toEqual(0);
       });
     });
 
     context("when component already exists", () => {
       it("returns existing component", () => {
         expect(engine.getOrCreateNullComponentById(entityId, NumberComponent)).toEqual(component);
+      });
+    });
+  });
+
+  describe("#getOrAddNullComponentById", () => {
+    beforeEach(() => {
+      component = engine.getOrAddNullComponentById(entityId, NumberComponent);
+    });
+
+    context("when component does not yet exist", () => {
+      it("returns null component", () => {
+        expect(component).toBeInstanceOf(NumberComponent);
+        expect((<any>component).testNumber).toEqual(5); // NumberComponent default
+      });
+
+      it("adds the component", () => {
+        expect(engine.getComponentById(entityId, NumberComponent)).toEqual(component);
+      });
+    });
+
+    context("when component already exists", () => {
+      it("returns existing component", () => {
+        expect(engine.getOrAddNullComponentById(entityId, NumberComponent)).toEqual(component);
       });
     });
   });

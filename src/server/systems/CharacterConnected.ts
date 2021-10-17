@@ -11,11 +11,8 @@ import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
-// import Networked from "../../shared/components/interfaces/Networked";
 import Character from "../../shared/components/Character";
 import Hunter from "../../shared/components/characterTypes/Hunter";
-
-const queryComponents = [ConnectionEvent, Room, NearbyCharacters];
 
 class CharacterConnected extends Networked {
   private _state: State;
@@ -28,7 +25,7 @@ class CharacterConnected extends Networked {
   start(): void {}
 
   update(): void {
-    this.engine.query(this.createOutMessages, ...queryComponents);
+    this.engine.query(this.createOutMessages, ConnectionEvent, Room, NearbyCharacters);
   }
 
   destroy(): void {}
