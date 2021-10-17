@@ -1,6 +1,7 @@
+import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
 import { Int32, MESSAGE_TYPE, UInt8 } from "../messages/schema";
-import Networked from "./Networked";
+import Networked from "./interfaces/Networked";
 
 export enum CharacterType {
   Hunter, // default
@@ -8,8 +9,9 @@ export enum CharacterType {
   // TODO: rest
 }
 // TODO: optimize with ArrayBuffers ??
-class Type extends Networked<MESSAGE_TYPE.TYPE> {
+class Type extends Component implements Networked<MESSAGE_TYPE.TYPE> {
   type: CharacterType;
+  messageType: MESSAGE_TYPE.TYPE;
 
   constructor(entityId: EntityId, type: CharacterType) {
     super(entityId);

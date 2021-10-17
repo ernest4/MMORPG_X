@@ -12,10 +12,10 @@ import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
-import Networked from "../../shared/components/Networked";
+import Networked from "../../shared/components/interfaces/Networked";
 import Character from "../../shared/components/Character";
 
-const queryComponents = [ConnectionEvent, Room, NearbyCharacters] as const;
+const queryComponents = [ConnectionEvent, Room, NearbyCharacters];
 
 class CharacterConnected extends System {
   private _state: State;
@@ -28,12 +28,12 @@ class CharacterConnected extends System {
   start(): void {}
 
   update(): void {
-    this.engine.query(this.createServerMessages, ...queryComponents);
+    this.engine.query(this.createOutMessages, ...queryComponents);
   }
 
   destroy(): void {}
 
-  private createServerMessages = (querySet: QuerySet) => {
+  private createOutMessages = (querySet: QuerySet) => {
     const [{ id: newCharacterId }, room, nearbyCharacters] = querySet as [
       ConnectionEvent,
       Room,
