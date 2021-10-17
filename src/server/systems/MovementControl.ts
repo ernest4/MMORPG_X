@@ -18,8 +18,6 @@ export enum DIRECTION {
   LEFT_DOWN,
 }
 
-// export type DIRECTION = typeof DIRECTIONS[keyof typeof DIRECTIONS];
-
 class MovementControl extends System {
   constructor(engine: Engine) {
     super(engine);
@@ -39,7 +37,12 @@ class MovementControl extends System {
   };
 
   private applyMoveMessage = (querySet: QuerySet) => {
-    const [{ sender: fromEntityId, parsedMessage }] = querySet as [MoveMessage];
+    const [
+      {
+        sender: fromEntityId,
+        parsedMessage: { direction },
+      },
+    ] = querySet as [MoveMessage];
     // TODO: future 'Entity' API sample: ...
     // const entity = this.engine.getEntity(move.fromEntityId);
     // const [physicsBody, speed] = entity.getComponents(PhysicsBody, Speed) as [PhysicsBody, Speed];
@@ -48,7 +51,7 @@ class MovementControl extends System {
     const [physicsBody, { speed }] = <[PhysicsBody, Speed]>(
       this.engine.getComponentsById(fromEntityId, PhysicsBody, Speed)
     );
-    const direction = parsedMessage.direction;
+
     const newLinearVelocity = this.calculateNewLinearVelocity(speed, direction);
     physicsBody.linearVelocity.xyz = newLinearVelocity;
   };

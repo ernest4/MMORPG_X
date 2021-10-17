@@ -53,7 +53,12 @@ class Game {
     // this._engine.addSystem(new Collision(this._engine)); // TODO: takes in transform and checks it against map. Might be useful to store 'previous' values on Transform (that get auto updated) so in case of collision Transform could be reverted to that?
     this._engine.addSystem(new SpatialPartitioning(this._engine, this._state));
     this._engine.addSystem(new CharacterConnected(this._engine, this._state));
+
+    // TODO: need some more abstract system for this kinda like SynchronizeNetworkedComponents in
+    // client side.
+    // Perhaps add isChanged() to networked component interface and if true, create OutMessage ?
     this._engine.addSystem(new TransformChanged(this._engine));
+    this._engine.addSystem(new HitPointsChanged(this._engine));
     // TODO: any other systems here
     // this._engine.addSystem(new Serializer(this._engine)); # gonna invoke sidekiq workers
     // this._engine.addSystem(new AI(this._engine));

@@ -17,6 +17,21 @@ abstract class Component extends SparseSetItem {
   static createNull<T extends Component>(entityId: EntityId, componentClass: ComponentClass<T>): T {
     return new componentClass(entityId);
   }
+
+  // TODO: wip
+  track = (...fields: string[]) => {
+    fields.forEach(field => {
+      this[field] = this.tracker(field);
+    });
+  };
+
+  isChanged = (field?: string): boolean => {
+    // TODO: ...check all by default, otherwise specific field
+  };
+
+  private tracker = (field: string) => {
+    // TODO: ...
+  };
 }
 
 export default Component;

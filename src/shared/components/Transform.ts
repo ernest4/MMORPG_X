@@ -29,6 +29,8 @@ class Transform extends Component implements Networked<MESSAGE_TYPE.TRANSFORM> {
     // when parent transform changes, child transform changes (thats how Unity does it)
     // get/set parent ???
     // this._children = entityId[]; ???
+
+    this.track("position", ...);
   }
 
   get parsedMessage(): { x: Float32; y: Float32; z: Float32; entityId: Int32 } {
