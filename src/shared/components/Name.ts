@@ -16,6 +16,10 @@ class Name extends Component implements Networked<MESSAGE_TYPE.NAME> {
   get parsedMessage(): { name: string; entityId: Int32 } {
     return this;
   }
+
+  applyParsedMessage({ name }: { name: string; entityId: Int32 }) {
+    this.name = name;
+  }
 }
 
 export default Name;

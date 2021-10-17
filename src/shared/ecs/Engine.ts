@@ -174,6 +174,9 @@ class Engine {
 
   newEntityIdWithAlias = (aliasId: EntityId): EntityId => {
     const entityId = this.newEntityId();
+    // TODO: !!! seems like it could bee buggy. addition of alias can fail if alias is the same,
+    // but a NEW entityId will be returned regardless...
+    // TO fix it, will need to tweak sparse set to return item | null...(success | failure)
     this.addEntityIdAlias(entityId, aliasId);
     return entityId;
   };
@@ -184,6 +187,21 @@ class Engine {
 
   getEntityIdByAlias = (aliasId: EntityId) => {
     return (<EntityIdAlias>this._entityIdAliases.get(aliasId))?.entityId;
+  };
+
+  // TODO: jests
+  getOrAddEntityIdByAlias = (aliasId: EntityId): EntityId => {
+    const entityId = this.getEntityIdByAlias(aliasId);
+    return entityId ? entityId : this.newEntityIdWithAlias(aliasId);
+  };
+
+  // TODO: jests
+  getOrCreateNullComponentById = <T extends Component>(
+    entityId: EntityId,
+    componentClass: ComponentClass<T>
+  ) => {
+    let networkedComponent = this.getComponentById(entityId, componentClass);
+    return networkedComponent ? networkedComponent : Component.createNull(entityId, componentClass);
   };
 
   removeEntity = (entityId: EntityId) => {

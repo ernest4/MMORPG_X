@@ -2,7 +2,7 @@ import Networked from "../../shared/components/interfaces/Networked";
 import NetworkedComponentMessage from "../../shared/components/NetworkedComponentMessage";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import { ComponentClass, QuerySet } from "../../shared/ecs/types";
+import { ComponentClass, EntityId, QuerySet } from "../../shared/ecs/types";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
 
 class ApplyParsedMessages<T extends MESSAGE_TYPE> extends System {
@@ -29,14 +29,15 @@ class ApplyParsedMessages<T extends MESSAGE_TYPE> extends System {
 
   private applyMessageComponent = (querySet: QuerySet) => {
     const [messageComponent] = querySet as [NetworkedComponentMessage<T>];
-    const { entityId: entityIdAlias } = messageComponent.parsedMessage;
+    const { parsedMessage } = messageComponent;
 
-    // TODO: find or create ...
-    const entityId = this.engine.getEntityIdByAlias(<number>entityIdAlias);
-    if (!entityId) return;
+    const entityId = this.engine.getOrAddEntityIdByAlias(<number>parsedMessage.entityId);
+    const networkedComponent = this.engine.getOrCreateNullComponentById(
+      entityId,
+      this.networkedComponentClass
+    );
 
-    const networkedComponent = this.engine.getComponentById(entityId, this.networkedComponentClass);
-    if (networkedComponent) networkedComponent.applyParsedMessage(messageComponent.parsedMessage);
+    networkedComponent.applyParsedMessage(parsedMessage);
   };
 }
 
