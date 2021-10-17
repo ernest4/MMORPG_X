@@ -7,7 +7,7 @@ import Character from "../../shared/components/Character";
 import Name from "../../shared/components/Name";
 import HitPoints from "../../shared/components/HitPoints";
 import Type, { CharacterType } from "../../shared/components/Type";
-import { CharacterConnectedMessage } from "../../shared/messages/schema";
+import { CharacterMessage } from "../../shared/messages/schema";
 
 class CharacterDeserializer extends System {
   constructor(engine: Engine) {
@@ -17,13 +17,13 @@ class CharacterDeserializer extends System {
   start(): void {}
 
   update(): void {
-    this.engine.query(this.createCharacterComponents, CharacterConnectedMessage, WebSocket);
+    this.engine.query(this.createCharacterComponents, CharacterMessage, WebSocket);
   }
 
   destroy(): void {}
 
   private createCharacterComponents = (querySet: QuerySet) => {
-    const [characterConnected, webSocket] = querySet as [CharacterConnectedMessage, WebSocket];
+    const [characterConnected, webSocket] = querySet as [CharacterMessage, WebSocket];
     const { characterId, characterName, characterType } = characterConnected.parsedMessage;
 
     const newCharacterEntityId = this.engine.newEntityIdWithAlias(<number>characterId);

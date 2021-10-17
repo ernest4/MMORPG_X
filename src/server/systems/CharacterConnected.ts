@@ -107,7 +107,7 @@ class CharacterConnected extends System {
   ) => {
     return new OutMessage(
       this.newEntityId(),
-      MESSAGE_TYPE.CHARACTER_CONNECTED,
+      MESSAGE_TYPE.CHARACTER,
       { characterId, characterName, characterType: <number>type },
       toEntityId
     );

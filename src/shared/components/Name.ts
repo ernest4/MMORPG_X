@@ -1,13 +1,19 @@
-import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
+import { Int32, MESSAGE_TYPE } from "../messages/schema";
+import Networked from "./Networked";
 
 // TODO: optimize with ArrayBuffers ??
-class Name extends Component {
+class Name extends Networked<MESSAGE_TYPE.NAME> {
   name: string;
 
   constructor(entityId: EntityId, name: string) {
     super(entityId);
     this.name = name;
+  }
+
+  get parsedMessage(): { name: string; entityId: Int32 } {
+    const { id: characterId, name } = this;
+    return { entityId: characterId, name };
   }
 }
 

@@ -46,7 +46,7 @@ const u16a = (binaryOrder: BinaryOrder) =>
 const s = (binaryOrder: BinaryOrder) =>
   convertPositionToFieldType<string>(FIELD_TYPE.STRING, binaryOrder);
 
-const characterId = (binaryOrder: BinaryOrder) => ({ characterId: i32(binaryOrder) });
+const entityId = (binaryOrder: BinaryOrder) => ({ entityId: i32(binaryOrder) });
 
 // export const MESSAGE_TYPES = {
 //   PING: 0,
@@ -63,7 +63,9 @@ export enum MESSAGE_TYPE {
   PING,
   PONG,
   TRANSFORM,
-  CHARACTER_CONNECTED,
+  CHARACTER,
+  NAME,
+  TYPE,
   CHARACTER_DISCONNECTED,
   ROOM_INIT,
   MOVE,
@@ -80,7 +82,9 @@ export type ParsedMessage<K extends MESSAGE_TYPE> = typeof SCHEMA[K]["parsedMess
 export class PingMessage extends Message<MESSAGE_TYPE.PING> {}
 export class PongMessage extends Message<MESSAGE_TYPE.PONG> {}
 export class TransformMessage extends Message<MESSAGE_TYPE.TRANSFORM> {}
-export class CharacterConnectedMessage extends Message<MESSAGE_TYPE.CHARACTER_CONNECTED> {}
+export class CharacterMessage extends Message<MESSAGE_TYPE.CHARACTER> {}
+export class NameMessage extends Message<MESSAGE_TYPE.NAME> {}
+export class TypeMessage extends Message<MESSAGE_TYPE.TYPE> {}
 export class CharacterDisconnectedMessage extends Message<MESSAGE_TYPE.CHARACTER_DISCONNECTED> {}
 export class RoomInitMessage extends Message<MESSAGE_TYPE.ROOM_INIT> {}
 export class MoveMessage extends Message<MESSAGE_TYPE.MOVE> {}
@@ -108,24 +112,39 @@ const SCHEMA = {
   },
   [MESSAGE_TYPE.TRANSFORM]: {
     [parsedMessage]: {
-      ...characterId(0),
+      ...entityId(0),
       x: f32(1),
       y: f32(2),
       z: f32(3),
     },
     [component]: TransformMessage,
   },
-  [MESSAGE_TYPE.CHARACTER_CONNECTED]: {
+  [MESSAGE_TYPE.CHARACTER]: {
     [parsedMessage]: {
-      ...characterId(0),
-      characterType: u8(1),
-      characterName: s(2),
+      ...entityId(0),
     },
-    [component]: CharacterConnectedMessage,
+    [component]: CharacterMessage,
   },
+  [MESSAGE_TYPE.TYPE]: {
+    [parsedMessage]: {
+      ...entityId(0),
+      type: u8(1),
+    },
+    [component]: TypeMessage,
+  },
+  [MESSAGE_TYPE.NAME]: {
+    [parsedMessage]: {
+      ...entityId(0),
+      name: s(1),
+    },
+    [component]: NameMessage,
+  },
+  // TODO: probs turns this into more generic REMOVE_COMPONENT with entityId...
+  // then if that happens to be a character, client side will know to remove the rest of characters
+  // components too
   [MESSAGE_TYPE.CHARACTER_DISCONNECTED]: {
     [parsedMessage]: {
-      ...characterId(0),
+      ...entityId(0),
     },
     [component]: CharacterDisconnectedMessage,
   },
@@ -146,7 +165,7 @@ const SCHEMA = {
   },
   [MESSAGE_TYPE.HITPOINTS]: {
     [parsedMessage]: {
-      ...characterId(0),
+      ...entityId(0),
       hitPoints: i32(1),
     },
     [component]: HitPointsMessage,
@@ -156,12 +175,12 @@ const SCHEMA = {
 // export type MESSAGE_COMPONENT_CLASSES_INDEX = keyof typeof SCHEMA;
 
 // const c = new CharacterConnected(123, {
-//   characterId: 123,
+//   entityId: 123,
 //   characterName: "123",
 //   characterType: 123,
 // });
 
-// c.parsedMessage.characterId = 5;
+// c.parsedMessage.entityId = 5;
 // c.parsedMessage;
 
 export default SCHEMA;

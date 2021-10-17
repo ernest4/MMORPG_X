@@ -7,6 +7,10 @@ abstract class Component extends SparseSetItem {
   constructor(entityId: EntityId) {
     super(entityId);
   }
+
+  get entityId() {
+    return this.id;
+  }
 }
 
 export default Component;
