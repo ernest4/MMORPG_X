@@ -57,15 +57,15 @@ class SparseSet<T extends SparseSetItem> {
   };
 
   // Inserts a new element into set
-  add = (item: T) => {
+  add = (item: T): T | null => {
     const itemId = item.id;
 
-    //  Corner cases, x must not be out of
+    // Corner cases, x must not be out of
     // range, dense[] should not be full and
     // x should not already be present
     // if (x > maxValue) return;
     // if (n >= capacity) return;
-    if (this.get(itemId) !== null) return;
+    if (this.get(itemId) !== null) return null;
 
     // Inserting into array-dense[] at index 'n'.
     this._denseList[this._elementCount] = item;
@@ -75,6 +75,8 @@ class SparseSet<T extends SparseSetItem> {
 
     // Increment count of elements in set
     this._elementCount++;
+
+    return item;
   };
 
   // A function that deletes 'x' if present in this data

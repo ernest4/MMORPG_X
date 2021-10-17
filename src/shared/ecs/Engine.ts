@@ -172,17 +172,18 @@ class Engine {
 
   newEntityId = (): EntityId => this._entityIdPool.getId();
 
-  newEntityIdWithAlias = (aliasId: EntityId): EntityId => {
+  // TODO: jests for returning entityId or null
+  newEntityIdWithAlias = (aliasId: EntityId): EntityId | null => {
     const entityId = this.newEntityId();
-    // TODO: !!! seems like it could bee buggy. addition of alias can fail if alias is the same,
-    // but a NEW entityId will be returned regardless...
-    // TO fix it, will need to tweak sparse set to return item | null...(success | failure)
-    this.addEntityIdAlias(entityId, aliasId);
-    return entityId;
+    if (this.addEntityIdAlias(entityId, aliasId)) return entityId;
+
+    this._entityIdPool.reclaimId(entityId);
+    return null;
   };
 
-  addEntityIdAlias = (entityId: EntityId, aliasId: EntityId) => {
-    this._entityIdAliases.add(new EntityIdAlias(aliasId, entityId));
+  // TODO: jests for returning alias or null
+  addEntityIdAlias = (entityId: EntityId, aliasId: EntityId): EntityIdAlias | null => {
+    return this._entityIdAliases.add(new EntityIdAlias(aliasId, entityId));
   };
 
   getEntityIdByAlias = (aliasId: EntityId) => {

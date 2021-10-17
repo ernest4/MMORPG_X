@@ -28,16 +28,21 @@ describe(SparseSet, () => {
   describe("#add", () => {
     let previousSizeBeforeAdd: number;
     let previousSizeAfterAdd: number;
+    let addResult;
 
     beforeEach(() => {
       previousSizeBeforeAdd = subject.size;
-      subject.add(numberComponent3);
+      addResult = subject.add(numberComponent3);
       previousSizeAfterAdd = subject.size;
     });
 
     context("when item doesn't already exist", () => {
       it("adds the component", () => {
         expect(subject.get(numberComponent3.id)).toBe(numberComponent3);
+      });
+
+      it("returns the added item", () => {
+        expect(addResult).toEqual(numberComponent3);
       });
 
       it("increases size", () => {
@@ -52,6 +57,11 @@ describe(SparseSet, () => {
       });
 
       it("returns null", () => {
+        addResult = subject.add(numberComponent3);
+        expect(addResult).toEqual(null);
+      });
+
+      it("does not increase size", () => {
         subject.add(numberComponent3);
         expect(subject.size).toEqual(previousSizeAfterAdd);
       });
