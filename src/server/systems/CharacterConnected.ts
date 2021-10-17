@@ -45,6 +45,7 @@ class CharacterConnected extends System {
     const newCharacterId = connectionEvent.id;
 
     serverMessageComponents = [
+      // TODO: convert these to newOutMessage ??!?
       this.createRoomInitMessageComponent(room, newCharacterId),
       this.createConnectedMessageComponent(name, type, newCharacterId),
       this.newOutMessage(hitPoints, newCharacterId),

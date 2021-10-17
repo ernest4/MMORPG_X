@@ -13,6 +13,7 @@ import SCHEMA, {
   BinaryOrder,
   FieldName,
   UNKNOWN,
+  ParsedMessage,
 } from "../schema";
 import OutgoingMessage from "../../components/OutgoingMessage";
 
@@ -40,14 +41,17 @@ class Writer {
     };
   }
 
-  messageComponentToBinary = ({
+  messageComponentToBinary = <T extends MESSAGE_TYPE>({
     messageType,
     parsedMessage,
-  }: OutgoingMessage<any>): ArrayBuffer => {
+  }: OutgoingMessage<T>): ArrayBuffer => {
     return this.toBinary(messageType, parsedMessage);
   };
 
-  private toBinary = (messageType: MESSAGE_TYPE, parsedMessage): ArrayBuffer => {
+  private toBinary = <T extends MESSAGE_TYPE>(
+    messageType: MESSAGE_TYPE,
+    parsedMessage: ParsedMessage<T>
+  ): ArrayBuffer => {
     // // TODO: re-enablee validation...
     // const errors = Validator.validate(messageType, parsedMessage);
     // // TODO: console log only? rollbar?
@@ -87,7 +91,10 @@ class Writer {
   //   return byteCount;
   // };
 
-  private getByteCount = (messageType: MESSAGE_TYPE, parsedMessage): number => {
+  private getByteCount = <T extends MESSAGE_TYPE>(
+    messageType: MESSAGE_TYPE,
+    parsedMessage: ParsedMessage<T>
+  ): number => {
     let byteCount = 1; // message type
 
     const parsedMessageEntries = this.messageTypeToParsedMessageEntries(messageType);
@@ -119,12 +126,7 @@ class Writer {
 
   private messageTypeToParsedMessageEntries = (
     messageType: MESSAGE_TYPE
-  ): [FieldName, [FIELD_TYPE, BinaryOrder]][] => {
-    // return Object.entries(
-    //   (<SchemaItem<typeof messageType>>(<any>SCHEMA[messageType])).parsedMessage
-    // );
-    return Object.entries((<any>SCHEMA[messageType]).parsedMessage);
-  };
+  ): [FieldName, [FIELD_TYPE, BinaryOrder]][] => Object.entries(SCHEMA[messageType].parsedMessage);
 
   // TODO: extract? same method as on Reader...
   private toBinaryOrder = (
@@ -161,21 +163,13 @@ class Writer {
     Make sure all methods are updated!`;
   };
 
-  private populateBinaryMessage = (
+  private populateBinaryMessage = <T extends MESSAGE_TYPE>(
     binaryMessage: ArrayBuffer,
     messageType: MESSAGE_TYPE,
-    parsedMessage
+    parsedMessage: ParsedMessage<T>
   ) => {
     const messageDataView = new DataView(binaryMessage);
-    // const { messageType } = parsedMessage;
     let currentByteOffset = this.writeUInt8(MESSAGE_TYPE_POSITION, messageDataView, messageType);
-
-    // SCHEMA[messageType].binary.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
-    //   const data = parsedMessage[fieldName];
-    //   const fieldEncoder = this._fieldEncoders[fieldType];
-    //   const nextByteOffset = fieldEncoder(currentByteOffset, messageDataView, data);
-    //   currentByteOffset = nextByteOffset;
-    // });
 
     const parsedMessageEntries = this.messageTypeToParsedMessageEntries(messageType);
     const binaryOrderedParsedMessageEntries = this.toBinaryOrder(parsedMessageEntries);
