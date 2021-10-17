@@ -2,7 +2,7 @@ import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
 import { MESSAGE_TYPE, ParsedMessage } from "../messages/schema";
 
-class OutgoingMessage<T extends MESSAGE_TYPE> extends Component {
+class OutMessage<T extends MESSAGE_TYPE> extends Component {
   messageType: T;
   parsedMessage: ParsedMessage<T>;
   recipient?: EntityId;
@@ -20,4 +20,4 @@ class OutgoingMessage<T extends MESSAGE_TYPE> extends Component {
   }
 }
 
-export default OutgoingMessage;
+export default OutMessage;

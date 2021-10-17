@@ -34,7 +34,7 @@ class MovementControl extends System {
 
   destroy(): void {}
 
-  private stopMovement = ([_, physicsBody]: [Character, PhysicsBody]) => {
+  private stopMovement = ([character, physicsBody]: [Character, PhysicsBody]) => {
     physicsBody.linearVelocity.xyz = { x: 0, y: 0, z: 0 };
   };
 
@@ -44,8 +44,10 @@ class MovementControl extends System {
     // const entity = this.engine.getEntity(move.fromEntityId);
     // const [physicsBody, speed] = entity.getComponents(PhysicsBody, Speed) as [PhysicsBody, Speed];
     // OR? const [physicsBody, speed] = entity.getComponents<PhysicsBody, Speed>(PhysicsBody, Speed);
-    const physicsBody = this.engine.getComponentById<PhysicsBody>(PhysicsBody, fromEntityId);
-    const { speed } = this.engine.getComponentById<Speed>(Speed, fromEntityId);
+
+    const [physicsBody, { speed }] = <[PhysicsBody, Speed]>(
+      this.engine.getComponentsById(fromEntityId, PhysicsBody, Speed)
+    );
     const direction = parsedMessage.direction;
     const newLinearVelocity = this.calculateNewLinearVelocity(speed, direction);
     physicsBody.linearVelocity.xyz = newLinearVelocity;

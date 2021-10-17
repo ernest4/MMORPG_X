@@ -193,10 +193,7 @@ class SceneEditor extends System {
   private attachInteractiveToAllSprites = (querySet: QuerySet) => {
     const [sprite] = querySet as [Sprite];
 
-    const existingInteractiveComponent = this.engine.getComponentById<Interactive>(
-      Interactive,
-      sprite.id
-    );
+    const existingInteractiveComponent = this.engine.getComponentById(Interactive, sprite.id);
 
     if (existingInteractiveComponent) {
       if (!existingInteractiveComponent.onPointerDown) {

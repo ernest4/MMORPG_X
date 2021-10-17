@@ -16,6 +16,7 @@ interface Networked<T extends MESSAGE_TYPE> extends Component {
   readonly messageType: T;
 
   get parsedMessage(): ParsedMessage<T>;
+  applyParsedMessage(parsedMessage: ParsedMessage<T>);
 }
 
 export default Networked;

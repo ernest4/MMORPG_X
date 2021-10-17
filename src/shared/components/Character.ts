@@ -14,6 +14,10 @@ class Character extends Component implements Networked<MESSAGE_TYPE.CHARACTER> {
   get parsedMessage(): { entityId: Int32 } {
     return this;
   }
+
+  applyParsedMessage(parsedMessage: { entityId: Int32 }) {
+    // NOOP
+  }
 }
 
 export default Character;

@@ -1,5 +1,5 @@
 import { DIRECTION, DIRECTIONS } from "../../server/systems/MovementControl";
-import OutgoingMessage from "../../shared/components/OutgoingMessage";
+import OutMessage from "../../shared/components/OutMessage";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { QuerySet } from "../../shared/ecs/types";
@@ -49,7 +49,7 @@ class MovementControl extends System {
     if (!direction) return;
 
     this.engine.addComponent(
-      new OutgoingMessage(this.newEntityId(), MESSAGE_TYPE.MOVE, { direction })
+      new OutMessage(this.newEntityId(), MESSAGE_TYPE.MOVE, { direction })
     );
   };
 

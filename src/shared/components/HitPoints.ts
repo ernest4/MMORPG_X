@@ -16,6 +16,10 @@ class HitPoints extends Component implements Networked<MESSAGE_TYPE.HITPOINTS> {
   get parsedMessage(): { hitPoints: Int32; entityId: Int32 } {
     return this;
   }
+
+  applyParsedMessage({ hitPoints }: { hitPoints: Int32; entityId: Int32 }) {
+    this.hitPoints = hitPoints;
+  }
 }
 
 export default HitPoints;

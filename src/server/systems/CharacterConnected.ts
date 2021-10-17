@@ -5,9 +5,9 @@ import Networked from "./Networked";
 import { EntityId, QuerySet } from "../../shared/ecs/types";
 import { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import Name from "../../shared/components/Name";
-import Type from "../../shared/components/Type";
+import Type from "../../shared/components/characterTypes";
 import NearbyCharacters from "../components/NearbyCharacters";
-import OutMessage from "../../shared/components/OutgoingMessage";
+import OutMessage from "../../shared/components/OutMessage";
 import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
@@ -80,11 +80,11 @@ class CharacterConnected extends Networked {
 
   private getCharacterComponents = (entityId: EntityId) => {
     return [
-      this.engine.getComponentById<Character>(Character, entityId),
-      this.engine.getComponentById<Name>(Name, entityId),
-      this.engine.getComponentById<Type>(Type, entityId),
-      this.engine.getComponentById<HitPoints>(HitPoints, entityId),
-      this.engine.getComponentById<Transform>(Transform, entityId),
+      this.engine.getComponentById(entityId, Character),
+      this.engine.getComponentById(entityId, Name),
+      this.engine.getComponentById(entityId, Type),
+      this.engine.getComponentById(entityId, HitPoints),
+      this.engine.getComponentById(entityId, Transform),
     ];
   };
 }

@@ -15,7 +15,7 @@ import SCHEMA, {
   UNKNOWN,
   ParsedMessage,
 } from "../schema";
-import OutgoingMessage from "../../components/OutgoingMessage";
+import OutMessage from "../../components/OutMessage";
 
 // NOTE: ArrayBuffer and DataView work on both Node.js & Browser
 // NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
@@ -44,7 +44,7 @@ class Writer {
   messageComponentToBinary = <T extends MESSAGE_TYPE>({
     messageType,
     parsedMessage,
-  }: OutgoingMessage<T>): ArrayBuffer => {
+  }: OutMessage<T>): ArrayBuffer => {
     return this.toBinary(messageType, parsedMessage);
   };
 

@@ -6,7 +6,7 @@ import Transform from "../../shared/components/Transform";
 import Character from "../../shared/components/Character";
 import Name from "../../shared/components/Name";
 import HitPoints from "../../shared/components/HitPoints";
-import Type, { CharacterType } from "../../shared/components/Type";
+import Type, { CharacterType } from "../../shared/components/characterTypes";
 import { CharacterMessage } from "../../shared/messages/schema";
 
 class CharacterDeserializer extends System {

@@ -1,6 +1,6 @@
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import OutgoingMessage from "../../shared/components/OutgoingMessage";
+import OutMessage from "../../shared/components/OutMessage";
 import WebSocket from "../components/WebSocket";
 import Writer from "../../shared/messages/schema/Writer";
 
@@ -12,7 +12,7 @@ class Broadcast extends System {
   start(): void {}
 
   update(): void {
-    this.engine.query(this.broadcast, OutgoingMessage);
+    this.engine.query(this.broadcast, OutMessage);
 
     // Taken from crystal implementation....
     // # TODO: activate & test more bandwidth efficient option
@@ -22,14 +22,11 @@ class Broadcast extends System {
 
   destroy(): void {}
 
-  private broadcast = ([outgoingMessage]: [OutgoingMessage<any>]) => {
-    const recipientWebSocket = this.engine.getComponentById<WebSocket>(
-      WebSocket,
-      outgoingMessage.recipient
-    );
-    const binaryMessage = Writer.messageComponentToBinary(outgoingMessage);
+  private broadcast = ([outMessage]: [OutMessage<any>]) => {
+    const recipientWebSocket = this.engine.getComponentById(outMessage.recipient, WebSocket);
+    const binaryMessage = Writer.messageComponentToBinary(outMessage);
     recipientWebSocket.websocket.send(binaryMessage);
-    this.engine.removeComponent(outgoingMessage);
+    this.engine.removeComponent(outMessage);
   };
 
   // Taken from crystal implementation....

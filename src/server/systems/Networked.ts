@@ -1,6 +1,6 @@
 import System from "../../shared/ecs/System";
 import { EntityId } from "../../shared/ecs/types";
-import OutMessage from "../../shared/components/OutgoingMessage";
+import OutMessage from "../../shared/components/OutMessage";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
 import NetworkedComponent from "../../shared/components/interfaces/Networked";
 
