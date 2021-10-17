@@ -21,7 +21,7 @@ class EntityIdPool {
   }
 
   // TODO: jests
-  import = ({
+  deserialize = ({
     lastUsedEntityId,
     reclaimedEntityIdPool,
     reclaimedEntityIdPoolSize,
@@ -32,7 +32,7 @@ class EntityIdPool {
   };
 
   // TODO: jests
-  export = (): EntityIdPoolParams => {
+  serialize = (): EntityIdPoolParams => {
     return {
       lastUsedEntityId: this._lastUsedEntityId,
       reclaimedEntityIdPool: this._reclaimedEntityIdPool,

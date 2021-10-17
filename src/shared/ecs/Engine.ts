@@ -26,9 +26,9 @@ class Engine {
   // _systemUpdateFunctions: ((engine: Engine, deltaTime: DeltaTime) => void)[];
   private _systems: System[]; // NOTE: handle onn system to call start() and destroy()
   private _componentLists: { [key: string]: SparseSet<Component> };
-  private _entityIdPool: EntityIdPool;
   private _debug: boolean | undefined;
   private _entityIdAliases: SparseSet<EntityIdAlias>;
+  readonly entityIdPool: EntityIdPool;
 
   constructor(debug?: boolean) {
     this._debug = debug;
@@ -38,7 +38,7 @@ class Engine {
     this._updating = false;
     this._componentLists = {};
     // this.updateComplete = new signals.Signal(); // TODO: signals?? https://github.com/millermedeiros/js-signals
-    this._entityIdPool = new EntityIdPool();
+    this.entityIdPool = new EntityIdPool();
     this._entityIdAliases = new SparseSet();
     // this._events = {
     //   removedComponent: (component: Component, oldEntityId: EntityId) => {},
@@ -46,12 +46,16 @@ class Engine {
   }
 
   // TODO: jests
-  importEntityIdPool = (params: EntityIdPoolParams) => {
-    this._entityIdPool.import(params);
+  serialize = () => {
+    // TODO: serialize entityId pool & all serializable components
+    // TODO: serialize _entityIdAliases too ?!?
   };
 
   // TODO: jests
-  exportEntityIdPool = () => this._entityIdPool.export();
+  deserialize = () => {
+    // TODO: deserialize entityId pool & all serializable components
+    // TODO: deserialize _entityIdAliases too ?!?
+  };
 
   addSystem = (system: System) => {
     // addSystem = (system: System, priority?: number) => {
@@ -170,37 +174,34 @@ class Engine {
   //   // return entity;
   // };
 
-  newEntityId = (): EntityId => this._entityIdPool.getId();
+  newEntityId = (): EntityId => this.entityIdPool.getId();
 
-  // TODO: jests for returning entityId or null
   newEntityIdWithAlias = (aliasId: EntityId): EntityId | null => {
     const entityId = this.newEntityId();
     if (this.addEntityIdAlias(entityId, aliasId)) return entityId;
 
-    this._entityIdPool.reclaimId(entityId);
+    this.entityIdPool.reclaimId(entityId);
     return null;
   };
 
-  // TODO: jests for returning alias or null
-  addEntityIdAlias = (entityId: EntityId, aliasId: EntityId): EntityIdAlias | null => {
-    return this._entityIdAliases.add(new EntityIdAlias(aliasId, entityId));
+  addEntityIdAlias = (entityId: EntityId, aliasId: EntityId): EntityId | null => {
+    const addedAliasId = this._entityIdAliases.add(new EntityIdAlias(aliasId, entityId));
+    return addedAliasId ? addedAliasId.id : null;
   };
 
   getEntityIdByAlias = (aliasId: EntityId) => {
     return (<EntityIdAlias>this._entityIdAliases.get(aliasId))?.entityId;
   };
 
-  // TODO: jests
-  getOrAddEntityIdByAlias = (aliasId: EntityId): EntityId => {
+  getOrCreateEntityIdByAlias = (aliasId: EntityId): EntityId => {
     const entityId = this.getEntityIdByAlias(aliasId);
-    return entityId ? entityId : this.newEntityIdWithAlias(aliasId);
+    return isNumber(entityId) ? entityId : this.newEntityIdWithAlias(aliasId);
   };
 
-  // TODO: jests
   getOrCreateNullComponentById = <T extends Component>(
     entityId: EntityId,
     componentClass: ComponentClass<T>
-  ) => {
+  ): T => {
     let networkedComponent = this.getComponentById(entityId, componentClass);
     return networkedComponent ? networkedComponent : Component.createNull(entityId, componentClass);
   };
@@ -208,15 +209,13 @@ class Engine {
   removeEntity = (entityId: EntityId) => {
     // NOTE: In EnTT this happens by iterating every single sparse set in the registry, checking if it contains the entity, and deleting it if it does.
     Object.values(this._componentLists).forEach(componentList => componentList.remove(entityId));
-
-    this._entityIdPool.reclaimId(entityId);
+    this.entityIdPool.reclaimId(entityId);
   };
 
   // NOTE: fast O(1) bulk operations
-  removeAllEntities = () => {
+  removeAllComponents = () => {
     Object.values(this._componentLists).forEach(componentList => componentList.clear());
-
-    this._entityIdPool.clear();
+    this.entityIdPool.clear();
   };
 
   update = (deltaTime: DeltaTime) => {
@@ -286,7 +285,7 @@ class Engine {
 
   private reclaimEntityIdIfFree = (entityId: EntityId) => {
     if (this.getAllComponentsOfId(entityId).length === 0) {
-      this._entityIdPool.reclaimId(entityId);
+      this.entityIdPool.reclaimId(entityId);
       // entity.reload();
     }
   };

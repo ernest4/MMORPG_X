@@ -3,6 +3,7 @@ import Component from "../../Component";
 import Engine from "../../Engine";
 import System from "../../System";
 import NumberComponent from "../helpers/components/NumberComponent";
+import StrictNumberComponent from "../helpers/components/StrictNumberComponent";
 import StringComponent from "../helpers/components/StringComponent";
 
 class TestySystem extends System {
@@ -514,24 +515,106 @@ describe(Engine, () => {
       entityId = engine.newEntityIdWithAlias(aliasId);
     });
 
-    it("adds alias to entityId", () => {
+    it("returns entityId", () => {
       expect(entityId).toBeNumber();
       expect(entityId).not.toEqual(aliasId);
+    });
+
+    it("adds alias to entityId", () => {
       expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
+    });
+
+    context("when alias already exists", () => {
+      it("returns null", () => {
+        expect(engine.newEntityIdWithAlias(aliasId)).toBeNull();
+      });
+
+      it("reclaims entity id", () => {
+        expect(engine.entityIdPool.serialize().reclaimedEntityIdPool).toEqual([]);
+        expect(engine.entityIdPool.serialize().reclaimedEntityIdPoolSize).toEqual(0);
+        engine.newEntityIdWithAlias(aliasId);
+        expect(engine.entityIdPool.serialize().reclaimedEntityIdPool).toEqual([1]);
+        expect(engine.entityIdPool.serialize().reclaimedEntityIdPoolSize).toEqual(1);
+      });
     });
   });
 
   // also tests #getEntityIdByAlias
   describe("#addEntityIdAlias", () => {
     const aliasId = 123;
+    let addResult;
 
     beforeEach(() => {
-      entityId = engine.newEntityId();
-      engine.addEntityIdAlias(entityId, aliasId);
+      addResult = engine.addEntityIdAlias(entityId, aliasId);
     });
 
     it("adds alias to entityId", () => {
       expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
+    });
+
+    it("returns added alias", () => {
+      expect(addResult).toEqual(aliasId);
+    });
+
+    context("when alias exists", () => {
+      it("does not add alias to entityId", () => {
+        expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
+        engine.addEntityIdAlias(12345678, aliasId);
+        expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
+      });
+
+      it("returns null", () => {
+        addResult = engine.addEntityIdAlias(entityId, aliasId);
+        expect(addResult).toEqual(null);
+      });
+    });
+  });
+
+  describe("#getOrCreateEntityIdByAlias", () => {
+    const aliasId = 123456;
+
+    beforeEach(() => {
+      entityId = engine.getOrCreateEntityIdByAlias(aliasId);
+    });
+
+    context("when alias does not yet exist", () => {
+      it("returns entityId", () => {
+        expect(entityId).toBeNumber();
+        expect(entityId).not.toEqual(aliasId);
+      });
+
+      it("adds alias to entityId", () => {
+        expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
+      });
+    });
+
+    context("when alias already exists", () => {
+      it("returns existing entityId", () => {
+        expect(engine.getOrCreateEntityIdByAlias(aliasId)).toEqual(entityId);
+      });
+    });
+  });
+
+  describe("#getOrCreateNullComponentById", () => {
+    beforeEach(() => {
+      component = engine.getOrCreateNullComponentById(entityId, NumberComponent);
+      component2 = engine.getOrCreateNullComponentById(entityId, StrictNumberComponent);
+    });
+
+    context("when component does not yet exist", () => {
+      it("returns null component", () => {
+        expect(component).toBeInstanceOf(NumberComponent);
+        expect((<any>component).testNumber).toEqual(5); // NumberComponent default
+
+        expect(component2).toBeInstanceOf(StrictNumberComponent);
+        expect((<any>component2).testNumber).toEqual(undefined);
+      });
+    });
+
+    context("when component already exists", () => {
+      it("returns existing component", () => {
+        expect(engine.getOrCreateNullComponentById(entityId, NumberComponent)).toEqual(component);
+      });
     });
   });
 
@@ -569,7 +652,7 @@ describe(Engine, () => {
       engine.addComponent(new NumberComponent(entityId2));
       engine.addComponent(new StringComponent(entityId2));
 
-      engine.removeAllEntities();
+      engine.removeAllComponents();
     });
 
     it("removes all components associated with the entityId", () => {

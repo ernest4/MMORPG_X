@@ -31,7 +31,7 @@ class ApplyParsedMessages<T extends MESSAGE_TYPE> extends System {
     const [messageComponent] = querySet as [NetworkedComponentMessage<T>];
     const { parsedMessage } = messageComponent;
 
-    const entityId = this.engine.getOrAddEntityIdByAlias(<number>parsedMessage.entityId);
+    const entityId = this.engine.getOrCreateEntityIdByAlias(<number>parsedMessage.entityId);
     const networkedComponent = this.engine.getOrCreateNullComponentById(
       entityId,
       this.networkedComponentClass
