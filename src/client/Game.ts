@@ -13,10 +13,16 @@ import Broadcast from "./systems/Broadcast";
 import MovementControl from "./systems/MovementControl";
 import SpriteLoader from "./systems/SpriteLoader";
 import ApplyParsedMessages from "./systems/ApplyParsedMessages";
-import { CharacterMessage, HitPointsMessage, TransformMessage } from "../shared/messages/schema";
+import {
+  CharacterMessage,
+  HitPointsMessage,
+  HunterMessage,
+  TransformMessage,
+} from "../shared/messages/schema";
 import Transform from "../shared/components/Transform";
 import HitPoints from "../shared/components/HitPoints";
 import Character from "../shared/components/Character";
+import Hunter from "../shared/components/characterTypes/Hunter";
 // import FpsCounter from "./utils/FpsCounter";
 
 const PHASER_GAME_CONFIG = {
@@ -73,6 +79,10 @@ class Game {
     this._engine.addSystem(new ApplyParsedMessages(this._engine, Character, CharacterMessage));
     this._engine.addSystem(new ApplyParsedMessages(this._engine, Transform, TransformMessage));
     this._engine.addSystem(new ApplyParsedMessages(this._engine, HitPoints, HitPointsMessage));
+    // CharacterTypes ==>
+    this._engine.addSystem(new ApplyParsedMessages(this._engine, Hunter, HunterMessage));
+    // this._engine.addSystem(new ApplyParsedMessages(this._engine, Hacker, HackerMessage));
+    // <== CharacterTypes
     // ... REST ...
 
     // this._engine.addSystem(new CharacterPosition(this._engine));

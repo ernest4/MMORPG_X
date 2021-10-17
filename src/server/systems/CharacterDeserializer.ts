@@ -13,7 +13,6 @@ import PhysicsBody from "../components/PhysicsBody";
 import Transform from "../../shared/components/Transform";
 import Hunter from "../../shared/components/characterTypes/Hunter";
 import { DEFAULT_ROOM_NAME } from "../game/State";
-import Type, { CharacterType } from "../../shared/components/characterTypes";
 
 class CharacterDeserializer extends System {
   constructor(engine: Engine) {

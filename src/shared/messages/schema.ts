@@ -65,7 +65,7 @@ export enum MESSAGE_TYPE {
   TRANSFORM,
   CHARACTER,
   NAME,
-  TYPE,
+  HUNTER,
   CHARACTER_DISCONNECTED,
   ROOM_INIT,
   MOVE,
@@ -84,7 +84,7 @@ export class PongMessage extends Message<MESSAGE_TYPE.PONG> {}
 export class TransformMessage extends Message<MESSAGE_TYPE.TRANSFORM> {}
 export class CharacterMessage extends Message<MESSAGE_TYPE.CHARACTER> {}
 export class NameMessage extends Message<MESSAGE_TYPE.NAME> {}
-export class TypeMessage extends Message<MESSAGE_TYPE.TYPE> {}
+export class HunterMessage extends Message<MESSAGE_TYPE.HUNTER> {}
 export class CharacterDisconnectedMessage extends Message<MESSAGE_TYPE.CHARACTER_DISCONNECTED> {}
 export class RoomInitMessage extends Message<MESSAGE_TYPE.ROOM_INIT> {}
 export class MoveMessage extends Message<MESSAGE_TYPE.MOVE> {}
@@ -125,12 +125,11 @@ const SCHEMA = {
     },
     [component]: CharacterMessage,
   },
-  [MESSAGE_TYPE.TYPE]: {
+  [MESSAGE_TYPE.HUNTER]: {
     [parsedMessage]: {
       ...entityId(0),
-      type: u8(1),
     },
-    [component]: TypeMessage,
+    [component]: HunterMessage,
   },
   [MESSAGE_TYPE.NAME]: {
     [parsedMessage]: {
