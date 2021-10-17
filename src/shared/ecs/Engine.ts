@@ -133,10 +133,6 @@ class Engine {
     componentClasses.forEach(this.removeComponentsOfClass);
   };
 
-  // getComponentById = <T extends Component>(entityId: EntityId, componentClass: ComponentClass) => {
-  //   return this._componentLists[componentClass.name]?.get(entityId) as T | null;
-  // };
-
   getComponentById = <T extends Component>(
     entityId: EntityId,
     componentClass: ComponentClass<T>
@@ -144,7 +140,6 @@ class Engine {
     return this._componentLists[componentClass.name]?.get(entityId) as T | null;
   };
 
-  // TODO: specs (still broken...)
   getComponentsById = (
     entityId: EntityId,
     ...componentClasses: ComponentClass<any>[]

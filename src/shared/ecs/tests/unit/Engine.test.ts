@@ -453,8 +453,9 @@ describe(Engine, () => {
         engine.removeComponent(component);
       });
 
-      it("returns the rest of components", () => {
+      it("returns null for that component and the rest of components", () => {
         expect(engine.getComponentsById(entityId, NumberComponent, StringComponent)).toEqual([
+          null,
           component2,
         ]);
       });
@@ -465,8 +466,11 @@ describe(Engine, () => {
         engine.removeComponents(component, component2);
       });
 
-      it("returns empty array", () => {
-        expect(engine.getComponentsById(entityId, NumberComponent, StringComponent)).toEqual([]);
+      it("returns null array", () => {
+        expect(engine.getComponentsById(entityId, NumberComponent, StringComponent)).toEqual([
+          null,
+          null,
+        ]);
       });
     });
   });

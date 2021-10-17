@@ -60,16 +60,16 @@ class Entity {
     return components;
   };
 
-  // TODO: jests
-  removeComponent = (componentClass: ComponentClass) => {
-    // TODO: check (validate) against internal hash ?
-    this._engine.removeComponentById(this.id, componentClass);
-  };
+  // // TODO: jests
+  // removeComponent = (componentClass: ComponentClass) => {
+  //   // TODO: check (validate) against internal hash ?
+  //   this._engine.removeComponentById(this.id, componentClass);
+  // };
 
-  // TODO: jests
-  removeComponents = (...componentClasses: ComponentClass[]) => {
-    this._engine.removeComponentsById(this.id, ...componentClasses);
-  };
+  // // TODO: jests
+  // removeComponents = (...componentClasses: ComponentClass[]) => {
+  //   this._engine.removeComponentsById(this.id, ...componentClasses);
+  // };
 
   // getComponent = <T extends Component>(componentClass: ComponentClass) => {
   //   return this._engine.getComponent<T>(componentClass, this.id);
