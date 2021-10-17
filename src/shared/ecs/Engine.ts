@@ -85,12 +85,13 @@ class Engine {
     return component;
   };
 
+  addComponents = (...components: Component[]) => components.forEach(this.addComponent);
+
+  // TODO: sketches...
   addComponentToEntity = <T extends Component>(entity: Entity, component: T) => {
     entity._loadComponent(component); // TODO: maybe call reload() sticking to public api? but it's expensive, will loop through all component lists...
     return this.addComponent(component);
   };
-
-  addComponents = (...components: Component[]) => components.forEach(this.addComponent);
 
   removeComponent = (component: Component) => {
     // NOTE: indexing using component class name
@@ -106,7 +107,10 @@ class Engine {
 
   removeComponents = (...components: Component[]) => components.forEach(this.removeComponent);
 
-  removeComponentById = (entityId: EntityId, componentClass: ComponentClass) => {
+  removeComponentById = <T extends Component>(
+    entityId: EntityId,
+    componentClass: ComponentClass<T>
+  ) => {
     const componentList = this._componentLists[componentClass.name];
     if (!componentList) return;
 
@@ -114,26 +118,46 @@ class Engine {
     if (isNumber(entityId)) this.reclaimEntityIdIfFree(entityId);
   };
 
-  removeComponentsById = (entityId: EntityId, ...componentClasses: ComponentClass[]) => {
-    const callback = (componentClass: ComponentClass) => {
+  removeComponentsById = (entityId: EntityId, ...componentClasses: ComponentClass<any>[]) => {
+    const callback = (componentClass: ComponentClass<any>) => {
       this.removeComponentById(entityId, componentClass);
     };
     componentClasses.forEach(callback);
   };
 
-  removeComponentsOfClass = (componentClass: ComponentClass) => {
+  removeComponentsOfClass = <T extends Component>(componentClass: ComponentClass<T>) => {
     this._componentLists[componentClass.name]?.stream(this.removeComponent);
   };
 
-  removeComponentsOfClasses = (...componentClasses: ComponentClass[]) => {
+  removeComponentsOfClasses = (...componentClasses: ComponentClass<any>[]) => {
     componentClasses.forEach(this.removeComponentsOfClass);
   };
 
-  getComponent = <T extends Component>(componentClass: ComponentClass, entityId: EntityId) => {
+  // getComponentById = <T extends Component>(entityId: EntityId, componentClass: ComponentClass) => {
+  //   return this._componentLists[componentClass.name]?.get(entityId) as T | null;
+  // };
+
+  getComponentById = <T extends Component>(
+    entityId: EntityId,
+    componentClass: ComponentClass<T>
+  ) => {
     return this._componentLists[componentClass.name]?.get(entityId) as T | null;
   };
 
-  getComponents = (entityId: EntityId) => {
+  // TODO: specs (still broken...)
+  getComponentsById = (
+    entityId: EntityId,
+    ...componentClasses: ComponentClass<any>[]
+  ): Component[] => {
+    const components: Component[] = [];
+    const callback = (componentClass: ComponentClass<any>) => {
+      components.push(this.getComponentById(entityId, componentClass));
+    };
+    componentClasses.forEach(callback);
+    return components;
+  };
+
+  getAllComponentsOfId = (entityId: EntityId) => {
     let components: Component[] = [];
     Object.values(this._componentLists).forEach(componentList => {
       const component = componentList.get(entityId);
@@ -191,7 +215,7 @@ class Engine {
     // this.updateComplete.dispatch(); // TODO: signals??
   };
 
-  query = (callback: QueryCallback, ...componentClasses: ComponentClass[]) => {
+  query = (callback: QueryCallback, ...componentClasses: ComponentClass<any>[]) => {
     if (componentClasses.length === 0) throw Error("Empty Query");
 
     // NOTE: finding shortest component list
@@ -247,7 +271,7 @@ class Engine {
   private updateSystem = (system: System) => system.update();
 
   private reclaimEntityIdIfFree = (entityId: EntityId) => {
-    if (this.getComponents(entityId).length === 0) {
+    if (this.getAllComponentsOfId(entityId).length === 0) {
       this._entityIdPool.reclaimId(entityId);
       // entity.reload();
     }

@@ -48,7 +48,7 @@ class SpatialPartitioning extends System {
   };
 
   private getOrCreateNearbyCharactersComponent = (entityId: EntityId): NearbyCharacters => {
-    const nearbyCharacters = this.engine.getComponent<NearbyCharacters>(NearbyCharacters, entityId);
+    const nearbyCharacters = this.engine.getComponentById<NearbyCharacters>(NearbyCharacters, entityId);
     if (!nearbyCharacters) return this.engine.addComponent(new NearbyCharacters(entityId));
     return nearbyCharacters;
   };

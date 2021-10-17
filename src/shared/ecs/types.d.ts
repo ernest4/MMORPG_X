@@ -20,10 +20,16 @@ enum DeltaTime {} // ms
 enum EntityId {}
 type QuerySet = Component[];
 type QueryCallback = (querySet: QuerySet) => void;
-type ComponentClass = {
+// type ComponentClass = {
+//   name: string;
+//   prototype: Component;
+//   new (entityId: EntityId, ...arguments: any[]): Component;
+// };
+
+type ComponentClass<T extends Component> = {
   name: string;
-  prototype: Component;
-  new (entityId: EntityId, ...arguments: any[]): Component;
+  prototype: T;
+  new (entityId: EntityId, ...arguments: any[]): T;
 };
 
 // NOTE: using string enums over number enums as number enums are not enforceable in the type check!

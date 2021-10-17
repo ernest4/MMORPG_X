@@ -401,7 +401,7 @@ describe(Engine, () => {
     });
   });
 
-  describe("#getComponent", () => {
+  describe("#getComponentById", () => {
     beforeEach(() => {
       entityId = engine.newEntityId();
       component = new NumberComponent(entityId);
@@ -410,7 +410,7 @@ describe(Engine, () => {
 
     context("when entity has component", () => {
       it("returns component", () => {
-        expect(engine.getComponent<NumberComponent>(NumberComponent, entityId)).toEqual(component);
+        expect(engine.getComponentById(entityId, NumberComponent)).toEqual(component);
       });
     });
 
@@ -420,18 +420,58 @@ describe(Engine, () => {
       });
 
       it("returns null", () => {
-        expect(engine.getComponent<NumberComponent>(NumberComponent, entityId)).toEqual(null);
+        expect(engine.getComponentById(entityId, NumberComponent)).toEqual(null);
       });
     });
 
     context("when no component of that type exists at all", () => {
       it("returns null", () => {
-        expect(engine.getComponent<StringComponent>(StringComponent, entityId)).not.toBeDefined();
+        expect(engine.getComponentById(entityId, StringComponent)).not.toBeDefined();
       });
     });
   });
 
-  describe("#getComponents", () => {
+  describe("#getComponentsById", () => {
+    beforeEach(() => {
+      entityId = engine.newEntityId();
+      component = new NumberComponent(entityId);
+      component2 = new StringComponent(entityId);
+      engine.addComponents(component, component2);
+    });
+
+    context("when entity has component", () => {
+      it("returns component", () => {
+        expect(engine.getComponentsById(entityId, NumberComponent, StringComponent)).toEqual([
+          component,
+          component2,
+        ]);
+      });
+    });
+
+    context("when entity does not a the component", () => {
+      beforeEach(() => {
+        engine.removeComponent(component);
+      });
+
+      it("returns the rest of components", () => {
+        expect(engine.getComponentsById(entityId, NumberComponent, StringComponent)).toEqual([
+          component2,
+        ]);
+      });
+    });
+
+    context("when no components exists at all", () => {
+      beforeEach(() => {
+        engine.removeComponents(component, component2);
+      });
+
+      it("returns empty array", () => {
+        expect(engine.getComponentsById(entityId, NumberComponent, StringComponent)).toEqual([]);
+      });
+    });
+  });
+
+  describe("#getAllComponentsOfId", () => {
     beforeEach(() => {
       entityId = engine.newEntityId();
       component = new NumberComponent(entityId);
@@ -442,7 +482,7 @@ describe(Engine, () => {
 
     context("when entity has all possible components", () => {
       it("returns array of components for given entityId", () => {
-        expect(engine.getComponents(entityId)).toEqual([component, component2]);
+        expect(engine.getAllComponentsOfId(entityId)).toEqual([component, component2]);
       });
     });
 
@@ -452,7 +492,7 @@ describe(Engine, () => {
       });
 
       it("returns array of components for given entityId", () => {
-        expect(engine.getComponents(entityId)).toEqual([component2]);
+        expect(engine.getAllComponentsOfId(entityId)).toEqual([component2]);
       });
     });
   });

@@ -60,7 +60,7 @@ class Interaction extends System {
   private registerInteractiveEntityListeners = (querySet: QuerySet) => {
     const [interactive] = querySet as [Interactive];
 
-    const sprite = this.engine.getComponent<Sprite>(Sprite, interactive.id);
+    const sprite = this.engine.getComponentById<Sprite>(Sprite, interactive.id);
 
     // NOTE: Interactive without Sprite doesn't make sense, so dispose of it
     if (!sprite) return this.disposeUnusedInteractiveComponent(interactive);
@@ -137,7 +137,7 @@ class Interaction extends System {
       return;
     }
 
-    const sprite = this.engine.getComponent<Sprite>(Sprite, interactive.id);
+    const sprite = this.engine.getComponentById<Sprite>(Sprite, interactive.id);
 
     const phaserSprite = sprite?.phaserSprite;
 

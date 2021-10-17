@@ -91,7 +91,7 @@ class Serialization extends System {
 
     // NOTE: serialize https://web.dev/file-system-access/#read-a-file-from-the-file-system
 
-    const components = this.engine.getComponents(transform.id);
+    const components = this.engine.getAllComponentsOfId(transform.id);
     const permittedComponents = components.filter(({ serializable }) => serializable);
 
     permittedComponents.forEach(async component => {

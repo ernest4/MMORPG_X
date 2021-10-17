@@ -24,7 +24,7 @@ class CharacterPosition extends System {
     const entityId = this.engine.getEntityIdByAlias(characterId);
 
     if (entityId) {
-      const transform = this.engine.getComponent<Transform>(Transform, entityId);
+      const transform = this.engine.getComponentById<Transform>(Transform, entityId);
       if (transform) transform.position.xyz = { x, y, z };
     }
   };

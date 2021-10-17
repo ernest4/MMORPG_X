@@ -23,7 +23,7 @@ class Broadcast extends System {
   destroy(): void {}
 
   private broadcast = ([outgoingMessage]: [OutgoingMessage<any>]) => {
-    const recipientWebSocket = this.engine.getComponent<WebSocket>(
+    const recipientWebSocket = this.engine.getComponentById<WebSocket>(
       WebSocket,
       outgoingMessage.recipient
     );

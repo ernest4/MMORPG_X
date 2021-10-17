@@ -83,7 +83,7 @@ class SceneEditor extends System {
 
     if (!cloneEntity) return;
 
-    const originalEntityComponents = this.engine.getComponents(originalEntityId);
+    const originalEntityComponents = this.engine.getAllComponentsOfId(originalEntityId);
 
     const entityId = this.newEntityId();
 
@@ -112,7 +112,7 @@ class SceneEditor extends System {
 
     store.dispatch(sceneEditorActions.setCloneEntity(false));
     store.dispatch(sceneEditorActions.setCurrentEntityId(entityId));
-    const components = this.engine.getComponents(entityId);
+    const components = this.engine.getAllComponentsOfId(entityId);
     store.dispatch(sceneEditorActions.setCurrentEntityComponents([components]));
   };
 
@@ -130,7 +130,7 @@ class SceneEditor extends System {
 
   private processAddList = (entityId: EntityId) => {
     const sceneEditorStore = store.getState().sceneEditor as any;
-    const components = this.engine.getComponents(entityId);
+    const components = this.engine.getAllComponentsOfId(entityId);
     const currentEntityComponentsAddList = sceneEditorStore.currentEntityComponentsAddList;
 
     if (currentEntityComponentsAddList?.length === 0) return;
@@ -153,7 +153,7 @@ class SceneEditor extends System {
     Object.entries(currentEntityComponentsUpdateHash).forEach(
       ([componentName, componentProperties]: [string, any]) => {
         const componentClass = (availableComponents as any)[componentName];
-        const component = this.engine.getComponent(componentClass, entityId);
+        const component = this.engine.getComponentById(componentClass, entityId);
 
         if (!component) return;
 
@@ -171,7 +171,7 @@ class SceneEditor extends System {
 
   private processRemoveList = (entityId: EntityId) => {
     const sceneEditorStore = store.getState().sceneEditor as any;
-    const components = this.engine.getComponents(entityId);
+    const components = this.engine.getAllComponentsOfId(entityId);
     const currentEntityComponentsRemoveList = sceneEditorStore.currentEntityComponentsRemoveList;
 
     if (currentEntityComponentsRemoveList?.length === 0) return;
@@ -193,7 +193,7 @@ class SceneEditor extends System {
   private attachInteractiveToAllSprites = (querySet: QuerySet) => {
     const [sprite] = querySet as [Sprite];
 
-    const existingInteractiveComponent = this.engine.getComponent<Interactive>(
+    const existingInteractiveComponent = this.engine.getComponentById<Interactive>(
       Interactive,
       sprite.id
     );
@@ -229,7 +229,7 @@ class SceneEditor extends System {
   };
 
   private pushEntityComponentsToRedux = (entityId: EntityId) => {
-    const components = this.engine.getComponents(entityId);
+    const components = this.engine.getAllComponentsOfId(entityId);
     store.dispatch(sceneEditorActions.setCurrentEntityComponents(components));
   };
 

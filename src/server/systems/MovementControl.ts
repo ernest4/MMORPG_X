@@ -44,8 +44,8 @@ class MovementControl extends System {
     // const entity = this.engine.getEntity(move.fromEntityId);
     // const [physicsBody, speed] = entity.getComponents(PhysicsBody, Speed) as [PhysicsBody, Speed];
     // OR? const [physicsBody, speed] = entity.getComponents<PhysicsBody, Speed>(PhysicsBody, Speed);
-    const physicsBody = this.engine.getComponent<PhysicsBody>(PhysicsBody, fromEntityId);
-    const { speed } = this.engine.getComponent<Speed>(Speed, fromEntityId);
+    const physicsBody = this.engine.getComponentById<PhysicsBody>(PhysicsBody, fromEntityId);
+    const { speed } = this.engine.getComponentById<Speed>(Speed, fromEntityId);
     const direction = parsedMessage.direction;
     const newLinearVelocity = this.calculateNewLinearVelocity(speed, direction);
     physicsBody.linearVelocity.xyz = newLinearVelocity;

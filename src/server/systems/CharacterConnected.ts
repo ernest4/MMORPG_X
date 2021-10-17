@@ -1,7 +1,7 @@
 import ConnectionEvent from "../../shared/components/ConnectionEvent";
 import Transform from "../../shared/components/Transform";
 import { Engine } from "../../shared/ecs";
-import System from "../../shared/ecs/System";
+import Networked from "./Networked";
 import { EntityId, QuerySet } from "../../shared/ecs/types";
 import { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import Name from "../../shared/components/Name";
@@ -12,12 +12,12 @@ import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
-import Networked from "../../shared/components/interfaces/Networked";
+// import Networked from "../../shared/components/interfaces/Networked";
 import Character from "../../shared/components/Character";
 
 const queryComponents = [ConnectionEvent, Room, NearbyCharacters];
 
-class CharacterConnected extends System {
+class CharacterConnected extends Networked {
   private _state: State;
 
   constructor(engine: Engine, state: State) {
@@ -48,34 +48,25 @@ class CharacterConnected extends System {
     let outMessageComponents: OutMessage<any>[] = [];
 
     const newCharacterComponents = this.getCharacterComponents(newCharacterId);
-    outMessageComponents = [
-      this.createRoomInitMessageComponent(room, newCharacterId), // TODO: convert this to newOutMessage ??!?
-      ...this.newOutMessages(newCharacterComponents),
-    ];
+    this.engine.addComponent(this.createRoomInitMessageComponent(room, newCharacterId));
+    this.addOutMessageComponents(newCharacterComponents);
+    // outMessageComponents = [
+    //   this.createRoomInitMessageComponent(room, newCharacterId), // TODO: convert this to newOutMessage ??!?
+    //   ...this.newOutMessageComponents(newCharacterComponents),
+    // ];
 
     nearbyCharacters.entityIdSet.stream(({ id: nearbyCharacterId }: SparseSetItem) => {
       const nearbyCharacterComponents = this.getCharacterComponents(nearbyCharacterId);
-      outMessageComponents = [
-        ...outMessageComponents,
-        ...this.newOutMessages(newCharacterComponents, nearbyCharacterId),
-        ...this.newOutMessages(nearbyCharacterComponents, newCharacterId),
-      ];
+      // outMessageComponents = [
+      //   ...outMessageComponents,
+      //   ...this.newOutMessageComponents(newCharacterComponents, nearbyCharacterId),
+      //   ...this.newOutMessageComponents(nearbyCharacterComponents, newCharacterId),
+      // ];
+      this.addOutMessageComponents(newCharacterComponents, nearbyCharacterId);
+      this.addOutMessageComponents(nearbyCharacterComponents, newCharacterId);
     });
 
-    this.engine.addComponents(...outMessageComponents);
-  };
-
-  // TODO: sketch...move out to utils?
-  private newOutMessage = <T extends MESSAGE_TYPE>(
-    { messageType, parsedMessage, entityId }: Networked<T>,
-    recipient?: EntityId
-  ) => {
-    return new OutMessage(this.newEntityId(), messageType, parsedMessage, recipient || entityId);
-  };
-
-  // TODO: sketch...move out to utils?
-  private newOutMessages = (components: Networked<any>[], recipient?: EntityId) => {
-    return components.map(component => this.newOutMessage(component, recipient));
+    // this.engine.addComponents(...outMessageComponents);
   };
 
   private createRoomInitMessageComponent = ({ roomName }: Room, toEntityId: EntityId) => {
@@ -89,11 +80,11 @@ class CharacterConnected extends System {
 
   private getCharacterComponents = (entityId: EntityId) => {
     return [
-      this.engine.getComponent<Character>(Character, entityId),
-      this.engine.getComponent<Name>(Name, entityId),
-      this.engine.getComponent<Type>(Type, entityId),
-      this.engine.getComponent<HitPoints>(HitPoints, entityId),
-      this.engine.getComponent<Transform>(Transform, entityId),
+      this.engine.getComponentById<Character>(Character, entityId),
+      this.engine.getComponentById<Name>(Name, entityId),
+      this.engine.getComponentById<Type>(Type, entityId),
+      this.engine.getComponentById<HitPoints>(HitPoints, entityId),
+      this.engine.getComponentById<Transform>(Transform, entityId),
     ];
   };
 }

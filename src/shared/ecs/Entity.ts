@@ -104,7 +104,7 @@ class Entity {
   // ALTHOUGH entities are kinda ephemeral...
   // could have loadComponents() method to reinitialize a cached entity if needed?
   private loadComponents = () => {
-    const components = this._engine.getComponents(this.id);
+    const components = this._engine.getAllComponentsOfId(this.id);
     // NOTE: this is totally fine in JS, but TS gets real pissy about undefined methods like that
     // components.forEach(component => {
     //   this[component.constructor.name.toLowerCase()] = component;

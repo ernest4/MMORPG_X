@@ -38,7 +38,7 @@ describe(Movement, () => {
     });
 
     it("updates transforms based on physicsBody", () => {
-      const transform = engine.getComponent<Transform>(Transform, entityId);
+      const transform = engine.getComponentById(entityId, Transform);
       expect(transform!.position.x).toEqual(105);
       expect(transform!.position.y).toEqual(106);
       expect(transform!.rotation.z).toEqual(100);

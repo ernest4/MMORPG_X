@@ -25,8 +25,8 @@ class CharacterMove extends System {
     let serverMessageComponents: OutgoingMessage<any>[] = [];
 
     // TODO: use future 'Entity' api here...
-    const nearbyCharacters = this.engine.getComponent<NearbyCharacters>(NearbyCharacters, move.id);
-    const transform = this.engine.getComponent<Transform>(Transform, move.id);
+    const nearbyCharacters = this.engine.getComponentById<NearbyCharacters>(NearbyCharacters, move.id);
+    const transform = this.engine.getComponentById<Transform>(Transform, move.id);
 
     serverMessageComponents.push(this.createPositionMessageComponent(transform, transform.id));
 
