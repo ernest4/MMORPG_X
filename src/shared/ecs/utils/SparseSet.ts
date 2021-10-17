@@ -16,10 +16,10 @@ export class SparseSetItem {
   }
 }
 
-class SparseSet {
+class SparseSet<T extends SparseSetItem> {
   // TODO: will want to optimize these lists to use ArrayBuffer for dense memory access where
   // possible?
-  private _denseList: SparseSetItem[];
+  private _denseList: T[];
   // TODO: Sparse lists will become hash maps in V8 optimizer. They are less efficient in speed
   // compared to arrays. So maybe use fixed size ArrayBuffer as well? Dynamically grow it yourself?
   private _sparseList: number[];
@@ -39,7 +39,7 @@ class SparseSet {
     this._elementCount = 0; // No elements initially
   }
 
-  get = (id: number): SparseSetItem | null => {
+  get = (id: number): T | null => {
     // Searched element must be in range
     // if (x > maxValue) return -1;
 
@@ -57,7 +57,7 @@ class SparseSet {
   };
 
   // Inserts a new element into set
-  add = (item: SparseSetItem) => {
+  add = (item: T) => {
     const itemId = item.id;
 
     //  Corner cases, x must not be out of
@@ -80,8 +80,8 @@ class SparseSet {
   // A function that deletes 'x' if present in this data
   // structure, else it does nothing (just returns).
   // By deleting 'x', we unset 'x' from this set.
-  remove = (item: SparseSetItem | number): number | null => {
-    const itemId = isNumber(item) ? (item as number) : (item as SparseSetItem).id;
+  remove = (item: T | number): number | null => {
+    const itemId = isNumber(item) ? (item as number) : (item as T).id;
 
     // If x is not present
     if (this.get(itemId) === null) return null;

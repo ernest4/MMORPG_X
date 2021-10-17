@@ -17,8 +17,9 @@ class Type extends Networked<MESSAGE_TYPE.TYPE> {
   }
 
   get parsedMessage(): { type: UInt8; entityId: Int32 } {
-    const { type, entityId } = this;
-    return <{ type: UInt8; entityId }>(<any>{ type, entityId });
+    // const { type, entityId } = this;
+    // return <{ type: UInt8; entityId }>(<any>{ type, entityId });
+    return <{ type: UInt8; entityId }>(<any>this);
   }
 }
 

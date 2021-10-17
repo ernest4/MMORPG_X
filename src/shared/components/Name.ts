@@ -12,8 +12,7 @@ class Name extends Networked<MESSAGE_TYPE.NAME> {
   }
 
   get parsedMessage(): { name: string; entityId: Int32 } {
-    const { id: characterId, name } = this;
-    return { entityId: characterId, name };
+    return this;
   }
 }
 

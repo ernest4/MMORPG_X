@@ -29,8 +29,8 @@ class Transform extends Networked<MESSAGE_TYPE.TRANSFORM> {
     // this._children = entityId[]; ???
   }
 
-  get parsedMessage(): { x: Float32; y: Float32; z: Float32; characterId: Int32 } {
-    return { ...this.position.xyz, characterId: this.id };
+  get parsedMessage(): { x: Float32; y: Float32; z: Float32; entityId: Int32 } {
+    return { ...this.position.xyz, entityId: this.entityId };
   }
 }
 

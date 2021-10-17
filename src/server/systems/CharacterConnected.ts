@@ -2,7 +2,7 @@ import ConnectionEvent from "../../shared/components/ConnectionEvent";
 import Transform from "../../shared/components/Transform";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import { EntityId } from "../../shared/ecs/types";
+import { EntityId, QuerySet } from "../../shared/ecs/types";
 import { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import Name from "../../shared/components/Name";
 import Type from "../../shared/components/Type";
@@ -12,11 +12,30 @@ import Room from "../components/Room";
 import State from "../game/State";
 import HitPoints from "../../shared/components/HitPoints";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
-import Component from "../../shared/ecs/Component";
 import Networked from "../../shared/components/Networked";
+import Character from "../../shared/components/Character";
 
-const queryComponents = [ConnectionEvent, Name, Type, HitPoints, Transform, Room, NearbyCharacters];
-type ComponentsSet = [ConnectionEvent, Name, Type, HitPoints, Transform, Room, NearbyCharacters];
+const queryComponents = [
+  ConnectionEvent,
+  Character,
+  Name,
+  Type,
+  HitPoints,
+  Transform,
+  Room,
+  NearbyCharacters,
+] as const;
+
+type ComponentsSet = [
+  ConnectionEvent,
+  Character,
+  Name,
+  Type,
+  HitPoints,
+  Transform,
+  Room,
+  NearbyCharacters
+];
 class CharacterConnected extends System {
   private _state: State;
 
@@ -33,23 +52,22 @@ class CharacterConnected extends System {
 
   destroy(): void {}
 
-  private createServerMessages = (querySet: ComponentsSet) => {
-    const [connectionEvent, name, type, hitPoints, transform, room, nearbyCharacters] = querySet;
+  private createServerMessages = (querySet: QuerySet) => {
+    const [connectionEvent, character, name, type, hitPoints, transform, room, nearbyCharacters] =
+      querySet as ComponentsSet;
 
     // TODO: future 'Entity' API sample: ...
     // const entity = this.engine.getEntity(connectionEvent.id);
     // const components = entity.getComponents(...queryComponents) as ComponentsSet;
     // OR? const components = entity.getComponents<ComponentsSet>(...queryComponents);
 
-    let serverMessageComponents: OutMessage<any>[] = [];
+    let outMessageComponents: OutMessage<any>[] = [];
     const newCharacterId = connectionEvent.id;
 
-    serverMessageComponents = [
-      // TODO: convert these to newOutMessage ??!?
+    outMessageComponents = [
+      // TODO: convert this to newOutMessage ??!?
       this.createRoomInitMessageComponent(room, newCharacterId),
-      this.createConnectedMessageComponent(name, type, newCharacterId),
-      this.newOutMessage(hitPoints, newCharacterId),
-      this.newOutMessage(transform, newCharacterId),
+      ...this.newOutMessages([character, name, type, hitPoints, transform]),
     ];
 
     nearbyCharacters.entityIdSet.stream(({ id: nearbyCharacterId }: SparseSetItem) => {
@@ -64,8 +82,8 @@ class CharacterConnected extends System {
         nearbyCharacterId
       );
 
-      serverMessageComponents = [
-        ...serverMessageComponents,
+      outMessageComponents = [
+        ...outMessageComponents,
         this.createConnectedMessageComponent(name, type, nearbyCharacterId),
         this.newOutMessage(transform, nearbyCharacterId),
         this.newOutMessage(hitPoints, nearbyCharacterId),
@@ -79,36 +97,27 @@ class CharacterConnected extends System {
       ];
     });
 
-    this.engine.addComponents(...serverMessageComponents);
+    this.engine.addComponents(...outMessageComponents);
   };
 
-  // TODO: sketch...
+  // TODO: sketch...move out to utils?
   private newOutMessage = <T extends MESSAGE_TYPE>(
-    { messageType, parsedMessage }: Networked<T>,
-    to: EntityId
+    { messageType, parsedMessage, entityId }: Networked<T>,
+    recipient?: EntityId
   ) => {
-    return new OutMessage(this.newEntityId(), messageType, parsedMessage, to);
+    return new OutMessage(this.newEntityId(), messageType, parsedMessage, recipient || entityId);
+  };
+
+  // TODO: sketch...move out to utils?
+  private newOutMessages = (components: Networked<any>[], recipient?: EntityId) => {
+    return components.map(component => this.newOutMessage(component, recipient));
   };
 
   private createRoomInitMessageComponent = ({ roomName }: Room, toEntityId: EntityId) => {
-    const { tileSizeInPx, widthInTiles, heightInTiles, tiles } = this._state.rooms[roomName];
     return new OutMessage(
       this.newEntityId(),
       MESSAGE_TYPE.ROOM_INIT,
-      { tileSizeInPx, widthInTiles, heightInTiles, tiles },
-      toEntityId
-    );
-  };
-
-  private createConnectedMessageComponent = (
-    { id: characterId, name: characterName }: Name,
-    { type }: Type,
-    toEntityId: EntityId
-  ) => {
-    return new OutMessage(
-      this.newEntityId(),
-      MESSAGE_TYPE.CHARACTER,
-      { characterId, characterName, characterType: <number>type },
+      this._state.rooms[roomName],
       toEntityId
     );
   };

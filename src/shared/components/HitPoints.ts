@@ -11,9 +11,8 @@ class HitPoints extends Networked<MESSAGE_TYPE.HITPOINTS> {
     this.hitPoints = hitPoints;
   }
 
-  get parsedMessage(): { hitPoints: Int32; characterId: Int32 } {
-    const { hitPoints, id: characterId } = this;
-    return { hitPoints, characterId };
+  get parsedMessage(): { hitPoints: Int32; entityId: Int32 } {
+    return this;
   }
 }
 

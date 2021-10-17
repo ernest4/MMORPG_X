@@ -12,7 +12,7 @@ describe(SparseSet, () => {
   let numberComponent2: NumberComponent;
   let numberComponent3: NumberComponent;
 
-  let subject: SparseSet;
+  let subject: SparseSet<Component>;
 
   beforeEach(() => {
     subject = new SparseSet();

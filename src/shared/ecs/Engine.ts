@@ -18,17 +18,17 @@ class EntityIdAlias extends SparseSetItem {
 
 // TODO: jest tests !!!!
 class Engine {
-  _deltaTime: DeltaTime;
-  _updating: boolean;
+  private _deltaTime: DeltaTime;
+  private _updating: boolean;
   // updateComplete: any; // TODO: better type?
   // NOTE: for faster iteration, reference straight to update function, one indirection instead of 2
   // (-> system -> update)
   // _systemUpdateFunctions: ((engine: Engine, deltaTime: DeltaTime) => void)[];
-  _systems: System[]; // NOTE: handle onn system to call start() and destroy()
-  _componentLists: { [key: string]: SparseSet };
-  _entityIdPool: EntityIdPool;
+  private _systems: System[]; // NOTE: handle onn system to call start() and destroy()
+  private _componentLists: { [key: string]: SparseSet<Component> };
+  private _entityIdPool: EntityIdPool;
   private _debug: boolean | undefined;
-  private _entityIdAliases: SparseSet;
+  private _entityIdAliases: SparseSet<EntityIdAlias>;
 
   constructor(debug?: boolean) {
     this._debug = debug;
