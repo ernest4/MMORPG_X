@@ -1,25 +1,12 @@
-import { DIRECTION, DIRECTIONS } from "../../server/systems/MovementControl";
-import OutMessage from "../../shared/components/OutMessage";
+import { DIRECTION } from "../../server/systems/MovementControl";
+import Networked from "../../shared/systems/Networked";
 import { Engine } from "../../shared/ecs";
-import System from "../../shared/ecs/System";
 import { QuerySet } from "../../shared/ecs/types";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
 import InputEvent from "../components/InputEvent";
 import { INPUT_EVENT_TYPES, INPUT_KEYS } from "./InputListener";
 
-const MOVEMENT_INPUTS = [
-  [INPUT_EVENT_TYPES.KEYDOWN, INPUT_KEYS.A],
-  [INPUT_EVENT_TYPES.KEYDOWN, INPUT_KEYS.W],
-  [INPUT_EVENT_TYPES.KEYDOWN, INPUT_KEYS.S],
-  [INPUT_EVENT_TYPES.KEYDOWN, INPUT_KEYS.D],
-
-  // [INPUT_EVENT_TYPES.KEYUP, INPUT_KEYS.A],
-  // [INPUT_EVENT_TYPES.KEYUP, INPUT_KEYS.W],
-  // [INPUT_EVENT_TYPES.KEYUP, INPUT_KEYS.S],
-  // [INPUT_EVENT_TYPES.KEYUP, INPUT_KEYS.D],
-];
-
-class MovementControl extends System {
+class MovementControl extends Networked {
   constructor(engine: Engine) {
     super(engine);
   }
@@ -27,6 +14,11 @@ class MovementControl extends System {
   start(): void {}
 
   update(): void {
+    // TODO:
+    // ok for now, need to get state later to distinguish between
+    // 'D' for moving and 'D' for writing a message...
+    // this.engine.query(this.applyInputEvents, InputEvent, Walking);
+    // 'Walking' is a state component. Others could be e.g. 'Talking' when writing message?
     this.engine.query(this.applyInputEvents, InputEvent);
   }
 
@@ -34,38 +26,25 @@ class MovementControl extends System {
 
   private applyInputEvents = (querySet: QuerySet) => {
     const [inputEvent] = querySet as [InputEvent];
-
-    if (this.isMovementInput(inputEvent)) this.applyMovementInputEvent(inputEvent);
-  };
-
-  private isMovementInput = ({ type, key }: InputEvent): boolean => {
-    return MOVEMENT_INPUTS.some(
-      ([movementType, movementKey]) => type === movementType && key === movementKey
-    );
-  };
-
-  private applyMovementInputEvent = (inputEvent: InputEvent) => {
     const direction = this.getDirection(inputEvent);
-    if (!direction) return;
+    if (direction === null) return;
 
-    this.engine.addComponent(
-      new OutMessage(this.newEntityId(), MESSAGE_TYPE.MOVE, { direction })
-    );
+    this.addOutMessageComponentWith(MESSAGE_TYPE.MOVE, { direction } as { direction: number });
   };
 
   private getDirection = ({ type, key }: InputEvent): DIRECTION | null => {
     switch (key) {
       case INPUT_KEYS.A:
-        if (type === INPUT_EVENT_TYPES.KEYDOWN) return DIRECTIONS.LEFT;
+        if (type === INPUT_EVENT_TYPES.KEYDOWN) return DIRECTION.LEFT;
         break;
       case INPUT_KEYS.D:
-        if (type === INPUT_EVENT_TYPES.KEYDOWN) return DIRECTIONS.RIGHT;
+        if (type === INPUT_EVENT_TYPES.KEYDOWN) return DIRECTION.RIGHT;
         break;
       case INPUT_KEYS.W:
-        if (type === INPUT_EVENT_TYPES.KEYDOWN) return DIRECTIONS.UP;
+        if (type === INPUT_EVENT_TYPES.KEYDOWN) return DIRECTION.UP;
         break;
       case INPUT_KEYS.S:
-        if (type === INPUT_EVENT_TYPES.KEYDOWN) return DIRECTIONS.DOWN;
+        if (type === INPUT_EVENT_TYPES.KEYDOWN) return DIRECTION.DOWN;
         break;
     }
 

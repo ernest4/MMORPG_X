@@ -7,18 +7,18 @@ import Speed from "../components/Speed";
 import { QuerySet } from "../../shared/ecs/types";
 import { MoveMessage } from "../../shared/messages/schema";
 
-export const DIRECTIONS = {
-  LEFT: 1,
-  LEFT_UP: 2,
-  UP: 3,
-  RIGHT_UP: 4,
-  RIGHT: 5,
-  RIGHT_DOWN: 6,
-  DOWN: 7,
-  LEFT_DOWN: 8,
-} as const;
+export enum DIRECTION {
+  LEFT,
+  LEFT_UP,
+  UP,
+  RIGHT_UP,
+  RIGHT,
+  RIGHT_DOWN,
+  DOWN,
+  LEFT_DOWN,
+}
 
-export type DIRECTION = typeof DIRECTIONS[keyof typeof DIRECTIONS];
+// export type DIRECTION = typeof DIRECTIONS[keyof typeof DIRECTIONS];
 
 class MovementControl extends System {
   constructor(engine: Engine) {
@@ -57,28 +57,28 @@ class MovementControl extends System {
     let newLinearVelocity: Vector3Hash = { x: 0, y: 0, z: 0 };
 
     switch (direction) {
-      case DIRECTIONS.LEFT:
+      case DIRECTION.LEFT:
         newLinearVelocity = { x: -speed, y: 0, z: 0 };
         break;
-      case DIRECTIONS.LEFT_UP:
+      case DIRECTION.LEFT_UP:
         newLinearVelocity = { x: -speed, y: -speed, z: 0 };
         break;
-      case DIRECTIONS.UP:
+      case DIRECTION.UP:
         newLinearVelocity = { x: 0, y: -speed, z: 0 };
         break;
-      case DIRECTIONS.RIGHT_UP:
+      case DIRECTION.RIGHT_UP:
         newLinearVelocity = { x: speed, y: -speed, z: 0 };
         break;
-      case DIRECTIONS.RIGHT:
+      case DIRECTION.RIGHT:
         newLinearVelocity = { x: speed, y: 0, z: 0 };
         break;
-      case DIRECTIONS.RIGHT_DOWN:
+      case DIRECTION.RIGHT_DOWN:
         newLinearVelocity = { x: speed, y: speed, z: 0 };
         break;
-      case DIRECTIONS.DOWN:
+      case DIRECTION.DOWN:
         newLinearVelocity = { x: 0, y: speed, z: 0 };
         break;
-      case DIRECTIONS.LEFT_DOWN:
+      case DIRECTION.LEFT_DOWN:
         newLinearVelocity = { x: -speed, y: speed, z: 0 };
         break;
     }

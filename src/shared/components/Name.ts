@@ -17,7 +17,7 @@ class Name extends Component implements Networked<MESSAGE_TYPE.NAME> {
     return this;
   }
 
-  applyParsedMessage({ name }: { name: string; entityId: Int32 }) {
+  synchronizeFrom({ name }: { name: string; entityId: Int32 }) {
     this.name = name;
   }
 }

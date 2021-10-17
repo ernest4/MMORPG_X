@@ -25,7 +25,7 @@ class TransformMessage extends System {
 
     if (entityId) {
       const transform = this.engine.getComponentById(entityId, Transform);
-      if (transform) transform.applyParsedMessage(transformMessage.parsedMessage);
+      if (transform) transform.synchronizeFrom(transformMessage.parsedMessage);
     }
   };
 }

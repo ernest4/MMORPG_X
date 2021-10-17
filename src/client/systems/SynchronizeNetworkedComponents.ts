@@ -2,10 +2,10 @@ import Networked from "../../shared/components/interfaces/Networked";
 import NetworkedComponentMessage from "../../shared/components/NetworkedComponentMessage";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import { ComponentClass, EntityId, QuerySet } from "../../shared/ecs/types";
+import { ComponentClass, QuerySet } from "../../shared/ecs/types";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
 
-class ApplyParsedMessages<T extends MESSAGE_TYPE> extends System {
+class SynchronizeNetworkedComponents<T extends MESSAGE_TYPE> extends System {
   networkedComponentClass: ComponentClass<Networked<T>>;
   messageComponentClass: ComponentClass<NetworkedComponentMessage<T>>;
 
@@ -37,8 +37,8 @@ class ApplyParsedMessages<T extends MESSAGE_TYPE> extends System {
       this.networkedComponentClass
     );
 
-    networkedComponent.applyParsedMessage(parsedMessage);
+    networkedComponent.synchronizeFrom(parsedMessage);
   };
 }
 
-export default ApplyParsedMessages;
+export default SynchronizeNetworkedComponents;

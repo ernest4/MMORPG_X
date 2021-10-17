@@ -35,7 +35,7 @@ class Transform extends Component implements Networked<MESSAGE_TYPE.TRANSFORM> {
     return { ...this.position.xyz, entityId: this.entityId };
   }
 
-  applyParsedMessage({ x, y, z }: { x: Float32; y: Float32; z: Float32; entityId: Int32 }) {
+  synchronizeFrom({ x, y, z }: { x: Float32; y: Float32; z: Float32; entityId: Int32 }) {
     this.position.xyz = { x, y, z };
   }
 }

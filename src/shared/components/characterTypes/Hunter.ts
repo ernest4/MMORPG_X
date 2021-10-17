@@ -15,7 +15,7 @@ class Hunter extends Component implements Networked<MESSAGE_TYPE.HUNTER> {
     return this;
   }
 
-  applyParsedMessage(parsedMessage: { entityId: Int32 }) {
+  synchronizeFrom(parsedMessage: { entityId: Int32 }) {
     // NOOP
   }
 }

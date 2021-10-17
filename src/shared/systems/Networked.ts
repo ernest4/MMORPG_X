@@ -1,14 +1,19 @@
-import System from "../../shared/ecs/System";
-import { EntityId } from "../../shared/ecs/types";
-import OutMessage from "../../shared/components/OutMessage";
-import { MESSAGE_TYPE } from "../../shared/messages/schema";
-import NetworkedComponent from "../../shared/components/interfaces/Networked";
+import System from "../ecs/System";
+import { EntityId } from "../ecs/types";
+import OutMessage from "../components/OutMessage";
+import { MESSAGE_TYPE, ParsedMessage } from "../messages/schema";
+import NetworkedComponent from "../components/interfaces/Networked";
 
 abstract class Networked extends System {
-  // TODO: sketches
-  // addOutMessageComponentWith = (messageType, parsedMessage) => {
-  //   // TODO: ...
-  // };
+  addOutMessageComponentWith = <T extends MESSAGE_TYPE>(
+    messageType: T,
+    parsedMessage: ParsedMessage<T>,
+    recipient?: EntityId
+  ) => {
+    this.engine.addComponent(
+      new OutMessage(this.newEntityId(), messageType, parsedMessage, recipient)
+    );
+  };
 
   // addOutMessageComponentsWith = () => {
   //   // TODO: ...

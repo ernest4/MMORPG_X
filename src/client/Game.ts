@@ -12,17 +12,19 @@ import SpriteRender from "./systems/SpriteRender";
 import Broadcast from "./systems/Broadcast";
 import MovementControl from "./systems/MovementControl";
 import SpriteLoader from "./systems/SpriteLoader";
-import ApplyParsedMessages from "./systems/ApplyParsedMessages";
+import SynchronizeNetworkedComponents from "./systems/SynchronizeNetworkedComponents";
 import {
   CharacterMessage,
   HitPointsMessage,
   HunterMessage,
+  NameMessage,
   TransformMessage,
 } from "../shared/messages/schema";
 import Transform from "../shared/components/Transform";
 import HitPoints from "../shared/components/HitPoints";
 import Character from "../shared/components/Character";
 import Hunter from "../shared/components/characterTypes/Hunter";
+import Name from "../shared/components/Name";
 // import FpsCounter from "./utils/FpsCounter";
 
 const PHASER_GAME_CONFIG = {
@@ -74,13 +76,13 @@ class Game {
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new InputListener(this._engine, this._scene));
     this._engine.addSystem(new MovementControl(this._engine));
-    // TODO: more granular, system per received message. In each if entity (character) does not
-    // exist yet, just make on on the spot, so you dont need to worry about message order
-    this._engine.addSystem(new ApplyParsedMessages(this._engine, Character, CharacterMessage));
-    this._engine.addSystem(new ApplyParsedMessages(this._engine, Transform, TransformMessage));
-    this._engine.addSystem(new ApplyParsedMessages(this._engine, HitPoints, HitPointsMessage));
+    
+    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Character, CharacterMessage));
+    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Name, NameMessage));
+    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Transform, TransformMessage));
+    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, HitPoints, HitPointsMessage));
     // CharacterTypes ==>
-    this._engine.addSystem(new ApplyParsedMessages(this._engine, Hunter, HunterMessage));
+    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Hunter, HunterMessage));
     // this._engine.addSystem(new ApplyParsedMessages(this._engine, Hacker, HackerMessage));
     // <== CharacterTypes
     // ... REST ...

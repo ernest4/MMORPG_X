@@ -1,6 +1,6 @@
 import Transform from "../../shared/components/Transform";
 import { Engine } from "../../shared/ecs";
-import Networked from "../systems/Networked";
+import Networked from "../../shared/systems/Networked";
 import { QuerySet } from "../../shared/ecs/types";
 import { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import NearbyCharacters from "../components/NearbyCharacters";
