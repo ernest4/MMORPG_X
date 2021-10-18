@@ -17,7 +17,7 @@ import State from "./game/State";
 import SpatialPartitioning from "./systems/SpatialPartitioning";
 import CharacterConnected from "./systems/CharacterConnected";
 import Broadcast from "./systems/Broadcast";
-import TransformChanged from "./systems/TransformChanged";
+// import TransformChanged from "./systems/TransformChanged";
 import NetworkedComponentPublisher from "./systems/NetworkedComponentPublisher";
 import { MoveMessage } from "../shared/messages/schema";
 import Transform from "../shared/components/Transform";
@@ -57,12 +57,12 @@ class Game {
     this._engine.addSystem(new SpatialPartitioning(this._engine, this._state));
     this._engine.addSystem(new CharacterConnected(this._engine, this._state));
 
-    // TODO: need some more abstract system for this kinda like SynchronizeNetworkedComponents in
-    // client side.
-    // Perhaps add isChanged() to networked component interface and if true, create OutMessage ?
-    this._engine.addSystem(new TransformChanged(this._engine));
-    this._engine.addSystem(new HitPointsChanged(this._engine));
-    this._engine.addSystem(new NetworkedComponentPublisher(this._engine, Transform, MoveMessage));
+    this._engine.addSystem(
+      new NetworkedComponentPublisher(this._engine, Transform, [
+        MoveMessage /* SomeEventComponent, AnotherEventComponent */,
+      ])
+    );
+
     // TODO: any other systems here
     // this._engine.addSystem(new Serializer(this._engine)); # gonna invoke sidekiq workers
     // this._engine.addSystem(new AI(this._engine));
