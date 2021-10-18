@@ -5,7 +5,7 @@ import System from "../../shared/ecs/System";
 import { ComponentClass, QuerySet } from "../../shared/ecs/types";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
 
-class SynchronizeNetworkedComponents<T extends MESSAGE_TYPE> extends System {
+class NetworkedComponentsSynchronizer<T extends MESSAGE_TYPE> extends System {
   networkedComponentClass: ComponentClass<Networked<T>>;
   messageComponentClass: ComponentClass<NetworkedComponentMessage<T>>;
 
@@ -41,4 +41,4 @@ class SynchronizeNetworkedComponents<T extends MESSAGE_TYPE> extends System {
   };
 }
 
-export default SynchronizeNetworkedComponents;
+export default NetworkedComponentsSynchronizer;

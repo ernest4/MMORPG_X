@@ -9,10 +9,10 @@ import InputListener from "./systems/InputListener";
 import Manager from "./systems/Manager";
 import MessageListener from "./systems/MessageListener";
 import SpriteRender from "./systems/SpriteRender";
-import Broadcast from "./systems/Broadcast";
+import Broadcaster from "./systems/Broadcaster";
 import MovementControlPublisher from "./systems/MovementControlPublisher";
-import SpriteLoader from "./systems/SpriteLoader";
-import SynchronizeNetworkedComponents from "./systems/SynchronizeNetworkedComponents";
+import SpriteLoader from "./systems/SpriteLoaderEvent";
+import NetComponentsSyncer from "./systems/NetworkedComponentsSynchronizer";
 import {
   CharacterMessage,
   HitPointsMessage,
@@ -75,23 +75,27 @@ class Game {
     this._engine.addSystem(new MessageDeserializer(this._engine));
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new InputListener(this._engine, this._scene));
+
     this._engine.addSystem(new MovementControlPublisher(this._engine));
-    
-    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Character, CharacterMessage));
-    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Name, NameMessage));
-    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Transform, TransformMessage));
-    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, HitPoints, HitPointsMessage));
+
+    this._engine.addSystem(new NetComponentsSyncer(this._engine, Character, CharacterMessage));
+    this._engine.addSystem(new NetComponentsSyncer(this._engine, Name, NameMessage));
+    this._engine.addSystem(new NetComponentsSyncer(this._engine, Transform, TransformMessage));
+    this._engine.addSystem(new NetComponentsSyncer(this._engine, HitPoints, HitPointsMessage));
     // CharacterTypes ==>
-    this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Hunter, HunterMessage));
+    this._engine.addSystem(new NetComponentsSyncer(this._engine, Hunter, HunterMessage));
     // this._engine.addSystem(new ApplyParsedMessages(this._engine, Hacker, HackerMessage));
     // <== CharacterTypes
     // ... REST ...
 
-    // this._engine.addSystem(new CharacterPosition(this._engine));
+    // TODO: something needs to pull in the room data and trigger loading assets for that
+    // TODO: something needs to trigger character sprite to load, Hunter component for now?
+    // NEED TO PRODUCE LoadSpriteEvent !
+
     // this._engine.addSystem(new AssetLoader(this._engine)); // TODO: async load in sprites / textures /sounds etc
     this._engine.addSystem(new SpriteLoader(this._engine, this._scene)); // TODO: refactor into asset loader?
     this._engine.addSystem(new SpriteRender(this._engine));
-    this._engine.addSystem(new Broadcast(this._engine, this._webSocket)); // NOTE: always last
+    this._engine.addSystem(new Broadcaster(this._engine, this._webSocket)); // NOTE: always last
 
     // this._engine.addSystem(new Serialization(this._engine, this));
     // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));

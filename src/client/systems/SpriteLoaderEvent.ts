@@ -1,14 +1,15 @@
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { EntityId, QuerySet } from "../../shared/ecs/types";
-import LoadSprite from "../components/LoadSprite";
+import LoadSpriteEvent from "../components/LoadSprite";
 import Buffer from "../../shared/utils/Buffer";
+import { Sprite } from "../components";
 
 type LoadEvent = {
   key: string;
   type: string;
   texture: Phaser.Textures.Texture;
-  entityId: EntityId;
+  targetEntityId: EntityId;
 };
 
 class SpriteLoader extends System {
@@ -24,60 +25,49 @@ class SpriteLoader extends System {
   start(): void {}
 
   update(): void {
-    this.engine.query(this.queueLoadEvents, LoadSprite);
-    // this.engine.removeComponentsOfClass(LoadSprite);
+    this.engine.query(this.queueLoadEvents, LoadSpriteEvent);
+    this.engine.removeComponentsOfClass(LoadSpriteEvent);
     // start loading (can call this over and over, even when already loading...no harm)
     this._scene.load.start();
-    // this.createSprite;
+    this.createSpriteComponents();
   }
 
   destroy(): void {}
 
   private queueLoadEvents = (querySet: QuerySet) => {
-    const [loadSprite] = querySet as [LoadSprite];
+    const [{ url, frameConfig, targetEntityId }] = querySet as [LoadSpriteEvent];
 
-    const key = "bot";
     // TODO: check if loaded already and if so avoid loading again
-    this.isTextureLoading(key); // TODO: wip...
+    // this.isTextureLoading(key); // TODO: wip...
 
-    const pendingLoad = this._scene.load.spritesheet({
-      key,
-      url: "images/robot.png",
-      frameConfig: {
-        frameWidth: 32,
-        frameHeight: 38,
-        startFrame: 0,
-        endFrame: 8,
-      },
-    });
+    const pendingLoad = this._scene.load.spritesheet({ key: url, url, frameConfig });
     pendingLoad.on(
       "filecomplete",
-      (key, type, texture) => this.addLoadEvent(key, type, texture, loadSprite.id),
+      (key, type, texture) => this.addLoadEvent(key, type, texture, targetEntityId),
       this._scene
     );
-
-    //
-    // const entityId = this.engine.newEntityIdWithAlias(characterId);
-    // const characterComponents = [
-    //   new Character(entityId),
-    //   new Name(entityId, characterName),
-    //   new HitPoints(entityId, hitpoints),
-    //   new Transform(entityId, { x, y, z }),
-    // ];
-    // this.engine.addComponents(...characterComponents);
   };
 
-  private isTextureLoading = (textureUrl: string): boolean => {
-    return this._scene.textures.get(textureUrl).key === "__MISSING";
+  private createSpriteComponents = () => {
+    this._loadEventsBuffer.process(({ key, type, texture, targetEntityId }) => {
+      const phaserSprite = this._scene.add.sprite(0, 0, key);
+      const sprite = new Sprite(targetEntityId, phaserSprite);
+      this.engine.addComponent(sprite);
+    });
   };
+
+  // Not sure if this works as intended: https://photonstorm.github.io/phaser3-docs/Phaser.Textures.TextureManager.html
+  // private isTextureLoading = (textureUrl: string): boolean => {
+  //   return this._scene.textures.get(textureUrl).key === "__MISSING";
+  // };
 
   private addLoadEvent = (
     key: string,
     type: string,
     texture: Phaser.Textures.Texture,
-    entityId: EntityId
+    targetEntityId: EntityId
   ) => {
-    this._loadEventsBuffer.push({ key, type, texture, entityId });
+    this._loadEventsBuffer.push({ key, type, texture, targetEntityId });
   };
 }
 

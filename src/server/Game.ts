@@ -16,7 +16,7 @@ import Movement from "./systems/Movement";
 import State from "./game/State";
 import SpatialPartitioning from "./systems/SpatialPartitioning";
 import CharacterConnectedPublisher from "./systems/CharacterConnectedPublisher";
-import Broadcast from "./systems/Broadcast";
+import Broadcaster from "./systems/Broadcaster";
 // import TransformChanged from "./systems/TransformChanged";
 import NetworkedComponentNearbyPublisher from "./systems/NetworkedComponentNearbyPublisher";
 import { MoveMessage } from "../shared/messages/schema";
@@ -61,6 +61,7 @@ class Game {
     this._engine.addSystem(new Movement(this._engine));
     // this._engine.addSystem(new Collision(this._engine)); // TODO: takes in transform and checks it against map. Might be useful to store 'previous' values on Transform (that get auto updated) so in case of collision Transform could be reverted to that?
     this._engine.addSystem(new SpatialPartitioning(this._engine, this._state));
+
     this._engine.addSystem(new CharacterConnectedPublisher(this._engine, this._state));
 
     this._engine.addSystem(
@@ -99,7 +100,7 @@ class Game {
     // this._engine.addSystem(new Serializer(this._engine)); # gonna invoke sidekiq workers
     // this._engine.addSystem(new AI(this._engine));
     // this._engine.addSystem(new Script(this._engine)); // scripts ?
-    this._engine.addSystem(new Broadcast(this._engine)); // NOTE: always last
+    this._engine.addSystem(new Broadcaster(this._engine)); // NOTE: always last
   };
 
   private updateEngine = (deltaTime: DeltaTime) => this._engine.update(deltaTime);

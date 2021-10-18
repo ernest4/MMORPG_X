@@ -4,7 +4,7 @@ import Writer from "../../shared/messages/schema/Writer";
 import { QuerySet } from "../../shared/ecs/types";
 import OutMessage from "../../shared/components/OutMessage";
 
-class Broadcast extends System {
+class Broadcaster extends System {
   private _webSocket: WebSocket;
 
   constructor(engine: Engine, webSocket: WebSocket) {
@@ -72,4 +72,4 @@ class Broadcast extends System {
   // # end
 }
 
-export default Broadcast;
+export default Broadcaster;

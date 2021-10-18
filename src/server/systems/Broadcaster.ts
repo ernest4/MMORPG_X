@@ -4,7 +4,7 @@ import OutMessage from "../../shared/components/OutMessage";
 import WebSocket from "../components/WebSocket";
 import Writer from "../../shared/messages/schema/Writer";
 
-class Broadcast extends System {
+class Broadcaster extends System {
   constructor(engine: Engine) {
     super(engine);
   }
@@ -69,4 +69,4 @@ class Broadcast extends System {
   // # end
 }
 
-export default Broadcast;
+export default Broadcaster;

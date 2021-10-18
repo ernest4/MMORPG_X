@@ -7,9 +7,6 @@ class Sprite extends Component {
   constructor(entityId: EntityId, phaserSprite: Phaser.GameObjects.Sprite) {
     super(entityId);
     // this.frame = 0;
-    // this._textureUrl = "";
-    // this._frameWidth = 0;
-    // this._frameHeight = 0;
     this.phaserSprite = phaserSprite;
   }
 }
