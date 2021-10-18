@@ -29,8 +29,6 @@ class Transform extends Component implements Networked<MESSAGE_TYPE.TRANSFORM> {
     // when parent transform changes, child transform changes (thats how Unity does it)
     // get/set parent ???
     // this._children = entityId[]; ???
-
-    this.trackChanges("position", ...);
   }
 
   get parsedMessage(): { x: Float32; y: Float32; z: Float32; entityId: Int32 } {
@@ -43,9 +41,3 @@ class Transform extends Component implements Networked<MESSAGE_TYPE.TRANSFORM> {
 }
 
 export default Transform;
-
-
-// nah, go the other way. use marker components like MoveMessage but more general
-// like TransformChanged which are trigger from MoveMessage and the like to know when to
-// broadcast transform for e.g.
-// need to think about event vs not (based on entityId) here...

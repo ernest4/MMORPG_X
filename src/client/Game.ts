@@ -10,7 +10,7 @@ import Manager from "./systems/Manager";
 import MessageListener from "./systems/MessageListener";
 import SpriteRender from "./systems/SpriteRender";
 import Broadcast from "./systems/Broadcast";
-import MovementControl from "./systems/MovementControl";
+import MovementControlPublisher from "./systems/MovementControlPublisher";
 import SpriteLoader from "./systems/SpriteLoader";
 import SynchronizeNetworkedComponents from "./systems/SynchronizeNetworkedComponents";
 import {
@@ -75,7 +75,7 @@ class Game {
     this._engine.addSystem(new MessageDeserializer(this._engine));
     this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
     this._engine.addSystem(new InputListener(this._engine, this._scene));
-    this._engine.addSystem(new MovementControl(this._engine));
+    this._engine.addSystem(new MovementControlPublisher(this._engine));
     
     this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Character, CharacterMessage));
     this._engine.addSystem(new SynchronizeNetworkedComponents(this._engine, Name, NameMessage));

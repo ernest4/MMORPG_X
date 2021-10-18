@@ -5,7 +5,7 @@ import { MESSAGE_TYPE, ParsedMessage } from "../messages/schema";
 import NetworkedComponent from "../components/interfaces/Networked";
 
 // TODO: jests
-abstract class Networked extends System {
+abstract class Publisher extends System {
   // TODO: jests
   addOutMessageComponentWith = <T extends MESSAGE_TYPE>(
     messageType: T,
@@ -50,4 +50,4 @@ abstract class Networked extends System {
   };
 }
 
-export default Networked;
+export default Publisher;

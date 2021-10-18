@@ -18,20 +18,20 @@ abstract class Component extends SparseSetItem {
     return new componentClass(entityId);
   }
 
-  // TODO: wip use Proxy ??
-  trackChanges = (...fields: string[]) => {
-    fields.forEach(field => {
-      this[field] = this.changeTracker(field);
-    });
-  };
+  // // TODO: wip use Proxy ??
+  // trackChanges = (...fields: string[]) => {
+  //   fields.forEach(field => {
+  //     this[field] = this.changeTracker(field);
+  //   });
+  // };
 
-  hasChanged = (field?: string): boolean => {
-    // TODO: ...check all by default, otherwise specific field
-  };
+  // hasChanged = (field?: string): boolean => {
+  //   // TODO: ...check all by default, otherwise specific field
+  // };
 
-  private changeTracker = (field: string) => {
-    // TODO: ...
-  };
+  // private changeTracker = (field: string) => {
+  //   // TODO: ...
+  // };
 }
 
 export default Component;

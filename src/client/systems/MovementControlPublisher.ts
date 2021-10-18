@@ -1,12 +1,12 @@
 import { DIRECTION } from "../../server/systems/MovementControl";
-import Networked from "../../shared/systems/Networked";
+import Publisher from "../../shared/systems/Publisher";
 import { Engine } from "../../shared/ecs";
 import { QuerySet } from "../../shared/ecs/types";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
 import InputEvent from "../components/InputEvent";
 import { INPUT_EVENT_TYPES, INPUT_KEYS } from "./InputListener";
 
-class MovementControl extends Networked {
+class MovementControlPublisher extends Publisher {
   constructor(engine: Engine) {
     super(engine);
   }
@@ -52,4 +52,4 @@ class MovementControl extends Networked {
   };
 }
 
-export default MovementControl;
+export default MovementControlPublisher;

@@ -1,11 +1,11 @@
 import HitPoints from "../../shared/components/Transform";
 import { Engine } from "../../shared/ecs";
-import Networked from "../../shared/systems/Networked";
+import Publisher from "../../shared/systems/Publisher";
 import { QuerySet } from "../../shared/ecs/types";
 import { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import NearbyCharacters from "../components/NearbyCharacters";
 
-class HitPointsChanged extends Networked {
+class HitPointsChanged extends Publisher {
   constructor(engine: Engine) {
     super(engine);
   }

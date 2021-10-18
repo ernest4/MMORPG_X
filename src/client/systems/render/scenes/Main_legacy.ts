@@ -5,7 +5,7 @@ import Manager from "../../Manager";
 import SpriteRender from "../../SpriteRender";
 import InputListener from "../../InputListener";
 import Movement from "../../Movement";
-import MovementControl from "../../MovementControl";
+import MovementControlPublisher from "../../MovementControlPublisher";
 import { DEVELOPMENT } from "../../../../shared/utils/environment";
 import SceneEditor from "../../SceneEditor";
 import Interaction from "../../Interaction";
@@ -33,7 +33,7 @@ export default class Main extends Scene {
     // this._engine.addSystem(new Network(this._engine, this)); // TODO: networking here ...
     this._engine.addSystem(new InputListener(this._engine, this));
     this._engine.addSystem(new Interaction(this._engine, this));
-    this._engine.addSystem(new MovementControl(this._engine));
+    this._engine.addSystem(new MovementControlPublisher(this._engine));
     // this._engine.addSystem(new AI(this._engine));
     // physics
     this._engine.addSystem(new Dragging(this._engine));

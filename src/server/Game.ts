@@ -15,12 +15,18 @@ import MovementControl from "./systems/MovementControl";
 import Movement from "./systems/Movement";
 import State from "./game/State";
 import SpatialPartitioning from "./systems/SpatialPartitioning";
-import CharacterConnected from "./systems/CharacterConnected";
+import CharacterConnectedPublisher from "./systems/CharacterConnectedPublisher";
 import Broadcast from "./systems/Broadcast";
 // import TransformChanged from "./systems/TransformChanged";
-import NetworkedComponentPublisher from "./systems/NetworkedComponentPublisher";
+import NetworkedComponentNearbyPublisher from "./systems/NetworkedComponentNearbyPublisher";
 import { MoveMessage } from "../shared/messages/schema";
 import Transform from "../shared/components/Transform";
+import NearbyCharacterConnectedEvent from "./components/NearbyCharacterConnectedEvent";
+import ConnectionEvent from "../shared/components/ConnectionEvent";
+import Character from "../shared/components/Character";
+import Name from "../shared/components/Name";
+import Hunter from "../shared/components/characterTypes/Hunter";
+import HitPoints from "../shared/components/HitPoints";
 
 class Game {
   lastDeltaTime: any;
@@ -55,11 +61,37 @@ class Game {
     this._engine.addSystem(new Movement(this._engine));
     // this._engine.addSystem(new Collision(this._engine)); // TODO: takes in transform and checks it against map. Might be useful to store 'previous' values on Transform (that get auto updated) so in case of collision Transform could be reverted to that?
     this._engine.addSystem(new SpatialPartitioning(this._engine, this._state));
-    this._engine.addSystem(new CharacterConnected(this._engine, this._state));
+    this._engine.addSystem(new CharacterConnectedPublisher(this._engine, this._state));
 
     this._engine.addSystem(
-      new NetworkedComponentPublisher(this._engine, Transform, [
-        MoveMessage /* SomeEventComponent, AnotherEventComponent */,
+      new NetworkedComponentNearbyPublisher(this._engine, Character, [
+        ConnectionEvent,
+        NearbyCharacterConnectedEvent,
+      ])
+    );
+    this._engine.addSystem(
+      new NetworkedComponentNearbyPublisher(this._engine, Name, [
+        ConnectionEvent,
+        NearbyCharacterConnectedEvent,
+      ])
+    );
+    this._engine.addSystem(
+      new NetworkedComponentNearbyPublisher(this._engine, Hunter, [
+        ConnectionEvent,
+        NearbyCharacterConnectedEvent,
+      ])
+    );
+    this._engine.addSystem(
+      new NetworkedComponentNearbyPublisher(this._engine, HitPoints, [
+        ConnectionEvent,
+        NearbyCharacterConnectedEvent,
+      ])
+    );
+    this._engine.addSystem(
+      new NetworkedComponentNearbyPublisher(this._engine, Transform, [
+        MoveMessage,
+        ConnectionEvent,
+        NearbyCharacterConnectedEvent,
       ])
     );
 

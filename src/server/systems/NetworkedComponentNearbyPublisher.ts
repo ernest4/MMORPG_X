@@ -1,5 +1,5 @@
 import { Engine } from "../../shared/ecs";
-import NetworkedSystem from "../../shared/systems/Networked";
+import Publisher from "../../shared/systems/Publisher";
 import Networked from "../../shared/components/interfaces/Networked";
 import Event from "../../shared/components/interfaces/Event";
 import { ComponentClass, EntityId, QuerySet } from "../../shared/ecs/types";
@@ -7,7 +7,7 @@ import SparseSet, { SparseSetItem } from "../../shared/ecs/utils/SparseSet";
 import NearbyCharacters from "../components/NearbyCharacters";
 import { MESSAGE_TYPE } from "../../shared/messages/schema";
 
-class NetworkedComponentPublisher<T extends MESSAGE_TYPE> extends NetworkedSystem {
+class NetworkedComponentNearbyPublisher<T extends MESSAGE_TYPE> extends Publisher {
   private _networkedComponentClass: ComponentClass<Networked<T>>;
   private _eventComponentClasses: ComponentClass<Event>[];
   private _publishedTargetEntityIdsSet: SparseSet<SparseSetItem>;
@@ -44,6 +44,16 @@ class NetworkedComponentPublisher<T extends MESSAGE_TYPE> extends NetworkedSyste
     const [nearbyCharacters, networkedComponent] = <[NearbyCharacters, Networked<T>]>(
       this.engine.getComponentsById(targetEntityId, NearbyCharacters, this._networkedComponentClass)
     );
+    
+    if (!nearbyCharacters) return;
+    if (!networkedComponent) return;
+
+    // TODO: maybe above can use some utility helper like:
+    // withPresentItems((nearbyCharacters, networkedComponent) => {
+    //   // callback if all items present
+    // }, nearbyCharacters, networkedComponent)
+    // OR
+    // if areBlank(nearbyCharacters, networkedComponent) return;
 
     this.addOutMessageComponent(networkedComponent);
 
@@ -63,4 +73,4 @@ class NetworkedComponentPublisher<T extends MESSAGE_TYPE> extends NetworkedSyste
   };
 }
 
-export default NetworkedComponentPublisher;
+export default NetworkedComponentNearbyPublisher;
