@@ -18,6 +18,9 @@ import SpatialPartitioning from "./systems/SpatialPartitioning";
 import CharacterConnected from "./systems/CharacterConnected";
 import Broadcast from "./systems/Broadcast";
 import TransformChanged from "./systems/TransformChanged";
+import NetworkedComponentPublisher from "./systems/NetworkedComponentPublisher";
+import { MoveMessage } from "../shared/messages/schema";
+import Transform from "../shared/components/Transform";
 
 class Game {
   lastDeltaTime: any;
@@ -59,6 +62,7 @@ class Game {
     // Perhaps add isChanged() to networked component interface and if true, create OutMessage ?
     this._engine.addSystem(new TransformChanged(this._engine));
     this._engine.addSystem(new HitPointsChanged(this._engine));
+    this._engine.addSystem(new NetworkedComponentPublisher(this._engine, Transform, MoveMessage));
     // TODO: any other systems here
     // this._engine.addSystem(new Serializer(this._engine)); # gonna invoke sidekiq workers
     // this._engine.addSystem(new AI(this._engine));

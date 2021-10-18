@@ -2,7 +2,7 @@ import { ComponentClass, EntityId } from "./types";
 import { SparseSetItem } from "./utils/SparseSet";
 
 // NOTE: custom components will extend this.
-// NOTE: NO METHODS ON COMPONENTS !!!
+// NOTE: NO OTHER METHODS ON COMPONENTS (except getters/setters) !!!
 abstract class Component extends SparseSetItem {
   constructor(entityId: EntityId) {
     super(entityId);
@@ -18,18 +18,18 @@ abstract class Component extends SparseSetItem {
     return new componentClass(entityId);
   }
 
-  // TODO: wip
-  track = (...fields: string[]) => {
+  // TODO: wip use Proxy ??
+  trackChanges = (...fields: string[]) => {
     fields.forEach(field => {
-      this[field] = this.tracker(field);
+      this[field] = this.changeTracker(field);
     });
   };
 
-  isChanged = (field?: string): boolean => {
+  hasChanged = (field?: string): boolean => {
     // TODO: ...check all by default, otherwise specific field
   };
 
-  private tracker = (field: string) => {
+  private changeTracker = (field: string) => {
     // TODO: ...
   };
 }

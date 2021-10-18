@@ -1,8 +1,9 @@
 import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
 import { MESSAGE_TYPE, ParsedMessage } from "../messages/schema";
+import Event from "./interfaces/Event";
 
-class Message<T extends MESSAGE_TYPE> extends Component {
+class Message<T extends MESSAGE_TYPE> extends Component implements Event {
   parsedMessage: ParsedMessage<T>;
   sender?: EntityId;
 
@@ -10,6 +11,13 @@ class Message<T extends MESSAGE_TYPE> extends Component {
     super(entityId);
     this.parsedMessage = parsedMessage;
     this.sender = sender;
+  }
+
+  get targetEntityId(): EntityId {
+    // NOTE: kinda hacky...but i think it works
+    // this.sender covers client -> server messages
+    // this.parsedMessage["entityId"] covers server -> client messages
+    return this.sender || this.parsedMessage["entityId"];
   }
 }
 
