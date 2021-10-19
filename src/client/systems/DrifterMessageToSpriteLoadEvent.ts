@@ -1,11 +1,9 @@
-import ConnectionEvent from "../../shared/components/ConnectionEvent";
-import WebSocketComponent from "../components/WebSocket";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import Buffer from "../../shared/utils/Buffer";
 import Drifter from "../../shared/components/characterTypes/Drfiter";
 import { DrifterMessage } from "../../shared/messages/schema";
 import { QuerySet } from "../../shared/ecs/types";
+import { Sprite } from "../components";
 
 class DrifterMessageToSpriteLoadEvent extends System {
   constructor(engine: Engine) {
@@ -25,7 +23,10 @@ class DrifterMessageToSpriteLoadEvent extends System {
   private createSpriteLoadEvents = (querySet: QuerySet) => {
     const [drifter, drifterMessage] = querySet as [Drifter, DrifterMessage];
     // TODO
-    // 1. check if sprite exists for entity (aliased) that has Drifter component & drifter evevt
+    // 1. check if sprite exists for entity that has Drifter component & drifter evevt
+    const sprite = this.engine.getComponentById(drifter.entityId, Sprite);
+    if (sprite) return;
+
     // 2. if not, check if sprite load event exists, otherwise exit
     // 3. if not create sprite load event, otherwise exit
   };
