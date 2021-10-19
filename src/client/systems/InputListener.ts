@@ -2,6 +2,7 @@ import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import Buffer from "../../shared/utils/Buffer";
 import InputEvent from "../components/InputEvent";
+import Phaser from "phaser";
 
 export const INPUT_KEYS = {
   UP: "UP",

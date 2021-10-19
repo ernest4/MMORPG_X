@@ -1,7 +1,7 @@
 // import { Scene } from "babylonjs";
 // import { AdvancedDynamicTexture } from "babylonjs-gui";
-
-const DEBUG = process.env.DEBUG_LOG === "true" || process.env.NODE_ENV !== "production";
+export {};
+// const DEBUG = process.env.DEBUG_LOG === "true" || process.env.NODE_ENV !== "production";
 
 // export const showFPS = (advancedTexture: AdvancedDynamicTexture, scene: Scene) => {
 //   var fpsContainer = new BABYLON.GUI.Rectangle();

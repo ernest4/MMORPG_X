@@ -4,6 +4,7 @@ import { EntityId, QuerySet } from "../../shared/ecs/types";
 import LoadSpriteEvent from "../components/LoadSpriteEvent";
 import Buffer from "../../shared/utils/Buffer";
 import { Sprite } from "../components";
+import Phaser from "phaser";
 
 type LoadEvent = {
   key: string;

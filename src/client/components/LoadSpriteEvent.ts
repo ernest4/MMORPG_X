@@ -1,6 +1,7 @@
 import Event from "../../shared/components/interfaces/Event";
 import Component from "../../shared/ecs/Component";
 import { EntityId } from "../../shared/ecs/types";
+import Phaser from "phaser";
 
 class LoadSpriteEvent extends Component implements Event {
   url: string;
