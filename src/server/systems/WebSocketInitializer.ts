@@ -23,19 +23,21 @@ class WebSocketInitializer extends System {
 
   destroy(): void {}
 
-  private initWebSocket = ([webSocketInitEvent]: [WebSocketInitEvent]) => {
+  private initWebSocket = ([{ id, behaviour }]: [WebSocketInitEvent]) => {
+    if (!behaviour.upgrade || !behaviour.open || !behaviour.close) return;
+
     this._server.ws("/", {
       /* Options */
       // compression: uWS.SHARED_COMPRESSOR,
       // maxPayloadLength: 16 * 1024 * 1024,
       // idleTimeout: 10,
       /* Handlers */
-      ...webSocketInitEvent.behaviour,
+      ...behaviour,
       // drain: (ws: uWS.WebSocket) => {
       //   console.log("WebSocket backpressure: " + ws.getBufferedAmount());
       // },
     });
-    this.engine.removeComponent(webSocketInitEvent);
+    this.engine.removeComponentById(id, WebSocketInitEvent);
   };
 }
 

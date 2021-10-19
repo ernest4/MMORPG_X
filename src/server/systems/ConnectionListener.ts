@@ -56,6 +56,8 @@ class ConnectionListener extends System {
       //   return res.writeStatus("401").end();
       // }
 
+      this.log("upgrading...");
+
       // NOTE: uid will be for auth / DB lookup. Guest / google_id
       res.upgrade(
         { uid: `${GUEST_UID_PREFIX}${entityId}` },
@@ -71,7 +73,7 @@ class ConnectionListener extends System {
   private onOpen = entityId => {
     return (webSocket: uWS.WebSocket) => {
       this._connectionsBuffer.push({ entityId, webSocket });
-      console.log(`A WebSocket connected! ws.uid:${webSocket.uid}`); // TODO: remove
+      this.log(`A WebSocket connected! ws.uid:${webSocket.uid}`); // TODO: remove
     };
   };
 

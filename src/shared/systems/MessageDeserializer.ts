@@ -21,6 +21,8 @@ class MessageDeserializer extends System {
   private createMessageComponents = ([{ fromEntityId, binaryMessage }]: [MessageEvent]) => {
     const entityId = this.newEntityId();
     const messageComponent = Reader.binaryToMessageComponent(entityId, binaryMessage, fromEntityId);
+    // debugging
+    console.log(messageComponent.parsedMessage);
     this.engine.addComponent(messageComponent);
   };
 }

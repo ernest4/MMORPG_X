@@ -25,7 +25,10 @@ class ConnectionListener extends System {
 
   destroy(): void {}
 
-  private onOpen = (event: Event) => this._connectionsBuffer.push(true);
+  private onOpen = (event: Event) => {
+    this.log("onOpen");
+    this._connectionsBuffer.push(true);
+  };
 
   private createConnectionEvents = () => {
     this._connectionsBuffer.process(isConnected => {

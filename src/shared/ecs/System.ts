@@ -19,6 +19,10 @@ abstract class System {
 
   newEntityId = () => this._engine.newEntityId();
 
+  log = (string: string) => {
+    console.log(`[Engine]:[${this.constructor.name}]:${string}`);
+  };
+
   get engine() {
     return this._engine;
   }
