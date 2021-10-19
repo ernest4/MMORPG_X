@@ -1,7 +1,7 @@
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { EntityId, QuerySet } from "../../shared/ecs/types";
-import LoadSpriteEvent from "../components/LoadSprite";
+import LoadSpriteEvent from "../components/LoadSpriteEvent";
 import Buffer from "../../shared/utils/Buffer";
 import { Sprite } from "../components";
 

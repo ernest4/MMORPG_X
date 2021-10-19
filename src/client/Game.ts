@@ -11,7 +11,7 @@ import MessageListener from "./systems/MessageListener";
 import SpriteRender from "./systems/SpriteRender";
 import Broadcaster from "./systems/Broadcaster";
 import MovementControlPublisher from "./systems/MovementControlPublisher";
-import SpriteLoader from "./systems/SpriteLoaderEvent";
+import SpriteLoader from "./systems/SpriteLoader";
 import NetworkedComponentsSynchronizer from "./systems/NetworkedComponentsSynchronizer";
 import {
   CharacterMessage,
@@ -27,6 +27,7 @@ import HitPoints from "../shared/components/HitPoints";
 import Character from "../shared/components/Character";
 import Drifter from "../shared/components/characterTypes/Drfiter";
 import Name from "../shared/components/Name";
+import DrifterMessageToSpriteLoadEvent from "./systems/DrifterMessageToSpriteLoadEvent";
 // import FpsCounter from "./utils/FpsCounter";
 
 const PHASER_GAME_CONFIG = {
@@ -112,9 +113,9 @@ class Game {
       // ... REST ...
 
       // TODO: something needs to pull in the room data and trigger loading assets for that
-      new RoomSynchronizer(this._engine), // TODO: split into room init + update systems ?
+      // new RoomSynchronizer(this._engine), // TODO: split into room init + update systems ?
       // TODO: something needs to trigger character sprite to load, Hunter component for now?
-      // new HunterToSpriteLoadEvent(this._engine),
+      new DrifterMessageToSpriteLoadEvent(this._engine),
       // NEED TO PRODUCE LoadSpriteEvent !
 
       // new AssetLoader(this._engine), // TODO: async load in sprites / textures /sounds etc
