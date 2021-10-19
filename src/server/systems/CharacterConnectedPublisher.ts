@@ -33,8 +33,7 @@ class CharacterConnected extends Publisher {
     ];
 
     this.addOutMessageComponentWith(
-      MESSAGE_TYPE.ROOM_INIT,
-      this._state.rooms[room.roomName],
+      { messageType: MESSAGE_TYPE.ROOM_INIT, ...this._state.rooms[room.roomName] },
       newCharacterId
     );
 

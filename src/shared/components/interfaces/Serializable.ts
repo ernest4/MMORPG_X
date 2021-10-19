@@ -9,18 +9,18 @@ import { EntityId } from "../../ecs/types";
 //     super(entityId);
 //   }
 
-//   abstract get parsedMessage(): ParsedMessage<T>;
+//   abstract parsedMessage(): ParsedMessage<T>;
 // }
 
 // interface Serializable<T extends MESSAGE_TYPE> extends Component {
 //   readonly messageType: T;
 
-//   get parsedMessage(): ParsedMessage<T>;
+//   parsedMessage(): ParsedMessage<T>;
 // }
 
 // TODO: wip sketches...
 interface Serializable extends Component {
-  get serialize(): { entityId: EntityId; [key: string]: any };
+  serialize(): { entityId: EntityId; [key: string]: any };
 }
 
 export default Serializable;

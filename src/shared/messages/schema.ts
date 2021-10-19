@@ -81,6 +81,11 @@ export type ParsedMessage<K extends MESSAGE_TYPE> = {
   messageType: K;
 } & typeof SCHEMA[K]["parsedMessage"];
 
+// export type ParsedMessage<K extends MESSAGE_TYPE> = {
+//   messageType: K;
+//   typeof SCHEMA[K]["parsedMessage"];
+// }
+
 // component classes that act as 'tags' for engine to query for
 export class PingMessage extends Message<MESSAGE_TYPE.PING> {}
 export class PongMessage extends Message<MESSAGE_TYPE.PONG> {}

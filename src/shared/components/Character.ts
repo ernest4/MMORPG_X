@@ -11,7 +11,7 @@ class Character extends Component implements Networked<MESSAGE_TYPE.CHARACTER> {
     super(entityId);
   }
 
-  get parsedMessage(): ParsedMessage<MESSAGE_TYPE.CHARACTER> {
+  parsedMessage(): ParsedMessage<MESSAGE_TYPE.CHARACTER> {
     return this;
   }
 

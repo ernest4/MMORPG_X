@@ -16,7 +16,7 @@ export class SparseSetItem {
   }
 }
 
-class SparseSet<T extends SparseSetItem> {
+class SparseSet<T extends SparseSetItem = SparseSetItem> {
   // TODO: will want to optimize these lists to use ArrayBuffer for dense memory access where
   // possible?
   private _denseList: T[];

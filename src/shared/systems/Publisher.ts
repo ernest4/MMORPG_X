@@ -38,7 +38,7 @@ abstract class Publisher extends System {
     { parsedMessage, entityId }: NetworkedComponent<T>,
     recipient?: EntityId
   ) => {
-    return new OutMessage(this.newEntityId(), parsedMessage, recipient || entityId);
+    return new OutMessage(this.newEntityId(), parsedMessage(), recipient || entityId);
   };
 
   // TODO: jests

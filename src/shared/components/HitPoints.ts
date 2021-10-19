@@ -13,7 +13,7 @@ class HitPoints extends Component implements Networked<MESSAGE_TYPE.HITPOINTS> {
     this.hitPoints = hitPoints;
   }
 
-  get parsedMessage(): ParsedMessage<MESSAGE_TYPE.HITPOINTS> {
+  parsedMessage(): ParsedMessage<MESSAGE_TYPE.HITPOINTS> {
     return this;
   }
 

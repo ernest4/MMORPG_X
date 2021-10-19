@@ -29,7 +29,10 @@ class MovementControlPublisher extends Publisher {
     const direction = this.getDirection(inputEvent);
     if (direction === null) return;
 
-    this.addOutMessageComponentWith(MESSAGE_TYPE.MOVE, { direction } as { direction: number });
+    this.addOutMessageComponentWith({ messageType: MESSAGE_TYPE.MOVE, direction } as {
+      messageType: MESSAGE_TYPE;
+      direction: number;
+    });
   };
 
   private getDirection = ({ type, key }: InputEvent): DIRECTION | null => {

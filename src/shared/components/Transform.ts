@@ -31,7 +31,7 @@ class Transform extends Component implements Networked<MESSAGE_TYPE.TRANSFORM> {
     // this._children = entityId[]; ???
   }
 
-  get parsedMessage(): ParsedMessage<MESSAGE_TYPE.TRANSFORM> {
+  parsedMessage(): ParsedMessage<MESSAGE_TYPE.TRANSFORM> {
     return { messageType: this.messageType, ...this.position.xyz, entityId: this.entityId };
   }
 

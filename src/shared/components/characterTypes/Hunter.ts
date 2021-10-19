@@ -12,7 +12,7 @@ class Hunter extends Component implements Networked<MESSAGE_TYPE.HUNTER> {
     super(entityId);
   }
 
-  get parsedMessage(): ParsedMessage<MESSAGE_TYPE.HUNTER> {
+  parsedMessage(): ParsedMessage<MESSAGE_TYPE.HUNTER> {
     return this;
   }
 

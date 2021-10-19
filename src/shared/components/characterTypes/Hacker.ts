@@ -1,6 +1,6 @@
 import Component from "../../ecs/Component";
 import { EntityId } from "../../ecs/types";
-import { Int32, MESSAGE_TYPE } from "../../messages/schema";
+import { MESSAGE_TYPE, ParsedMessage } from "../../messages/schema";
 import Networked from "../interfaces/Networked";
 
 // Medium Tech ('mage') class
@@ -12,11 +12,11 @@ class Hacker extends Component implements Networked<MESSAGE_TYPE.HACKER> {
     super(entityId);
   }
 
-  get parsedMessage(): { entityId: Int32 } {
+  parsedMessage(): ParsedMessage<MESSAGE_TYPE.HACKER> {
     return this;
   }
 
-  synchronizeFrom(parsedMessage: { entityId: Int32 }) {
+  synchronizeFrom(parsedMessage: ParsedMessage<MESSAGE_TYPE.HACKER>): void {
     // NOOP
   }
 }
