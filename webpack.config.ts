@@ -20,7 +20,13 @@ const config: Configuration = {
     chunkFilename: DEVELOPMENT ? "[name].chunk.js" : "[name].[contenthash].chunk.js",
     publicPath: DEVELOPMENT ? "/" : "/statics/",
   },
-  resolve: { extensions: [".js", ".ts", ".tsx"] },
+  resolve: {
+    extensions: [".js", ".ts", ".tsx"],
+    fallback: {
+      // util: require.resolve("util/"),
+      buffer: require.resolve("buffer/"),
+    },
+  },
   optimization: {
     minimize: !DEVELOPMENT,
     splitChunks: {

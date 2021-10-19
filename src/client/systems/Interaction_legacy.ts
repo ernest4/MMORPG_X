@@ -9,7 +9,7 @@ import {
 } from "../../shared/ecs/types";
 import Sprite from "../components/Sprite";
 import Interactive from "../components/Interactive";
-import InteractiveEvent from "../components/InteractiveEvent";
+import InteractiveEvent from "../components/InteractiveEvent_legacy";
 import SparseSet from "../../shared/ecs/utils/SparseSet";
 import { Scene } from "phaser";
 

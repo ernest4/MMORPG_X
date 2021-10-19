@@ -3,7 +3,7 @@ import initSceneEditor from "./sceneEditor/index"; // NOTE: importing this will 
 import store from "../store";
 import * as sceneEditorActions from "../store/actions/sceneEditor";
 import { EntityId, QuerySet } from "../../shared/ecs/types";
-import InteractiveEvent from "../components/InteractiveEvent";
+import InteractiveEvent from "../components/InteractiveEvent_legacy";
 import Sprite from "../components/Sprite";
 import Interactive from "../components/Interactive";
 import DragEvent from "../components/DragEvent";
