@@ -1,6 +1,6 @@
 import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
-import { Int32, MESSAGE_TYPE } from "../messages/schema";
+import { Int32, MESSAGE_TYPE, ParsedMessage } from "../messages/schema";
 import Networked from "./interfaces/Networked";
 
 // TODO: optimize with ArrayBuffers ??
@@ -13,11 +13,11 @@ class HitPoints extends Component implements Networked<MESSAGE_TYPE.HITPOINTS> {
     this.hitPoints = hitPoints;
   }
 
-  get parsedMessage(): { hitPoints: Int32; entityId: Int32 } {
+  get parsedMessage(): ParsedMessage<MESSAGE_TYPE.HITPOINTS> {
     return this;
   }
 
-  synchronizeFrom({ hitPoints }: { hitPoints: Int32; entityId: Int32 }) {
+  synchronizeFrom({ hitPoints }: ParsedMessage<MESSAGE_TYPE.HITPOINTS>): void {
     this.hitPoints = hitPoints;
   }
 }

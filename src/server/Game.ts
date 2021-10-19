@@ -25,7 +25,7 @@ import NearbyCharacterConnectedEvent from "./components/NearbyCharacterConnected
 import ConnectionEvent from "../shared/components/ConnectionEvent";
 import Character from "../shared/components/Character";
 import Name from "../shared/components/Name";
-import Hunter from "../shared/components/characterTypes/Hunter";
+import Drifter from "../shared/components/characterTypes/Drfiter";
 import HitPoints from "../shared/components/HitPoints";
 
 class Game {
@@ -50,57 +50,49 @@ class Game {
   private initECS = () => {
     this._engine = new Engine(DEVELOPMENT);
     // TODO: test all systems.
-    this._engine.addSystem(new Manager(this._engine));
-    this._engine.addSystem(new WebSocketInitializer(this._engine, this._server));
-    this._engine.addSystem(new ConnectionListener(this._engine));
-    this._engine.addSystem(new MessageListener(this._engine));
-    this._engine.addSystem(new MessageDeserializer(this._engine));
-    this._engine.addSystem(new DisconnectionListener(this._engine));
-    this._engine.addSystem(new CharacterDeserializer(this._engine));
-    this._engine.addSystem(new MovementControl(this._engine));
-    this._engine.addSystem(new Movement(this._engine));
-    // this._engine.addSystem(new Collision(this._engine)); // TODO: takes in transform and checks it against map. Might be useful to store 'previous' values on Transform (that get auto updated) so in case of collision Transform could be reverted to that?
-    this._engine.addSystem(new SpatialPartitioning(this._engine, this._state));
+    this._engine.addSystems(
+      new Manager(this._engine),
+      new WebSocketInitializer(this._engine, this._server),
+      new ConnectionListener(this._engine),
+      new MessageListener(this._engine),
+      new MessageDeserializer(this._engine),
+      new DisconnectionListener(this._engine),
+      new CharacterDeserializer(this._engine),
+      new MovementControl(this._engine),
+      new Movement(this._engine),
+      // new Collision(this._engine), // TODO: takes in transform and checks it against map. Might be useful to store 'previous' values on Transform (that get auto updated) so in case of collision Transform could be reverted to that?
+      new SpatialPartitioning(this._engine, this._state),
 
-    this._engine.addSystem(new CharacterConnectedPublisher(this._engine, this._state));
+      new CharacterConnectedPublisher(this._engine, this._state),
 
-    this._engine.addSystem(
       new NetworkedComponentNearbyPublisher(this._engine, Character, [
         ConnectionEvent,
         NearbyCharacterConnectedEvent,
-      ])
-    );
-    this._engine.addSystem(
+      ]),
       new NetworkedComponentNearbyPublisher(this._engine, Name, [
         ConnectionEvent,
         NearbyCharacterConnectedEvent,
-      ])
-    );
-    this._engine.addSystem(
-      new NetworkedComponentNearbyPublisher(this._engine, Hunter, [
+      ]),
+      new NetworkedComponentNearbyPublisher(this._engine, Drifter, [
         ConnectionEvent,
         NearbyCharacterConnectedEvent,
-      ])
-    );
-    this._engine.addSystem(
+      ]),
       new NetworkedComponentNearbyPublisher(this._engine, HitPoints, [
         ConnectionEvent,
         NearbyCharacterConnectedEvent,
-      ])
-    );
-    this._engine.addSystem(
+      ]),
       new NetworkedComponentNearbyPublisher(this._engine, Transform, [
         MoveMessage,
         ConnectionEvent,
         NearbyCharacterConnectedEvent,
-      ])
-    );
+      ]),
 
-    // TODO: any other systems here
-    // this._engine.addSystem(new Serializer(this._engine)); # gonna invoke sidekiq workers
-    // this._engine.addSystem(new AI(this._engine));
-    // this._engine.addSystem(new Script(this._engine)); // scripts ?
-    this._engine.addSystem(new Broadcaster(this._engine)); // NOTE: always last
+      // TODO: any other systems here
+      // new Serializer(this._engine), # gonna invoke sidekiq workers
+      // new AI(this._engine),
+      // new Script(this._engine), // scripts ?
+      new Broadcaster(this._engine) // NOTE: always last
+    );
   };
 
   private updateEngine = (deltaTime: DeltaTime) => this._engine.update(deltaTime);

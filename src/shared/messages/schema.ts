@@ -66,6 +66,8 @@ export enum MESSAGE_TYPE {
   CHARACTER,
   NAME,
   HUNTER,
+  DRIFTER,
+  HACKER,
   CHARACTER_DISCONNECTED,
   ROOM_INIT,
   MOVE,
@@ -75,8 +77,9 @@ export enum MESSAGE_TYPE {
 // export type MESSAGE_TYPE = typeof MESSAGE_TYPES[keyof typeof MESSAGE_TYPES];
 
 // type ParsedMessage<T extends "CHARACTER_CONNECTED" | "HITPOINTS"> = typeof SCHEMA[typeof MESSAGE_TYPES[T]]["binary"];
-// @ts-ignore
-export type ParsedMessage<K extends MESSAGE_TYPE> = typeof SCHEMA[K]["parsedMessage"];
+export type ParsedMessage<K extends MESSAGE_TYPE> = {
+  messageType: K;
+} & typeof SCHEMA[K]["parsedMessage"];
 
 // component classes that act as 'tags' for engine to query for
 export class PingMessage extends Message<MESSAGE_TYPE.PING> {}
@@ -85,6 +88,8 @@ export class TransformMessage extends Message<MESSAGE_TYPE.TRANSFORM> {}
 export class CharacterMessage extends Message<MESSAGE_TYPE.CHARACTER> {}
 export class NameMessage extends Message<MESSAGE_TYPE.NAME> {}
 export class HunterMessage extends Message<MESSAGE_TYPE.HUNTER> {}
+export class DrifterMessage extends Message<MESSAGE_TYPE.DRIFTER> {}
+export class HackerMessage extends Message<MESSAGE_TYPE.HACKER> {}
 export class CharacterDisconnectedMessage extends Message<MESSAGE_TYPE.CHARACTER_DISCONNECTED> {}
 export class RoomInitMessage extends Message<MESSAGE_TYPE.ROOM_INIT> {}
 export class MoveMessage extends Message<MESSAGE_TYPE.MOVE> {}
@@ -130,6 +135,18 @@ const SCHEMA = {
       ...entityId(0),
     },
     [component]: HunterMessage,
+  },
+  [MESSAGE_TYPE.DRIFTER]: {
+    [parsedMessage]: {
+      ...entityId(0),
+    },
+    [component]: DrifterMessage,
+  },
+  [MESSAGE_TYPE.HACKER]: {
+    [parsedMessage]: {
+      ...entityId(0),
+    },
+    [component]: HackerMessage,
   },
   [MESSAGE_TYPE.NAME]: {
     [parsedMessage]: {

@@ -42,62 +42,27 @@ class Writer {
   }
 
   messageComponentToBinary = <T extends MESSAGE_TYPE>({
-    messageType,
     parsedMessage,
   }: OutMessage<T>): ArrayBuffer => {
-    return this.toBinary(messageType, parsedMessage);
+    return this.toBinary(parsedMessage);
   };
 
-  private toBinary = <T extends MESSAGE_TYPE>(
-    messageType: MESSAGE_TYPE,
-    parsedMessage: ParsedMessage<T>
-  ): ArrayBuffer => {
+  private toBinary = <T extends MESSAGE_TYPE>(parsedMessage: ParsedMessage<T>): ArrayBuffer => {
     // // TODO: re-enablee validation...
     // const errors = Validator.validate(messageType, parsedMessage);
     // // TODO: console log only? rollbar?
     // if (0 < errors.length) throw Error(`Invalid Message Format: ${prettyPrintArray(errors)}`);
 
-    const byteCount = this.getByteCount(messageType, parsedMessage);
+    const byteCount = this.getByteCount(parsedMessage);
     const binaryMessage = new ArrayBuffer(byteCount);
-    this.populateBinaryMessage(binaryMessage, messageType, parsedMessage);
+    this.populateBinaryMessage(binaryMessage, parsedMessage);
     return binaryMessage;
   };
 
-  // private getByteCount = (parsedMessage): number => {
-  //   let byteCount = 1; // message type
-
-  //   SCHEMA[parsedMessage.messageType].binary.forEach(
-  //     ([fieldName, fieldType]: [string, FIELD_TYPE]) => {
-  //       let fieldTypeBytes = FIELD_TYPES[fieldTyEFIELD_TYPE]; .bytes// try access available
-  //       if (!isNumber(fieldTypeBytes)) {
-  //         // must be one of the unknown in advance types...
-  //         switch (fieldType) {
-  //           case FIELD_TYPES.STRING:
-  //             byteCount = this.getStringByteCount(parsedMessage[fieldName]);
-  //             break;
-  //           case FIELD_TYPES.UINT_16_ARRAY:
-  //             byteCount = this.getNumberArrayByteCount(
-  //               parsedMessage[fieldName],
-  //               FIELD_TYPES[FIELD_TYPE.UINT_16].bytes
-  //             );
-  //             break;
-  //           default:
-  //             throw Error(this.getByteCountErrorMessage(fieldType));
-  //         }
-  //       }
-  //       byteCount += fieldTypeBytes;
-  //     }
-  //   );
-  //   return byteCount;
-  // };
-
-  private getByteCount = <T extends MESSAGE_TYPE>(
-    messageType: MESSAGE_TYPE,
-    parsedMessage: ParsedMessage<T>
-  ): number => {
+  private getByteCount = <T extends MESSAGE_TYPE>(parsedMessage: ParsedMessage<T>): number => {
     let byteCount = 1; // message type
 
-    const parsedMessageEntries = this.messageTypeToParsedMessageEntries(messageType);
+    const parsedMessageEntries = this.messageTypeToParsedMessageEntries(parsedMessage.messageType);
     parsedMessageEntries.forEach(
       ([fieldName, [fieldType, binaryOrder]]: [FieldName, [FIELD_TYPE, BinaryOrder]]) => {
         let fieldTypeBytes = FIELD_TYPES[fieldType].bytes; // try access available
@@ -165,13 +130,16 @@ class Writer {
 
   private populateBinaryMessage = <T extends MESSAGE_TYPE>(
     binaryMessage: ArrayBuffer,
-    messageType: MESSAGE_TYPE,
     parsedMessage: ParsedMessage<T>
   ) => {
     const messageDataView = new DataView(binaryMessage);
-    let currentByteOffset = this.writeUInt8(MESSAGE_TYPE_POSITION, messageDataView, messageType);
+    let currentByteOffset = this.writeUInt8(
+      MESSAGE_TYPE_POSITION,
+      messageDataView,
+      parsedMessage.messageType
+    );
 
-    const parsedMessageEntries = this.messageTypeToParsedMessageEntries(messageType);
+    const parsedMessageEntries = this.messageTypeToParsedMessageEntries(parsedMessage.messageType);
     const binaryOrderedParsedMessageEntries = this.toBinaryOrder(parsedMessageEntries);
     binaryOrderedParsedMessageEntries.forEach(([fieldName, fieldType]: [string, FIELD_TYPE]) => {
       const data = parsedMessage[fieldName];

@@ -3,22 +3,22 @@ import { EntityId } from "../../ecs/types";
 import { MESSAGE_TYPE, ParsedMessage } from "../../messages/schema";
 import Networked from "../interfaces/Networked";
 
-// Heavy rifle / sniper class
+// Light jet packs class
 // TODO: optimize with ArrayBuffers ??
-class Hunter extends Component implements Networked<MESSAGE_TYPE.HUNTER> {
-  messageType: MESSAGE_TYPE.HUNTER;
+class Drifter extends Component implements Networked<MESSAGE_TYPE.DRIFTER> {
+  messageType: MESSAGE_TYPE.DRIFTER;
 
   constructor(entityId: EntityId) {
     super(entityId);
   }
 
-  get parsedMessage(): ParsedMessage<MESSAGE_TYPE.HUNTER> {
+  get parsedMessage(): ParsedMessage<MESSAGE_TYPE.DRIFTER> {
     return this;
   }
 
-  synchronizeFrom(parsedMessage: ParsedMessage<MESSAGE_TYPE.HUNTER>): void {
-    // NOOP
+  synchronizeFrom(parsedMessage: ParsedMessage<MESSAGE_TYPE.DRIFTER>): void {
+    // NOOP 
   }
 }
 
-export default Hunter;
+export default Drifter;

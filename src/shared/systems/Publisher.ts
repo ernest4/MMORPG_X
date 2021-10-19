@@ -8,13 +8,10 @@ import NetworkedComponent from "../components/interfaces/Networked";
 abstract class Publisher extends System {
   // TODO: jests
   addOutMessageComponentWith = <T extends MESSAGE_TYPE>(
-    messageType: T,
     parsedMessage: ParsedMessage<T>,
     recipient?: EntityId
   ) => {
-    this.engine.addComponent(
-      new OutMessage(this.newEntityId(), messageType, parsedMessage, recipient)
-    );
+    this.engine.addComponent(new OutMessage(this.newEntityId(), parsedMessage, recipient));
   };
 
   // addOutMessageComponentsWith = () => {
@@ -38,10 +35,10 @@ abstract class Publisher extends System {
 
   // TODO: jests
   newOutMessageComponent = <T extends MESSAGE_TYPE>(
-    { messageType, parsedMessage, entityId }: NetworkedComponent<T>,
+    { parsedMessage, entityId }: NetworkedComponent<T>,
     recipient?: EntityId
   ) => {
-    return new OutMessage(this.newEntityId(), messageType, parsedMessage, recipient || entityId);
+    return new OutMessage(this.newEntityId(), parsedMessage, recipient || entityId);
   };
 
   // TODO: jests

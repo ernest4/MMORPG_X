@@ -1,7 +1,7 @@
 import { EntityId } from "../../shared/ecs/types";
 import Vector3BufferView, { Vector3Hash } from "../../shared/ecs/utils/Vector3BufferView";
 import Component from "../ecs/Component";
-import { FIELD_TYPE, FIELD_TYPES, Float32, Int32, MESSAGE_TYPE } from "../messages/schema";
+import { FIELD_TYPE, FIELD_TYPES, MESSAGE_TYPE, ParsedMessage } from "../messages/schema";
 import Networked from "./interfaces/Networked";
 
 const FLOAT_32_BYTES = FIELD_TYPES[FIELD_TYPE.FLOAT_32].bytes;
@@ -31,11 +31,11 @@ class Transform extends Component implements Networked<MESSAGE_TYPE.TRANSFORM> {
     // this._children = entityId[]; ???
   }
 
-  get parsedMessage(): { x: Float32; y: Float32; z: Float32; entityId: Int32 } {
-    return { ...this.position.xyz, entityId: this.entityId };
+  get parsedMessage(): ParsedMessage<MESSAGE_TYPE.TRANSFORM> {
+    return { messageType: this.messageType, ...this.position.xyz, entityId: this.entityId };
   }
 
-  synchronizeFrom({ x, y, z }: { x: Float32; y: Float32; z: Float32; entityId: Int32 }) {
+  synchronizeFrom({ x, y, z }: ParsedMessage<MESSAGE_TYPE.TRANSFORM>): void {
     this.position.xyz = { x, y, z };
   }
 }

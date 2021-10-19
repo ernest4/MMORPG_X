@@ -42,20 +42,18 @@ class Reader {
     binaryMessage: ArrayBuffer,
     from?: EntityId
   ): Message<any> => {
-    const { messageType, parsedMessage } = this.parseBinary(binaryMessage);
-    const messageComponentClass = SCHEMA[messageType].component;
+    const { parsedMessage } = this.parseBinary(binaryMessage);
+    const messageComponentClass = SCHEMA[parsedMessage.messageType].component;
     return new messageComponentClass(messageComponentEntityId, parsedMessage, from);
   };
 
-  private parseBinary = (
-    binaryMessage: ArrayBuffer
-  ): { messageType: MESSAGE_TYPE; parsedMessage: ParsedMessage<any> } => {
+  private parseBinary = (binaryMessage: ArrayBuffer): { parsedMessage: ParsedMessage<any> } => {
     const messageDataView = new DataView(binaryMessage);
     let [messageType, currentByteOffset] = <[MESSAGE_TYPE, number]>(
       this.parseUInt8(MESSAGE_TYPE_POSITION, messageDataView)
     );
 
-    const parsedMessage = {};
+    const parsedMessage = { messageType };
     const parsedMessageEntries = <[FieldName, [FIELD_TYPE, BinaryOrder]][]>(
       Object.entries(SCHEMA[messageType].parsedMessage)
     );
@@ -66,7 +64,7 @@ class Reader {
       parsedMessage[fieldName] = data;
       currentByteOffset = nextByteOffset;
     });
-    return { messageType, parsedMessage };
+    return { parsedMessage };
   };
 
   // TODO: extract? same method as on Reader...

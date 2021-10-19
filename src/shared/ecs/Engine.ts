@@ -68,6 +68,9 @@ class Engine {
     if (this._debug) console.log(`[Engine]: Started system: ${system.constructor.name}`);
   };
 
+  // TODO: jests
+  addSystems = (...systems: System[]) => systems.forEach(this.addSystem);
+
   // getSystem
 
   // removeSystem

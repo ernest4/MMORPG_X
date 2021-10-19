@@ -12,18 +12,20 @@ import SpriteRender from "./systems/SpriteRender";
 import Broadcaster from "./systems/Broadcaster";
 import MovementControlPublisher from "./systems/MovementControlPublisher";
 import SpriteLoader from "./systems/SpriteLoaderEvent";
-import NetComponentsSyncer from "./systems/NetworkedComponentsSynchronizer";
+import NetworkedComponentsSynchronizer from "./systems/NetworkedComponentsSynchronizer";
 import {
   CharacterMessage,
+  DrifterMessage,
   HitPointsMessage,
   HunterMessage,
+  MESSAGE_TYPE,
   NameMessage,
   TransformMessage,
 } from "../shared/messages/schema";
 import Transform from "../shared/components/Transform";
 import HitPoints from "../shared/components/HitPoints";
 import Character from "../shared/components/Character";
-import Hunter from "../shared/components/characterTypes/Hunter";
+import Drifter from "../shared/components/characterTypes/Drfiter";
 import Name from "../shared/components/Name";
 // import FpsCounter from "./utils/FpsCounter";
 
@@ -69,47 +71,71 @@ class Game {
   private initECS = () => {
     this._engine = new Engine(DEVELOPMENT);
     // TODO: test all systems.
-    this._engine.addSystem(new Manager(this._engine));
-    this._engine.addSystem(new ConnectionListener(this._engine, this._webSocket));
-    this._engine.addSystem(new MessageListener(this._engine, this._webSocket));
-    this._engine.addSystem(new MessageDeserializer(this._engine));
-    this._engine.addSystem(new DisconnectionListener(this._engine, this._webSocket));
-    this._engine.addSystem(new InputListener(this._engine, this._scene));
+    this._engine.addSystems(
+      new Manager(this._engine),
+      new ConnectionListener(this._engine, this._webSocket),
+      new MessageListener(this._engine, this._webSocket),
+      new MessageDeserializer(this._engine),
+      new DisconnectionListener(this._engine, this._webSocket),
+      new InputListener(this._engine, this._scene),
 
-    this._engine.addSystem(new MovementControlPublisher(this._engine));
+      new MovementControlPublisher(this._engine),
 
-    this._engine.addSystem(new NetComponentsSyncer(this._engine, Character, CharacterMessage));
-    this._engine.addSystem(new NetComponentsSyncer(this._engine, Name, NameMessage));
-    this._engine.addSystem(new NetComponentsSyncer(this._engine, Transform, TransformMessage));
-    this._engine.addSystem(new NetComponentsSyncer(this._engine, HitPoints, HitPointsMessage));
-    // CharacterTypes ==>
-    this._engine.addSystem(new NetComponentsSyncer(this._engine, Hunter, HunterMessage));
-    // this._engine.addSystem(new ApplyParsedMessages(this._engine, Hacker, HackerMessage));
-    // <== CharacterTypes
-    // ... REST ...
+      new NetworkedComponentsSynchronizer<MESSAGE_TYPE.CHARACTER>(
+        this._engine,
+        Character,
+        CharacterMessage
+      ),
+      new NetworkedComponentsSynchronizer<MESSAGE_TYPE.NAME>(this._engine, Name, NameMessage),
+      new NetworkedComponentsSynchronizer<MESSAGE_TYPE.TRANSFORM>(
+        this._engine,
+        Transform,
+        TransformMessage
+      ),
+      new NetworkedComponentsSynchronizer<MESSAGE_TYPE.HITPOINTS>(
+        this._engine,
+        HitPoints,
+        HitPointsMessage
+      ),
 
-    // TODO: something needs to pull in the room data and trigger loading assets for that
-    // TODO: something needs to trigger character sprite to load, Hunter component for now?
-    // NEED TO PRODUCE LoadSpriteEvent !
+      // CharacterTypes ==>
+      new NetworkedComponentsSynchronizer<MESSAGE_TYPE.DRIFTER>(
+        this._engine,
+        Drifter,
+        DrifterMessage
+      ),
+      // NOTE: need to explicit template type like above or get bugs like this below...
+      // new NetComponentsSyncer(this._engine, Drifter, CharacterMessage)); // BUGGY!!!
+      // new NetComponentsSyncer(this._engine, Hunter, HunterMessage));
+      // new ApplyParsedMessages(this._engine, Hacker, HackerMessage));
+      // <== CharacterTypes
+      // ... REST ...
 
-    // this._engine.addSystem(new AssetLoader(this._engine)); // TODO: async load in sprites / textures /sounds etc
-    this._engine.addSystem(new SpriteLoader(this._engine, this._scene)); // TODO: refactor into asset loader?
-    this._engine.addSystem(new SpriteRender(this._engine));
-    this._engine.addSystem(new Broadcaster(this._engine, this._webSocket)); // NOTE: always last
+      // TODO: something needs to pull in the room data and trigger loading assets for that
+      new RoomSynchronizer(this._engine), // TODO: split into room init + update systems ?
+      // TODO: something needs to trigger character sprite to load, Hunter component for now?
+      // new HunterToSpriteLoadEvent(this._engine),
+      // NEED TO PRODUCE LoadSpriteEvent !
 
-    // this._engine.addSystem(new Serialization(this._engine, this));
-    // if (DEVELOPMENT) this._engine.addSystem(new SceneEditor(this._engine));
-    // // this._engine.addSystem(new Network(this._engine, this)); // TODO: networking here ...
-    // this._engine.addSystem(new Input(this._engine, this));
-    // this._engine.addSystem(new Interaction(this._engine, this));
-    // this._engine.addSystem(new MovementControl(this._engine));
-    // // this._engine.addSystem(new AI(this._engine));
+      // new AssetLoader(this._engine), // TODO: async load in sprites / textures /sounds etc
+      new SpriteLoader(this._engine, this._scene), // TODO: refactor into asset loader?
+      new SpriteRender(this._engine),
+      new Broadcaster(this._engine, this._webSocket) // NOTE: always last
+    );
+
+    // new Serialization(this._engine, this));
+    // if (DEVELOPMENT) new SceneEditor(this._engine),
+    // // new Network(this._engine, this)); // TODO: networking here ...
+    // new Input(this._engine, this));
+    // new Interaction(this._engine, this));
+    // new MovementControl(this._engine),
+    // // new AI(this._engine),
     // // physics
-    // this._engine.addSystem(new Dragging(this._engine));
-    // this._engine.addSystem(new Movement(this._engine));
-    // // this._engine.addSystem(new Animation(this._engine)); // will hook into state of the entity (animation state machine)
-    // // this._engine.addSystem(new Collision(this._engine));
-    // this._engine.addSystem(new Render(this._engine, this)); // shadows will be handled under sprite? or should it be separate system...?
+    // new Dragging(this._engine),
+    // new Movement(this._engine),
+    // // new Animation(this._engine), // will hook into state of the entity (animation state machine)
+    // // new Collision(this._engine),
+    // new Render(this._engine, this)); // shadows will be handled under sprite? or should it be separate system...?
     // // analysis -> print how long each system is taking / where is the bottleneck?
 
     // // TODO: move to camera component / render component

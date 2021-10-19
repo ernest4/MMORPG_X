@@ -1,6 +1,6 @@
 import Component from "../ecs/Component";
 import { EntityId } from "../ecs/types";
-import { Int32, MESSAGE_TYPE } from "../messages/schema";
+import { MESSAGE_TYPE, ParsedMessage } from "../messages/schema";
 import Networked from "./interfaces/Networked";
 
 // TODO: optimize with ArrayBuffers ??
@@ -11,11 +11,11 @@ class Character extends Component implements Networked<MESSAGE_TYPE.CHARACTER> {
     super(entityId);
   }
 
-  get parsedMessage(): { entityId: Int32 } {
+  get parsedMessage(): ParsedMessage<MESSAGE_TYPE.CHARACTER> {
     return this;
   }
 
-  synchronizeFrom(parsedMessage: { entityId: Int32 }) {
+  synchronizeFrom(parsedMessage: ParsedMessage<MESSAGE_TYPE.CHARACTER>): void {
     // NOOP
   }
 }

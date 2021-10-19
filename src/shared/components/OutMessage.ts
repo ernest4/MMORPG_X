@@ -3,18 +3,11 @@ import { EntityId } from "../ecs/types";
 import { MESSAGE_TYPE, ParsedMessage } from "../messages/schema";
 
 class OutMessage<T extends MESSAGE_TYPE> extends Component {
-  messageType: T;
   parsedMessage: ParsedMessage<T>;
   recipient?: EntityId;
 
-  constructor(
-    entityId: EntityId,
-    messageType: T,
-    parsedMessage: ParsedMessage<T>,
-    recipient?: EntityId
-  ) {
+  constructor(entityId: EntityId, parsedMessage: ParsedMessage<T>, recipient?: EntityId) {
     super(entityId);
-    this.messageType = messageType;
     this.parsedMessage = parsedMessage;
     this.recipient = recipient;
   }
