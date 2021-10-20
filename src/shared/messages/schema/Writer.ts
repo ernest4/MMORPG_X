@@ -18,10 +18,6 @@ import SCHEMA, {
 } from "../schema";
 import OutMessage from "../../components/OutMessage";
 
-// NOTE: ArrayBuffer and DataView work on both Node.js & Browser
-// NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
-// NOTE: 'Buffer' from Node.js will be used to do utf-8 encoding/decoding
-
 // TODO: jests
 class Writer {
   private _fieldEncoders: {
@@ -71,20 +67,19 @@ class Writer {
           // must be one of the unknown in advance types...
           switch (fieldType) {
             case FIELD_TYPE.STRING:
-              byteCount = this.getStringByteCount(parsedMessage[fieldName]);
-              break;
+              byteCount += this.getStringByteCount(parsedMessage[fieldName]);
+              return;
             case FIELD_TYPE.UINT_16_ARRAY:
-              byteCount = this.getNumberArrayByteCount(
+              byteCount += this.getNumberArrayByteCount(
                 parsedMessage[fieldName],
                 FIELD_TYPES[FIELD_TYPE.UINT_16].bytes
               );
-              break;
+              return;
             default:
               // TODO: console log only? rollbar?
               throw Error(this.getByteCountErrorMessage(fieldType));
           }
-        }
-        byteCount += fieldTypeBytes;
+        } else byteCount += fieldTypeBytes;
       }
     );
     return byteCount;
@@ -106,18 +101,22 @@ class Writer {
   };
 
   private getStringByteCount = (string: string): number => {
-    if (SERVER) return this.serverGetStringByteCount(string);
-    return this.clientGetStringByteCount(string);
-  };
+    // if (SERVER) return this.serverGetStringByteCount(string);
+    // return this.clientGetStringByteCount(string);
 
-  private serverGetStringByteCount = (string: string): number => {
-    return Buffer.from(string, "utf8").byteLength;
-  };
-
-  private clientGetStringByteCount = (string: string): number => {
+    // apparently node 11 now supports text(de)encoder
     // @ts-ignore
     return new TextEncoder("utf-8").encode(string).byteLength;
   };
+
+  // private serverGetStringByteCount = (string: string): number => {
+  //   return Buffer.from(string, "utf8").byteLength;
+  // };
+
+  // private clientGetStringByteCount = (string: string): number => {
+  //   // @ts-ignore
+  //   return new TextEncoder("utf-8").encode(string).byteLength;
+  // };
 
   private getNumberArrayByteCount = (array: number[], byteCountPerNumber: number): number => {
     return array.length * byteCountPerNumber;
@@ -171,34 +170,42 @@ class Writer {
   };
 
   private writeString = (currentByteOffset: number, dataView: DataView, data: string): number => {
-    if (SERVER) return this.serverWriteString(currentByteOffset, dataView, data);
-    return this.clientWriteString(currentByteOffset, dataView, data);
-  };
+    // if (SERVER) return this.serverWriteString(currentByteOffset, dataView, data);
+    // return this.clientWriteString(currentByteOffset, dataView, data);
 
-  private serverWriteString = (
-    currentByteOffset: number,
-    dataView: DataView,
-    data: string
-  ): number => {
-    const uint8array = Buffer.from(data, "utf8");
-    for (let i = 0; i < uint8array.byteLength + 1; i++) {
-      dataView.setUint8(currentByteOffset + i, uint8array[i]);
-    }
-    return currentByteOffset + uint8array.byteLength;
-  };
-
-  private clientWriteString = (
-    currentByteOffset: number,
-    dataView: DataView,
-    data: string
-  ): number => {
+    // apparently node 11 now supports text(de)encoder
     // @ts-ignore
     const uint8array = new TextEncoder("utf-8").encode(data);
-    for (let i = 0; i < uint8array.byteLength + 1; i++) {
+    for (let i = 0; i < uint8array.byteLength; i++) {
       dataView.setUint8(currentByteOffset + i, uint8array[i]);
     }
     return currentByteOffset + uint8array.byteLength;
   };
+
+  // private serverWriteString = (
+  //   currentByteOffset: number,
+  //   dataView: DataView,
+  //   data: string
+  // ): number => {
+  //   const uint8array = Buffer.from(data, "utf8");
+  //   for (let i = 0; i < uint8array.byteLength + 1; i++) {
+  //     dataView.setUint8(currentByteOffset + i, uint8array[i]);
+  //   }
+  //   return currentByteOffset + uint8array.byteLength;
+  // };
+
+  // private clientWriteString = (
+  //   currentByteOffset: number,
+  //   dataView: DataView,
+  //   data: string
+  // ): number => {
+  //   // @ts-ignore
+  //   const uint8array = new TextEncoder("utf-8").encode(data);
+  //   for (let i = 0; i < uint8array.byteLength + 1; i++) {
+  //     dataView.setUint8(currentByteOffset + i, uint8array[i]);
+  //   }
+  //   return currentByteOffset + uint8array.byteLength;
+  // };
 
   // TODO: comments like this everywhere?? code should be self documenting though...
   /**

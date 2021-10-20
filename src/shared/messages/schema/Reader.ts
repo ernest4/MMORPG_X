@@ -13,10 +13,6 @@ import SCHEMA, {
 } from "../schema";
 import Message from "../../components/Message";
 
-// NOTE: ArrayBuffer and DataView work on both Node.js & Browser
-// NOTE: TextDecoder/TextEncoder for utf-8 strings only work Browser
-// NOTE: 'Buffer' from Node.js will be used to do utf-8 encoding/decoding
-
 // TODO: jests
 class Reader {
   private _fieldDecoders: {
@@ -98,21 +94,11 @@ class Reader {
     return [data, currentByteOffset + FIELD_TYPES[FIELD_TYPE.FLOAT_32].bytes];
   };
 
-  private parseString = (currentByteOffset: number, dataView: DataView) => {
-    if (SERVER) return this.serverParseString(currentByteOffset, dataView);
-    return this.clientParseString(currentByteOffset, dataView);
-  };
+  private parseString = (currentByteOffset: number, { buffer: arrayBuffer }: DataView) => {
+    // if (SERVER) return this.serverParseString(currentByteOffset, dataView);
+    // return this.clientParseString(currentByteOffset, dataView);
 
-  private serverParseString = (currentByteOffset: number, { buffer: arrayBuffer }) => {
-    const textSlice = arrayBuffer.slice(currentByteOffset, arrayBuffer.byteLength);
-    const data = Buffer.from(textSlice).toString("utf-8");
-
-    // NOTE: next offset not super useful here as strings will be the last item in any message
-    // since they're final size is unknown.
-    return [data, currentByteOffset + textSlice.byteLength];
-  };
-
-  private clientParseString = (currentByteOffset: number, { buffer: arrayBuffer }) => {
+    // apparently node 11 now supports text(de)encoder
     const textSlice = arrayBuffer.slice(currentByteOffset, arrayBuffer.byteLength);
     // @ts-ignore
     const data = new TextDecoder("utf-8").decode(textSlice);
@@ -121,6 +107,25 @@ class Reader {
     // since they're final size is unknown.
     return [data, currentByteOffset + textSlice.byteLength];
   };
+
+  // private serverParseString = (currentByteOffset: number, { buffer: arrayBuffer }) => {
+  //   const textSlice = arrayBuffer.slice(currentByteOffset, arrayBuffer.byteLength);
+  //   const data = Buffer.from(textSlice).toString("utf-8");
+
+  //   // NOTE: next offset not super useful here as strings will be the last item in any message
+  //   // since they're final size is unknown.
+  //   return [data, currentByteOffset + textSlice.byteLength];
+  // };
+
+  // private clientParseString = (currentByteOffset: number, { buffer: arrayBuffer }) => {
+  //   const textSlice = arrayBuffer.slice(currentByteOffset, arrayBuffer.byteLength);
+  //   // @ts-ignore
+  //   const data = new TextDecoder("utf-8").decode(textSlice);
+
+  //   // NOTE: next offset not super useful here as strings will be the last item in any message
+  //   // since they're final size is unknown.
+  //   return [data, currentByteOffset + textSlice.byteLength];
+  // };
 
   private parseUInt16Array = (currentByteOffset: number, { buffer: arrayBuffer }) => {
     // NOTE: not using Uint16Array because it only uses platform default byte order, while I want to

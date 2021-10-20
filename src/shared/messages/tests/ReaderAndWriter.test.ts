@@ -1,3 +1,7 @@
+const { TextEncoder, TextDecoder } = require("util");
+global.TextEncoder = TextEncoder;
+global.TextDecoder = TextDecoder;
+
 import { context } from "../../../../tests/jestHelpers";
 import OutMessage from "../../components/OutMessage";
 import { round } from "../../ecs/utils/Number";
@@ -103,6 +107,26 @@ describe("Reader and Writer", () => {
       expect(round(messageComponent.parsedMessage.testFloat32_3, 5)).toEqual(
         round(parsedMessage.testFloat32_3, 5)
       );
+    });
+  });
+
+  describe("strings", () => {
+    it("writes and reads string", () => {
+      const parsedMessage = { messageType: MESSAGE_TYPE.TEST_STRING, testString: "testy stringy" };
+      const arrayBuffer = Writer.messageComponentToBinary(new OutMessage(123, parsedMessage));
+      const messageComponent = Reader.binaryToMessageComponent(456, arrayBuffer);
+      expect(messageComponent.parsedMessage).toEqual(parsedMessage);
+    });
+
+    it("writes and reads number and string", () => {
+      const parsedMessage = {
+        messageType: MESSAGE_TYPE.TEST_NUMBER_AND_STRING,
+        testUInt16_0: 123,
+        testString_1: "testy stringy",
+      };
+      const arrayBuffer = Writer.messageComponentToBinary(new OutMessage(123, parsedMessage));
+      const messageComponent = Reader.binaryToMessageComponent(456, arrayBuffer);
+      expect(messageComponent.parsedMessage).toEqual(parsedMessage);
     });
   });
 

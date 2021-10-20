@@ -64,6 +64,8 @@ export enum MESSAGE_TYPE {
   TEST_I32,
   TEST_SEQUENCE,
   TEST_NUMBER_TYPES,
+  TEST_STRING,
+  TEST_NUMBER_AND_STRING,
   // FOR TESTING <===
   PING,
   PONG,
@@ -96,6 +98,8 @@ export type ParsedMessage<K extends MESSAGE_TYPE> = {
 export class TestI32Message extends Message<MESSAGE_TYPE.TEST_I32> {}
 export class TestNumbersSequenceMessage extends Message<MESSAGE_TYPE.TEST_SEQUENCE> {}
 export class TestNumberTypesMessage extends Message<MESSAGE_TYPE.TEST_NUMBER_TYPES> {}
+export class TestStringMessage extends Message<MESSAGE_TYPE.TEST_STRING> {}
+export class TestNumberAndStringMessage extends Message<MESSAGE_TYPE.TEST_NUMBER_AND_STRING> {}
 // FOR TESTING <===
 export class PingMessage extends Message<MESSAGE_TYPE.PING> {}
 export class PongMessage extends Message<MESSAGE_TYPE.PONG> {}
@@ -145,6 +149,19 @@ const SCHEMA = {
       testFloat32_3: f32(3),
     },
     [component]: TestNumberTypesMessage,
+  },
+  [MESSAGE_TYPE.TEST_STRING]: {
+    [parsedMessage]: {
+      testString: s(0),
+    },
+    [component]: TestStringMessage,
+  },
+  [MESSAGE_TYPE.TEST_NUMBER_AND_STRING]: {
+    [parsedMessage]: {
+      testUInt16_0: u16(0),
+      testString_1: s(1),
+    },
+    [component]: TestNumberAndStringMessage,
   },
   // FOR TESTING <===
   [MESSAGE_TYPE.PING]: {
