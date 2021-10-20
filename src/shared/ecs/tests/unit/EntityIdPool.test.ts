@@ -1,4 +1,4 @@
-import { context } from "../../../../../tests/testAliases";
+import { context } from "../../../../../tests/jestHelpers";
 import EntityIdPool from "../../engine/EntityIdPool";
 
 describe(EntityIdPool, () => {

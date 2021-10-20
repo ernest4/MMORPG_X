@@ -1,4 +1,4 @@
-import { context } from "../../../../../tests/testAliases";
+import { context } from "../../../../../tests/jestHelpers";
 import Component from "../../Component";
 import SparseSet, { SparseSetItem } from "../../utils/SparseSet";
 import NumberComponent from "../helpers/components/NumberComponent";

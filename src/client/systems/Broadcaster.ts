@@ -3,16 +3,13 @@ import System from "../../shared/ecs/System";
 import Writer from "../../shared/messages/schema/Writer";
 import { QuerySet } from "../../shared/ecs/types";
 import OutMessage from "../../shared/components/OutMessage";
-import SCHEMA from "../../shared/messages/schema";
 
 class Broadcaster extends System {
   private _webSocket: WebSocket;
-  private _writer: Writer;
 
   constructor(engine: Engine, webSocket: WebSocket) {
     super(engine);
     this._webSocket = webSocket;
-    this._writer = new Writer(SCHEMA);
   }
 
   start(): void {}
@@ -30,7 +27,7 @@ class Broadcaster extends System {
 
   private broadcast = (querySet: QuerySet) => {
     const [outMessage] = querySet as [OutMessage<any>];
-    const binaryMessage = this._writer.messageComponentToBinary(outMessage);
+    const binaryMessage = Writer.messageComponentToBinary(outMessage);
     this._webSocket.send(binaryMessage);
     this.engine.removeComponent(outMessage);
   };

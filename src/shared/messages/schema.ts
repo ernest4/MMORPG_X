@@ -60,6 +60,10 @@ const entityId = (binaryOrder: BinaryOrder) => ({ entityId: i32(binaryOrder) });
 // } as const;
 
 export enum MESSAGE_TYPE {
+  // FOR TESTING ===>
+  TEST_I32,
+  TEST_NUMBERS,
+  // FOR TESTING <===
   PING,
   PONG,
   TRANSFORM,
@@ -87,6 +91,10 @@ export type ParsedMessage<K extends MESSAGE_TYPE> = {
 // }
 
 // component classes that act as 'tags' for engine to query for
+// FOR TESTING ===>
+export class TestI32Message extends Message<MESSAGE_TYPE.TEST_I32> {}
+export class TestNumbersMessage extends Message<MESSAGE_TYPE.TEST_I32> {}
+// FOR TESTING <===
 export class PingMessage extends Message<MESSAGE_TYPE.PING> {}
 export class PongMessage extends Message<MESSAGE_TYPE.PONG> {}
 export class TransformMessage extends Message<MESSAGE_TYPE.TRANSFORM> {}
@@ -105,11 +113,26 @@ export type SchemaItem<T extends MESSAGE_TYPE> = {
   component: Message<T>;
 };
 
-export type Schema = { [key: number]: SchemaItem<number> };
+export type Schema = { [key in MESSAGE_TYPE]: SchemaItem<MESSAGE_TYPE> };
 
 const parsedMessage = "parsedMessage"; // To prevent typos in schema
 const component = "component"; // To prevent typos in schema
 const SCHEMA = {
+  // FOR TESTING ===>
+  [MESSAGE_TYPE.TEST_I32]: {
+    [parsedMessage]: {
+      testNumber: i32(0),
+    },
+    [component]: TestI32Message,
+  },
+  [MESSAGE_TYPE.TEST_NUMBERS]: {
+    [parsedMessage]: {
+      testUInt8: u8(0),
+      // TODO: rest...
+    },
+    [component]: TestNumbersMessage,
+  },
+  // FOR TESTING <===
   [MESSAGE_TYPE.PING]: {
     [parsedMessage]: {
       ping: s(0),

@@ -4,7 +4,7 @@ import { isNumber } from "../../ecs/utils/Number";
 import { SERVER } from "../../utils/environment";
 import { prettyPrintArray } from "../../utils/logging";
 import Validator from "./Validator";
-import {
+import SCHEMA, {
   LITTLE_ENDIAN,
   MESSAGE_TYPE_POSITION,
   FIELD_TYPES,
@@ -24,13 +24,11 @@ import OutMessage from "../../components/OutMessage";
 
 // TODO: jests
 class Writer {
-  private _schema: Schema;
   private _fieldEncoders: {
     [K in FIELD_TYPE]: (currentByteOffset: number, messageDataView: DataView, data: any) => number;
   };
 
-  constructor(schema) {
-    this._schema = schema;
+  constructor() {
     // NOTE: the [K in FIELD_TYPE]: ... above enforces that ALL field types are present in the hash
     // and thus will have a decoder function !!
     this._fieldEncoders = {
@@ -94,8 +92,7 @@ class Writer {
 
   private messageTypeToParsedMessageEntries = (
     messageType: MESSAGE_TYPE
-  ): [FieldName, [FIELD_TYPE, BinaryOrder]][] =>
-    Object.entries(this._schema[messageType].parsedMessage);
+  ): [FieldName, [FIELD_TYPE, BinaryOrder]][] => Object.entries(SCHEMA[messageType].parsedMessage);
 
   // TODO: extract? same method as on Reader...
   private toBinaryOrder = (
@@ -226,4 +223,4 @@ class Writer {
 
 // returning singleton. Doesn't need to be class at all tbh, but might be useful to have some state
 // in the future, so keeping like this for now
-export default Writer;
+export default new Writer();

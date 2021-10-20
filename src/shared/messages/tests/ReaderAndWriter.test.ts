@@ -1,5 +1,8 @@
-import { context } from "../../../tests/jestHelpers";
+import { context } from "../../../../tests/jestHelpers";
+import OutMessage from "../../components/OutMessage";
+import { MESSAGE_TYPE } from "../schema";
 import Reader from "../schema/Reader";
+import Writer from "../schema/Writer";
 // import Component from "../../Component";
 // import Engine from "../../Engine";
 // import System from "../../System";
@@ -27,12 +30,7 @@ import Reader from "../schema/Reader";
 //   }
 // }
 
-const testSchema = {
-  wow: 123 // why isnt this giving TS error??!?!
-}
-
-describe(Reader, () => {
-  let reader: Reader;
+describe("Reader and Writer", () => {
   // let testySystem1: System;
   // let testySystem2: System;
   // let testySystem3: System;
@@ -49,7 +47,6 @@ describe(Reader, () => {
   // let component3: Component;
 
   beforeEach(() => {
-    reader = new Reader(testSchema);
     // testySystem1 = new TestySystem(engine);
     // testySystem1.start = jest.fn();
     // testySystem1.update = jest.fn();
@@ -61,6 +58,29 @@ describe(Reader, () => {
     // testySystem3.update = jest.fn();
     // queryCallBackFunction = jest.fn();
     // queryCallBackFunction2 = jest.fn();
+  });
+
+  describe("numbers", () => {
+    beforeEach(() => {
+      // TODO: ...
+    });
+
+    it("writes and reads int 32", () => {
+      const parsedMessage = { messageType: MESSAGE_TYPE.TEST_I32, testNumber: 123 };
+      const arrayBuffer = Writer.messageComponentToBinary(new OutMessage(123, parsedMessage));
+      const messageComponent = Reader.binaryToMessageComponent(456, arrayBuffer);
+      expect(messageComponent.parsedMessage).toEqual(parsedMessage);
+    });
+
+    it("writes and reads sequence of numbers", () => {
+      const parsedMessage = {
+        messageType: MESSAGE_TYPE.TEST_NUMBERS,
+        testUInt8: 5,
+      };
+      const arrayBuffer = Writer.messageComponentToBinary(new OutMessage(123, parsedMessage));
+      const messageComponent = Reader.binaryToMessageComponent(456, arrayBuffer);
+      expect(messageComponent.parsedMessage).toEqual(parsedMessage);
+    });
   });
 
   // describe("#addSystem", () => {

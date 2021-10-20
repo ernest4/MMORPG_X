@@ -1,4 +1,4 @@
-import { context } from "../../../tests/testAliases";
+import { context } from "../../../tests/jestHelpers";
 import Transform from "../../shared/components/Transform";
 import { Engine } from "../../shared/ecs";
 import PhysicsBody from "../components/PhysicsBody";
