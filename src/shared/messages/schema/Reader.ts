@@ -142,7 +142,7 @@ class Reader {
 
     // NOTE: next offset not super useful here as array will be the last item in any message
     // since its final size is unknown.
-    return [data, currentByteOffset + arrayBinaryView.byteLength];
+    return [new Uint16Array(data), currentByteOffset + arrayBinaryView.byteLength];
   };
 }
 

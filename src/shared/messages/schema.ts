@@ -66,6 +66,8 @@ export enum MESSAGE_TYPE {
   TEST_NUMBER_TYPES,
   TEST_STRING,
   TEST_NUMBER_AND_STRING,
+  TEST_U16_ARRAY,
+  TEST_NUMBER_AND_U16_ARRAY,
   // FOR TESTING <===
   PING,
   PONG,
@@ -100,6 +102,8 @@ export class TestNumbersSequenceMessage extends Message<MESSAGE_TYPE.TEST_SEQUEN
 export class TestNumberTypesMessage extends Message<MESSAGE_TYPE.TEST_NUMBER_TYPES> {}
 export class TestStringMessage extends Message<MESSAGE_TYPE.TEST_STRING> {}
 export class TestNumberAndStringMessage extends Message<MESSAGE_TYPE.TEST_NUMBER_AND_STRING> {}
+export class TestU16ArrayMessage extends Message<MESSAGE_TYPE.TEST_U16_ARRAY> {}
+export class TestNumberAndU16ArrayMessage extends Message<MESSAGE_TYPE.TEST_NUMBER_AND_U16_ARRAY> {}
 // FOR TESTING <===
 export class PingMessage extends Message<MESSAGE_TYPE.PING> {}
 export class PongMessage extends Message<MESSAGE_TYPE.PONG> {}
@@ -162,6 +166,19 @@ const SCHEMA = {
       testString_1: s(1),
     },
     [component]: TestNumberAndStringMessage,
+  },
+  [MESSAGE_TYPE.TEST_U16_ARRAY]: {
+    [parsedMessage]: {
+      testU16Array: u16a(0),
+    },
+    [component]: TestU16ArrayMessage,
+  },
+  [MESSAGE_TYPE.TEST_NUMBER_AND_U16_ARRAY]: {
+    [parsedMessage]: {
+      testInt32_0: i32(0),
+      testU16Array_1: u16a(1),
+    },
+    [component]: TestNumberAndU16ArrayMessage,
   },
   // FOR TESTING <===
   [MESSAGE_TYPE.PING]: {
