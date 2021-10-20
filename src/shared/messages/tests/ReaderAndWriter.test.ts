@@ -1,5 +1,6 @@
 import { context } from "../../../../tests/jestHelpers";
 import OutMessage from "../../components/OutMessage";
+import { round } from "../../ecs/utils/Number";
 import { MESSAGE_TYPE } from "../schema";
 import Reader from "../schema/Reader";
 import Writer from "../schema/Writer";
@@ -74,12 +75,34 @@ describe("Reader and Writer", () => {
 
     it("writes and reads sequence of numbers", () => {
       const parsedMessage = {
-        messageType: MESSAGE_TYPE.TEST_NUMBERS,
-        testUInt8: 5,
+        messageType: MESSAGE_TYPE.TEST_SEQUENCE,
+        testUInt8_0: 7,
+        testUInt8_1: 8,
+        testUInt8_2: 9,
+        testUInt8_3: 10,
+        testUInt8_4: 3,
       };
       const arrayBuffer = Writer.messageComponentToBinary(new OutMessage(123, parsedMessage));
       const messageComponent = Reader.binaryToMessageComponent(456, arrayBuffer);
       expect(messageComponent.parsedMessage).toEqual(parsedMessage);
+    });
+
+    it("writes and reads all number types", () => {
+      const parsedMessage = {
+        messageType: MESSAGE_TYPE.TEST_NUMBER_TYPES,
+        testUInt8_0: 5,
+        testUInt16_1: 3000,
+        testInt32_2: 8000000,
+        testFloat32_3: 5.678765,
+      };
+      const arrayBuffer = Writer.messageComponentToBinary(new OutMessage(123, parsedMessage));
+      const messageComponent = Reader.binaryToMessageComponent(456, arrayBuffer);
+      expect(messageComponent.parsedMessage.testUInt8_0).toEqual(parsedMessage.testUInt8_0);
+      expect(messageComponent.parsedMessage.testUInt16_1).toEqual(parsedMessage.testUInt16_1);
+      expect(messageComponent.parsedMessage.testInt32_2).toEqual(parsedMessage.testInt32_2);
+      expect(round(messageComponent.parsedMessage.testFloat32_3, 5)).toEqual(
+        round(parsedMessage.testFloat32_3, 5)
+      );
     });
   });
 

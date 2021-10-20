@@ -62,7 +62,8 @@ const entityId = (binaryOrder: BinaryOrder) => ({ entityId: i32(binaryOrder) });
 export enum MESSAGE_TYPE {
   // FOR TESTING ===>
   TEST_I32,
-  TEST_NUMBERS,
+  TEST_SEQUENCE,
+  TEST_NUMBER_TYPES,
   // FOR TESTING <===
   PING,
   PONG,
@@ -93,7 +94,8 @@ export type ParsedMessage<K extends MESSAGE_TYPE> = {
 // component classes that act as 'tags' for engine to query for
 // FOR TESTING ===>
 export class TestI32Message extends Message<MESSAGE_TYPE.TEST_I32> {}
-export class TestNumbersMessage extends Message<MESSAGE_TYPE.TEST_I32> {}
+export class TestNumbersSequenceMessage extends Message<MESSAGE_TYPE.TEST_SEQUENCE> {}
+export class TestNumberTypesMessage extends Message<MESSAGE_TYPE.TEST_NUMBER_TYPES> {}
 // FOR TESTING <===
 export class PingMessage extends Message<MESSAGE_TYPE.PING> {}
 export class PongMessage extends Message<MESSAGE_TYPE.PONG> {}
@@ -125,12 +127,24 @@ const SCHEMA = {
     },
     [component]: TestI32Message,
   },
-  [MESSAGE_TYPE.TEST_NUMBERS]: {
+  [MESSAGE_TYPE.TEST_SEQUENCE]: {
     [parsedMessage]: {
-      testUInt8: u8(0),
-      // TODO: rest...
+      testUInt8_0: u8(0),
+      testUInt8_1: u8(1),
+      testUInt8_2: u8(2),
+      testUInt8_3: u8(3),
+      testUInt8_4: u8(4),
     },
-    [component]: TestNumbersMessage,
+    [component]: TestNumbersSequenceMessage,
+  },
+  [MESSAGE_TYPE.TEST_NUMBER_TYPES]: {
+    [parsedMessage]: {
+      testUInt8_0: u8(0),
+      testUInt16_1: u16(1),
+      testInt32_2: i32(2),
+      testFloat32_3: f32(3),
+    },
+    [component]: TestNumberTypesMessage,
   },
   // FOR TESTING <===
   [MESSAGE_TYPE.PING]: {
