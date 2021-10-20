@@ -100,10 +100,10 @@ export class RoomInitMessage extends Message<MESSAGE_TYPE.ROOM_INIT> {}
 export class MoveMessage extends Message<MESSAGE_TYPE.MOVE> {}
 export class HitPointsMessage extends Message<MESSAGE_TYPE.HITPOINTS> {}
 
-// export type SchemaItem<T extends MESSAGE_TYPE> = {
-//   parsedMessage: ParsedMessage<T>;
-//   component: Message<T>;
-// };
+export type SchemaItem<T extends MESSAGE_TYPE> = {
+  parsedMessage: ParsedMessage<T>;
+  component: Message<T>;
+};
 
 const parsedMessage = "parsedMessage"; // To prevent typos in schema
 const component = "component"; // To prevent typos in schema

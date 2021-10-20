@@ -12,13 +12,13 @@ class Hacker extends Component implements Networked<MESSAGE_TYPE.HACKER> {
     super(entityId);
   }
 
-  parsedMessage(): ParsedMessage<MESSAGE_TYPE.HACKER> {
+  parsedMessage = (): ParsedMessage<MESSAGE_TYPE.HACKER> => {
     return this;
-  }
+  };
 
-  synchronizeFrom(parsedMessage: ParsedMessage<MESSAGE_TYPE.HACKER>): void {
+  synchronizeFrom = (parsedMessage: ParsedMessage<MESSAGE_TYPE.HACKER>) => {
     // NOOP
-  }
+  };
 }
 
 export default Hacker;

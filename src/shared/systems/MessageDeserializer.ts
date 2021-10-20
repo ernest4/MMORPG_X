@@ -1,12 +1,15 @@
 import { Engine } from "../ecs";
 import System from "../ecs/System";
-import { MESSAGE_COMPONENT_CLASSES_LIST } from "../messages/schema";
+import SCHEMA, { MESSAGE_COMPONENT_CLASSES_LIST } from "../messages/schema";
 import Reader from "../messages/schema/Reader";
 import MessageEvent from "../components/MessageEvent";
 
 class MessageDeserializer extends System {
+  private _reader: Reader;
+
   constructor(engine: Engine) {
     super(engine);
+    this._reader = new Reader(SCHEMA);
   }
 
   start(): void {}
@@ -20,7 +23,11 @@ class MessageDeserializer extends System {
 
   private createMessageComponents = ([{ fromEntityId, binaryMessage }]: [MessageEvent]) => {
     const entityId = this.newEntityId();
-    const messageComponent = Reader.binaryToMessageComponent(entityId, binaryMessage, fromEntityId);
+    const messageComponent = this._reader.binaryToMessageComponent(
+      entityId,
+      binaryMessage,
+      fromEntityId
+    );
     // debugging
     console.log(messageComponent.parsedMessage);
     this.engine.addComponent(messageComponent);

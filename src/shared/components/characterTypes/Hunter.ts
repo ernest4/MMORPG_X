@@ -12,13 +12,13 @@ class Hunter extends Component implements Networked<MESSAGE_TYPE.HUNTER> {
     super(entityId);
   }
 
-  parsedMessage(): ParsedMessage<MESSAGE_TYPE.HUNTER> {
+  parsedMessage = (): ParsedMessage<MESSAGE_TYPE.HUNTER> => {
     return this;
-  }
+  };
 
-  synchronizeFrom(parsedMessage: ParsedMessage<MESSAGE_TYPE.HUNTER>): void {
+  synchronizeFrom = (parsedMessage: ParsedMessage<MESSAGE_TYPE.HUNTER>) => {
     // NOOP
-  }
+  };
 }
 
 export default Hunter;

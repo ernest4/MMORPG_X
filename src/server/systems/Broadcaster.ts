@@ -3,10 +3,14 @@ import System from "../../shared/ecs/System";
 import OutMessage from "../../shared/components/OutMessage";
 import WebSocket from "../components/WebSocket";
 import Writer from "../../shared/messages/schema/Writer";
+import SCHEMA from "../../shared/messages/schema";
 
 class Broadcaster extends System {
+  private _writer: Writer;
+
   constructor(engine: Engine) {
     super(engine);
+    this._writer = new Writer(SCHEMA);
   }
 
   start(): void {}
@@ -24,7 +28,7 @@ class Broadcaster extends System {
 
   private broadcast = ([outMessage]: [OutMessage<any>]) => {
     const recipientWebSocket = this.engine.getComponentById(outMessage.recipient, WebSocket);
-    const binaryMessage = Writer.messageComponentToBinary(outMessage);
+    const binaryMessage = this._writer.messageComponentToBinary(outMessage);
     recipientWebSocket.websocket.send(binaryMessage);
     this.engine.removeComponent(outMessage);
   };

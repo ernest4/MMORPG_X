@@ -13,13 +13,13 @@ class HitPoints extends Component implements Networked<MESSAGE_TYPE.HITPOINTS> {
     this.hitPoints = hitPoints;
   }
 
-  parsedMessage(): ParsedMessage<MESSAGE_TYPE.HITPOINTS> {
+  parsedMessage = (): ParsedMessage<MESSAGE_TYPE.HITPOINTS> => {
     return this;
-  }
+  };
 
-  synchronizeFrom({ hitPoints }: ParsedMessage<MESSAGE_TYPE.HITPOINTS>): void {
+  synchronizeFrom = ({ hitPoints }: ParsedMessage<MESSAGE_TYPE.HITPOINTS>) => {
     this.hitPoints = hitPoints;
-  }
+  };
 }
 
 export default HitPoints;

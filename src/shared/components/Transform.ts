@@ -31,13 +31,13 @@ class Transform extends Component implements Networked<MESSAGE_TYPE.TRANSFORM> {
     // this._children = entityId[]; ???
   }
 
-  parsedMessage(): ParsedMessage<MESSAGE_TYPE.TRANSFORM> {
+  parsedMessage = (): ParsedMessage<MESSAGE_TYPE.TRANSFORM> => {
     return { messageType: this.messageType, ...this.position.xyz, entityId: this.entityId };
-  }
+  };
 
-  synchronizeFrom({ x, y, z }: ParsedMessage<MESSAGE_TYPE.TRANSFORM>): void {
+  synchronizeFrom = ({ x, y, z }: ParsedMessage<MESSAGE_TYPE.TRANSFORM>): void => {
     this.position.xyz = { x, y, z };
-  }
+  };
 }
 
 export default Transform;

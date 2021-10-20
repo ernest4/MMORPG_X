@@ -13,12 +13,13 @@ class Name extends Component implements Networked<MESSAGE_TYPE.NAME> {
     this.name = name;
   }
 
-  parsedMessage(): ParsedMessage<MESSAGE_TYPE.NAME> {
+  parsedMessage = (): ParsedMessage<MESSAGE_TYPE.NAME> => {
     return this;
-  }
-  synchronizeFrom({ name }: ParsedMessage<MESSAGE_TYPE.NAME>): void {
+  };
+
+  synchronizeFrom = ({ name }: ParsedMessage<MESSAGE_TYPE.NAME>) => {
     this.name = name;
-  }
+  };
 }
 
 export default Name;

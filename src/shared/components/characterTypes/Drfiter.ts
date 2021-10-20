@@ -12,13 +12,13 @@ class Drifter extends Component implements Networked<MESSAGE_TYPE.DRIFTER> {
     super(entityId);
   }
 
-  parsedMessage(): ParsedMessage<MESSAGE_TYPE.DRIFTER> {
+  parsedMessage = (): ParsedMessage<MESSAGE_TYPE.DRIFTER> => {
     return this;
-  }
+  };
 
-  synchronizeFrom(parsedMessage: ParsedMessage<MESSAGE_TYPE.DRIFTER>): void {
+  synchronizeFrom = (parsedMessage: ParsedMessage<MESSAGE_TYPE.DRIFTER>) => {
     // NOOP
-  }
+  };
 }
 
 export default Drifter;

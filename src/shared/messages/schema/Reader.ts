@@ -10,6 +10,7 @@ import SCHEMA, {
   FieldName,
   MESSAGE_TYPE,
   ParsedMessage,
+  SchemaItem,
 } from "../schema";
 import Message from "../../components/Message";
 
@@ -19,11 +20,13 @@ import Message from "../../components/Message";
 
 // TODO: jests
 class Reader {
+  private _schema: { [key in MESSAGE_TYPE]: SchemaItem<MESSAGE_TYPE> };
   private _fieldDecoders: {
     [K in FIELD_TYPE]: (currentByteOffset: number, messageDataView: DataView) => any[];
   };
 
-  constructor() {
+  constructor(schema) {
+    this._schema = schema;
     // NOTE: the [K in FIELD_TYPE]: ... above enforces that ALL field types are present in the hash
     // and thus will have a decoder function !!
     this._fieldDecoders = {
@@ -43,7 +46,7 @@ class Reader {
     from?: EntityId
   ): Message<any> => {
     const { parsedMessage } = this.parseBinary(binaryMessage);
-    const messageComponentClass = SCHEMA[parsedMessage.messageType].component;
+    const messageComponentClass = this._schema[parsedMessage.messageType].component;
     return new messageComponentClass(messageComponentEntityId, parsedMessage, from);
   };
 
@@ -55,7 +58,7 @@ class Reader {
 
     const parsedMessage = { messageType };
     const parsedMessageEntries = <[FieldName, [FIELD_TYPE, BinaryOrder]][]>(
-      Object.entries(SCHEMA[messageType].parsedMessage)
+      Object.entries(this._schema[messageType].parsedMessage)
     );
     const binaryOrderedParsedMessageEntries = this.toBinaryOrder(parsedMessageEntries);
     binaryOrderedParsedMessageEntries.forEach(([fieldName, fieldType]) => {
@@ -141,4 +144,4 @@ class Reader {
   };
 }
 
-export default new Reader();
+export default Reader;
