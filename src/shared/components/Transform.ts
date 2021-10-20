@@ -11,7 +11,6 @@ class Transform extends Component implements Networked<MESSAGE_TYPE.TRANSFORM> {
   position: Vector3BufferView;
   rotation: Vector3BufferView;
   scale: Vector3BufferView;
-  messageType: MESSAGE_TYPE.TRANSFORM;
 
   constructor(
     entityId: EntityId,
@@ -32,7 +31,7 @@ class Transform extends Component implements Networked<MESSAGE_TYPE.TRANSFORM> {
   }
 
   parsedMessage = (): ParsedMessage<MESSAGE_TYPE.TRANSFORM> => {
-    return { messageType: this.messageType, ...this.position.xyz, entityId: this.entityId };
+    return { messageType: MESSAGE_TYPE.TRANSFORM, ...this.position.xyz, entityId: this.entityId };
   };
 
   synchronizeFrom = ({ x, y, z }: ParsedMessage<MESSAGE_TYPE.TRANSFORM>): void => {

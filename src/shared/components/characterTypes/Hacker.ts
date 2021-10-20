@@ -6,14 +6,13 @@ import Networked from "../interfaces/Networked";
 // Medium Tech ('mage') class
 // TODO: optimize with ArrayBuffers ??
 class Hacker extends Component implements Networked<MESSAGE_TYPE.HACKER> {
-  messageType: MESSAGE_TYPE.HACKER;
-
   constructor(entityId: EntityId) {
     super(entityId);
   }
 
   parsedMessage = (): ParsedMessage<MESSAGE_TYPE.HACKER> => {
-    return this;
+    const { entityId } = this;
+    return { messageType: MESSAGE_TYPE.HACKER, entityId };
   };
 
   synchronizeFrom = (parsedMessage: ParsedMessage<MESSAGE_TYPE.HACKER>) => {

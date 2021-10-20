@@ -6,7 +6,6 @@ import Networked from "./interfaces/Networked";
 // TODO: optimize with ArrayBuffers ??
 class Name extends Component implements Networked<MESSAGE_TYPE.NAME> {
   name: string;
-  messageType: MESSAGE_TYPE.NAME;
 
   constructor(entityId: EntityId, name: string) {
     super(entityId);
@@ -14,7 +13,8 @@ class Name extends Component implements Networked<MESSAGE_TYPE.NAME> {
   }
 
   parsedMessage = (): ParsedMessage<MESSAGE_TYPE.NAME> => {
-    return this;
+    const { entityId, name } = this;
+    return { messageType: MESSAGE_TYPE.NAME, entityId, name };
   };
 
   synchronizeFrom = ({ name }: ParsedMessage<MESSAGE_TYPE.NAME>) => {

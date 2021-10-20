@@ -6,7 +6,6 @@ import Networked from "./interfaces/Networked";
 // TODO: optimize with ArrayBuffers ??
 class HitPoints extends Component implements Networked<MESSAGE_TYPE.HITPOINTS> {
   hitPoints: Int32;
-  messageType: MESSAGE_TYPE.HITPOINTS;
 
   constructor(entityId: EntityId, hitPoints: Int32) {
     super(entityId);
@@ -14,7 +13,8 @@ class HitPoints extends Component implements Networked<MESSAGE_TYPE.HITPOINTS> {
   }
 
   parsedMessage = (): ParsedMessage<MESSAGE_TYPE.HITPOINTS> => {
-    return this;
+    const { entityId, hitPoints } = this;
+    return { messageType: MESSAGE_TYPE.HITPOINTS, entityId, hitPoints };
   };
 
   synchronizeFrom = ({ hitPoints }: ParsedMessage<MESSAGE_TYPE.HITPOINTS>) => {

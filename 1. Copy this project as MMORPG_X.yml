@@ -22,3 +22,15 @@
   4.1.1 be able to dynamically add and shape content and logic
         live, without having to restart server. (Content Pipeline).
   4.1.2 add test server for Alpha testing new content.
+
+
+5. ECS 2.0
+ - array buffers!
+ - extend array buffer with wrapper class (or template take in any buffer?) to make dynamically growing array buffer
+ - extend array buffer to make a struct
+ - create interface (or new component class) that is extension of struct
+ - use dynamic array buffer of component structs! (probs need to tough up sparse set...)
+ - could be fastest JS ECS engine around...
+ - BENCHMARKIT: create benchmarks (with performance.now() ?) and compare
+   query cycles/s of plain components v.s. struct arrays.
+   Can use the classic movement system as benchmarking system.

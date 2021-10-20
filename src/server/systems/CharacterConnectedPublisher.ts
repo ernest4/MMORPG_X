@@ -32,8 +32,9 @@ class CharacterConnected extends Publisher {
       NearbyCharacters
     ];
 
+    const { tileSizeInPx, widthInTiles, heightInTiles, tiles } = this._state.rooms[room.roomName];
     this.addOutMessageComponentWith(
-      { messageType: MESSAGE_TYPE.ROOM_INIT, ...this._state.rooms[room.roomName] },
+      { messageType: MESSAGE_TYPE.ROOM_INIT, tileSizeInPx, widthInTiles, heightInTiles, tiles },
       newCharacterId
     );
 
