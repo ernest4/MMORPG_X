@@ -4,7 +4,7 @@ import { isNumber } from "../../ecs/utils/Number";
 import { SERVER } from "../../utils/environment";
 import { prettyPrintArray } from "../../utils/logging";
 import Validator from "./Validator";
-import SCHEMA, {
+import {
   LITTLE_ENDIAN,
   MESSAGE_TYPE_POSITION,
   FIELD_TYPES,
@@ -14,7 +14,7 @@ import SCHEMA, {
   FieldName,
   UNKNOWN,
   ParsedMessage,
-  SchemaItem,
+  Schema,
 } from "../schema";
 import OutMessage from "../../components/OutMessage";
 
@@ -24,7 +24,7 @@ import OutMessage from "../../components/OutMessage";
 
 // TODO: jests
 class Writer {
-  private _schema: { [key in MESSAGE_TYPE]: SchemaItem<MESSAGE_TYPE> };
+  private _schema: Schema;
   private _fieldEncoders: {
     [K in FIELD_TYPE]: (currentByteOffset: number, messageDataView: DataView, data: any) => number;
   };

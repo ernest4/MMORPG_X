@@ -21,6 +21,9 @@ const config: Configuration = {
     publicPath: DEVELOPMENT ? "/" : "/statics/",
   },
   resolve: {
+    // alias: { // doesnt work ?!?!
+    //   JestHelpers: path.resolve(path.join(__dirname, "src", "tests", "jestHelpers")),
+    // },
     extensions: [".js", ".ts", ".tsx"],
     fallback: {
       // util: require.resolve("util/"),

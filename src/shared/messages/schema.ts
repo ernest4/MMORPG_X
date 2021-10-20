@@ -105,6 +105,8 @@ export type SchemaItem<T extends MESSAGE_TYPE> = {
   component: Message<T>;
 };
 
+export type Schema = { [key: number]: SchemaItem<number> };
+
 const parsedMessage = "parsedMessage"; // To prevent typos in schema
 const component = "component"; // To prevent typos in schema
 const SCHEMA = {

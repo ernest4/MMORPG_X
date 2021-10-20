@@ -1,7 +1,7 @@
 import { Buffer } from "buffer";
 import { EntityId } from "../../ecs/types";
 import { SERVER } from "../../utils/environment";
-import SCHEMA, {
+import {
   LITTLE_ENDIAN,
   MESSAGE_TYPE_POSITION,
   FIELD_TYPES,
@@ -10,7 +10,7 @@ import SCHEMA, {
   FieldName,
   MESSAGE_TYPE,
   ParsedMessage,
-  SchemaItem,
+  Schema,
 } from "../schema";
 import Message from "../../components/Message";
 
@@ -20,12 +20,12 @@ import Message from "../../components/Message";
 
 // TODO: jests
 class Reader {
-  private _schema: { [key in MESSAGE_TYPE]: SchemaItem<MESSAGE_TYPE> };
+  private _schema: Schema;
   private _fieldDecoders: {
     [K in FIELD_TYPE]: (currentByteOffset: number, messageDataView: DataView) => any[];
   };
 
-  constructor(schema) {
+  constructor(schema: Schema) {
     this._schema = schema;
     // NOTE: the [K in FIELD_TYPE]: ... above enforces that ALL field types are present in the hash
     // and thus will have a decoder function !!
