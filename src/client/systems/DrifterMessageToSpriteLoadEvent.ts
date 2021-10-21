@@ -14,15 +14,17 @@ class DrifterMessageToSpriteLoadEvent extends System {
   start(): void {}
 
   update(): void {
-    this.engine.query(this.createSpriteLoadEvents, Drifter, DrifterMessage);
+    this.engine.query(this.createSpriteLoadEvents, DrifterMessage);
   }
 
   destroy(): void {}
 
   private createSpriteLoadEvents = (querySet: QuerySet) => {
-    const [drifter, drifterMessage] = querySet as [Drifter, DrifterMessage];
+    const [{ targetEntityId }] = querySet as [DrifterMessage];
 
-    this.log(drifter);
+    const entityId = this.engine.getOrCreateEntityIdByAlias(<number>targetEntityId);
+    const drifter = this.engine.getOrCreateNullComponentById(entityId, Drifter);
+
     const sprite = this.engine.getComponentById(drifter.entityId, Sprite);
     if (sprite) return;
 
