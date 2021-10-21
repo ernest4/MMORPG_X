@@ -2,7 +2,7 @@ import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
 import { EntityId, QuerySet } from "../../shared/ecs/types";
 import LoadSpriteEvent from "../components/LoadSpriteEvent";
-import Buffer from "../../shared/utils/Buffer";
+import Buffer from "../../shared/ecs/utils/Buffer";
 import { Sprite } from "../components";
 import Phaser from "phaser";
 
@@ -39,6 +39,7 @@ class SpriteLoader extends System {
   private queueLoadEvents = (querySet: QuerySet) => {
     const [{ url, frameConfig, targetEntityId, id }] = querySet as [LoadSpriteEvent];
 
+    this.log(url);
     // NOTE: don't re-request to load something loading/loaded already
     if (this.isTextureLoading(url)) return; // keep loading event, check back another cycle...
     if (this.isTextureLoaded(url)) {
@@ -96,6 +97,7 @@ class SpriteLoader extends System {
   };
 
   private addSpriteComponent = (key: string, targetEntityId: EntityId) => {
+    this.log(key);
     const phaserSprite = this._scene.add.sprite(0, 0, key);
     const sprite = new Sprite(targetEntityId, phaserSprite);
     this.engine.addComponent(sprite);

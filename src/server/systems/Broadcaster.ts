@@ -25,7 +25,7 @@ class Broadcaster extends System {
   private broadcast = ([outMessage]: [OutMessage<any>]) => {
     const recipientWebSocket = this.engine.getComponentById(outMessage.recipient, WebSocket);
     const binaryMessage = Writer.messageComponentToBinary(outMessage);
-    recipientWebSocket.websocket.send(binaryMessage);
+    recipientWebSocket.websocket.send(binaryMessage, true);
     this.engine.removeComponent(outMessage);
   };
 

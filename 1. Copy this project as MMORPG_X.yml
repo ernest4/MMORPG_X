@@ -24,6 +24,8 @@
   4.1.2 add test server for Alpha testing new content.
 
 
+# FORGET MMO
+# JUST WORK ON THIS EXPERIMENT (benchmark it!!)
 5. ECS 2.0
  - array buffers!
  - extend array buffer with wrapper class (or template take in any buffer?) to make dynamically growing array buffer

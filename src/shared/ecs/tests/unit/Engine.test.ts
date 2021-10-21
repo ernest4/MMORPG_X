@@ -510,32 +510,45 @@ describe(Engine, () => {
   });
 
   describe("#newEntityIdWithAlias", () => {
-    const aliasId = 123456;
+    let aliasId = 123456;
 
-    beforeEach(() => {
-      entityId = engine.newEntityIdWithAlias(aliasId);
-    });
-
-    it("returns entityId", () => {
-      expect(entityId).toBeNumber();
-      expect(entityId).not.toEqual(aliasId);
-    });
-
-    it("adds alias to entityId", () => {
-      expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
-    });
-
-    context("when alias already exists", () => {
-      it("returns null", () => {
-        expect(engine.newEntityIdWithAlias(aliasId)).toBeNull();
+    context("when alias id is non zero", () => {
+      beforeEach(() => {
+        entityId = engine.newEntityIdWithAlias(aliasId);
       });
 
-      it("reclaims entity id", () => {
-        expect(engine.entityIdPool.serialize().reclaimedEntityIdPool).toEqual([]);
-        expect(engine.entityIdPool.serialize().reclaimedEntityIdPoolSize).toEqual(0);
-        engine.newEntityIdWithAlias(aliasId);
-        expect(engine.entityIdPool.serialize().reclaimedEntityIdPool).toEqual([1]);
-        expect(engine.entityIdPool.serialize().reclaimedEntityIdPoolSize).toEqual(1);
+      it("returns entityId", () => {
+        expect(entityId).toBeNumber();
+        expect(entityId).not.toEqual(aliasId);
+      });
+
+      it("adds alias to entityId", () => {
+        expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
+      });
+
+      context("when alias already exists", () => {
+        it("returns null", () => {
+          expect(engine.newEntityIdWithAlias(aliasId)).toBeNull();
+        });
+
+        it("reclaims entity id", () => {
+          expect(engine.entityIdPool.serialize().reclaimedEntityIdPool).toEqual([]);
+          expect(engine.entityIdPool.serialize().reclaimedEntityIdPoolSize).toEqual(0);
+          engine.newEntityIdWithAlias(aliasId);
+          expect(engine.entityIdPool.serialize().reclaimedEntityIdPool).toEqual([1]);
+          expect(engine.entityIdPool.serialize().reclaimedEntityIdPoolSize).toEqual(1);
+        });
+      });
+    });
+
+    context("when alias id is 0", () => {
+      beforeEach(() => {
+        aliasId = 0;
+        entityId = engine.newEntityIdWithAlias(aliasId);
+      });
+
+      it("adds alias to entityId", () => {
+        expect(engine.getEntityIdByAlias(aliasId)).toEqual(entityId);
       });
     });
   });

@@ -1,5 +1,6 @@
 import { Engine } from "../../shared/ecs";
-import Buffer from "../../shared/utils/Buffer";
+import Buffer from "../../shared/ecs/utils/Buffer";
+import { duplicateBuffer } from "../../shared/ecs/utils/arrayBuffer";
 import System from "../../shared/ecs/System";
 import WebSocket from "../components/WebSocket";
 import uWS from "uWebSockets.js";
@@ -40,7 +41,10 @@ class MessageListener extends System {
       // # parsed_message = Pulse::Messages::Resolver.resolve(binaryMessage)
       // # new_message = Message.new(socket, parsed_message)
 
-      this._messagesBuffer.push({ fromEntityId: entityId, binaryMessage: binaryMessage });
+      this._messagesBuffer.push({
+        fromEntityId: entityId,
+        binaryMessage: duplicateBuffer(binaryMessage),
+      });
     };
   };
 

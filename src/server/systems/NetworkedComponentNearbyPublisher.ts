@@ -44,7 +44,7 @@ class NetworkedComponentNearbyPublisher<T extends MESSAGE_TYPE> extends Publishe
     const [nearbyCharacters, networkedComponent] = <[NearbyCharacters, Networked<T>]>(
       this.engine.getComponentsById(targetEntityId, NearbyCharacters, this._networkedComponentClass)
     );
-    
+
     if (!nearbyCharacters) return;
     if (!networkedComponent) return;
 

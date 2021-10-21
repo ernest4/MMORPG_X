@@ -4,6 +4,7 @@ global.TextDecoder = TextDecoder;
 
 import { context } from "../../../../tests/jestHelpers";
 import OutMessage from "../../components/OutMessage";
+import Transform from "../../components/Transform";
 import { round } from "../../ecs/utils/Number";
 import { MESSAGE_TYPE } from "../schema";
 import Reader from "../schema/Reader";
@@ -100,6 +101,16 @@ describe("Reader and Writer", () => {
           parsedMessage.testU16Array_1.toString()
         );
       });
+    });
+  });
+
+  describe("Transform", () => {
+    it("writes and reads string", () => {
+      const transform = new Transform(123, { x: 1, y: 2, z: 3 });
+      const parsedMessage = transform.parsedMessage();
+      const arrayBuffer = Writer.messageComponentToBinary(new OutMessage(123, parsedMessage));
+      const messageComponent = Reader.binaryToMessageComponent(456, arrayBuffer);
+      expect(messageComponent.parsedMessage).toEqual(parsedMessage);
     });
   });
 });

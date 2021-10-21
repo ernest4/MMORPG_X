@@ -30,6 +30,7 @@ class NetworkedComponentsSynchronizer<T extends MESSAGE_TYPE> extends System {
   private applyMessageComponent = (querySet: QuerySet) => {
     const [messageComponent] = querySet as [NetworkedComponentMessage<T>];
     const { parsedMessage } = messageComponent;
+    this.log(messageComponent);
 
     const entityId = this.engine.getOrCreateEntityIdByAlias(<number>parsedMessage.entityId);
     const networkedComponent = this.engine.getOrCreateNullComponentById(
@@ -38,6 +39,9 @@ class NetworkedComponentsSynchronizer<T extends MESSAGE_TYPE> extends System {
     );
 
     networkedComponent.synchronizeFrom(parsedMessage);
+    this.log(this.networkedComponentClass.name);
+    this.log(entityId);
+    this.log(networkedComponent);
   };
 }
 

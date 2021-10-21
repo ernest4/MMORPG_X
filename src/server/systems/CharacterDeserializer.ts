@@ -11,8 +11,8 @@ import Room from "../components/Room";
 import Speed from "../components/Speed";
 import PhysicsBody from "../components/PhysicsBody";
 import Transform from "../../shared/components/Transform";
-import Hunter from "../../shared/components/characterTypes/Hunter";
 import { DEFAULT_ROOM_NAME } from "../game/State";
+import Drifter from "../../shared/components/characterTypes/Drfiter";
 
 class CharacterDeserializer extends System {
   constructor(engine: Engine) {
@@ -43,7 +43,7 @@ class CharacterDeserializer extends System {
   private createGuestCharacterComponents = (entityId: EntityId): Component[] => {
     return [
       new Character(entityId),
-      new Hunter(entityId),
+      new Drifter(entityId),
       new Name(entityId, `Name_${entityId}`),
       new HitPoints(entityId, 100),
       new Room(entityId, DEFAULT_ROOM_NAME),

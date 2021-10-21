@@ -42,6 +42,7 @@ class Writer {
     parsedMessage,
   }: OutMessage<T>): ArrayBuffer => {
     console.log(parsedMessage); // TODO: remove this debug log
+    
     return this.toBinary(parsedMessage);
   };
 

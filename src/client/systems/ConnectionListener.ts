@@ -2,7 +2,7 @@ import ConnectionEvent from "../../shared/components/ConnectionEvent";
 import WebSocketComponent from "../../client/components/WebSocket";
 import { Engine } from "../../shared/ecs";
 import System from "../../shared/ecs/System";
-import Buffer from "../../shared/utils/Buffer";
+import Buffer from "../../shared/ecs/utils/Buffer";
 
 class ConnectionListener extends System {
   private _webSocket: WebSocket;

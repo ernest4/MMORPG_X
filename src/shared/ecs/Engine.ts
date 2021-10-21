@@ -181,7 +181,7 @@ class Engine {
 
   newEntityIdWithAlias = (aliasId: EntityId): EntityId | null => {
     const entityId = this.newEntityId();
-    if (this.addEntityIdAlias(entityId, aliasId)) return entityId;
+    if (isNumber(this.addEntityIdAlias(entityId, aliasId))) return entityId;
 
     this.entityIdPool.reclaimId(entityId);
     return null;
