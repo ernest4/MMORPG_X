@@ -22,6 +22,7 @@ class SpriteRender extends System {
 
     phaserSprite.x = position.x;
     phaserSprite.y = position.y;
+    this.log(phaserSprite.x); // TODO: remove
 
     phaserSprite.angle = rotation.z;
 

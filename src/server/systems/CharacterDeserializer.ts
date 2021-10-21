@@ -47,7 +47,7 @@ class CharacterDeserializer extends System {
       new Name(entityId, `Name_${entityId}`),
       new HitPoints(entityId, 100),
       new Room(entityId, DEFAULT_ROOM_NAME),
-      new Speed(entityId, 20),
+      new Speed(entityId, 1000),
       new PhysicsBody(entityId),
       new Transform(entityId, { x: 0, y: 0, z: 0 }),
     ];
