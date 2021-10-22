@@ -31,20 +31,19 @@ class VectorBuffer<T extends VectorBufferItem = VectorBufferItem> {
   private _itemCapacity: number;
   private _bytesPerItem: number;
   private _currentByteOffset: number = 0;
+  private _growthFactor: number;
 
-  constructor(initialItemCapacity: number = 256, bytesPerItem: number) {
+  constructor(initialItemCapacity: number = 256, bytesPerItem: number, growthFactor: number = 2) {
     // initialSize represents the item count, not raw bytes. so probs need to lazy init the buffer
     // on first access so that you can see how big items are?
     this._arrayBuffer = new ArrayBuffer(initialItemCapacity * bytesPerItem);
     this._bytesPerItem = bytesPerItem;
     this._itemCapacity = initialItemCapacity;
+    this._growthFactor = growthFactor;
   }
 
   push = (item: T): T | null => {
-    // TODO: check if there is room
-    // resize if needed
-    // copy the values to assign (using buffer.set())
-    if (this._itemCount === this._itemCapacity) this.grow();
+    if (this._itemCapacity <= this._itemCount) this.grow();
     return this.set(this._itemCount, item);
   };
 
@@ -58,8 +57,6 @@ class VectorBuffer<T extends VectorBufferItem = VectorBufferItem> {
       readOffset + this._bytesPerItem
     ).buffer;
 
-    console.log(arrayBuffer);
-
     return <T>new VectorBufferItem(arrayBuffer);
   };
 
@@ -70,10 +67,9 @@ class VectorBuffer<T extends VectorBufferItem = VectorBufferItem> {
     const itemArrayBuffer = item.toArrayBuffer();
     const writeOffset = position * this._bytesPerItem;
 
-    console.log(this._arrayBuffer);
     new Uint8Array(this._arrayBuffer).set(new Uint8Array(itemArrayBuffer), writeOffset);
-    console.log(this._arrayBuffer);
     this._itemCount++;
+    return item;
   };
 
   get byteLength(): number {
@@ -94,9 +90,10 @@ class VectorBuffer<T extends VectorBufferItem = VectorBufferItem> {
 
   // double the size
   private grow = () => {
-    var newArrayBuffer = new ArrayBuffer(this._arrayBuffer.byteLength * 2);
+    const newArrayBuffer = new ArrayBuffer(this._arrayBuffer.byteLength * this._growthFactor);
     new Uint8Array(newArrayBuffer).set(new Uint8Array(this._arrayBuffer));
-    this._itemCapacity = this._itemCapacity * 2;
+    this._arrayBuffer = newArrayBuffer;
+    this._itemCapacity = this._itemCapacity * this._growthFactor;
   };
 }
 

@@ -2,6 +2,7 @@ import { context } from "../../../../../tests/jestHelpers";
 import VectorBuffer, { VectorBufferItem } from "../../utils/VectorBuffer";
 
 describe(VectorBuffer, () => {
+  let initialItemCapacity = 4;
   let vectorBufferItem1: VectorBufferItem;
   let vectorBufferItem2: VectorBufferItem;
   let vectorBufferItem3: VectorBufferItem;
@@ -9,14 +10,14 @@ describe(VectorBuffer, () => {
   const arrayBuffer1 = new ArrayBuffer(2);
   new Uint8Array(arrayBuffer1)[0] = 1;
   const arrayBuffer2 = new ArrayBuffer(2);
-  new Uint8Array(arrayBuffer2)[0] = 1;
+  new Uint8Array(arrayBuffer2)[0] = 2;
   const arrayBuffer3 = new ArrayBuffer(2);
-  new Uint8Array(arrayBuffer3)[0] = 1;
+  new Uint8Array(arrayBuffer3)[0] = 3;
 
   let subject: VectorBuffer;
 
   beforeEach(() => {
-    subject = new VectorBuffer(4, arrayBuffer1.byteLength);
+    subject = new VectorBuffer(initialItemCapacity, arrayBuffer1.byteLength);
 
     vectorBufferItem1 = new VectorBufferItem(arrayBuffer1);
     vectorBufferItem2 = new VectorBufferItem(arrayBuffer2);
@@ -40,25 +41,38 @@ describe(VectorBuffer, () => {
     });
 
     it("adds the item", () => {
-      expect(subject.get(0)).toEqual(vectorBufferItem1);
-      
-      expect(subject.get(1)).toEqual(vectorBufferItem2);
+      expect(subject.get(0).toArrayBuffer()).toEqual(vectorBufferItem1.toArrayBuffer());
+      expect(subject.get(1).toArrayBuffer()).toEqual(vectorBufferItem1.toArrayBuffer());
     });
 
-    // it("returns the added item", () => {
-    //   expect(addResult).toEqual(vectorBufferItem3);
-    // });
+    it("returns the added item", () => {
+      expect(addResult1.toArrayBuffer()).toEqual(vectorBufferItem1.toArrayBuffer());
+    });
 
     it("increases size", () => {
       expect(subject.size).toEqual(previousSizeBeforeAdd + 2);
     });
 
     context("when item can still fit", () => {
-      // TODO: .. doeesnt grow
+      it("does not increase capacity", () => {
+        expect(subject.capacity).toEqual(initialItemCapacity);
+      });
     });
 
     context("when item can't fit", () => {
-      // TODO: .. grows
+      beforeEach(() => {
+        subject.push(vectorBufferItem1);
+        subject.push(vectorBufferItem1);
+        subject.push(vectorBufferItem1);
+      });
+
+      it("does increases capacity", () => {
+        expect(subject.capacity).toEqual(initialItemCapacity * 2);
+      });
+
+      it("adds the item", () => {
+        expect(subject.get(4).toArrayBuffer()).toEqual(vectorBufferItem1.toArrayBuffer());
+      });
     });
   });
 
