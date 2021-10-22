@@ -47,6 +47,7 @@ class VectorBuffer<T extends VectorBufferItem = VectorBufferItem> {
     return this.set(this._itemCount, item);
   };
 
+  // TODO: jests
   get = (position: number): T | null => {
     if (this._itemCapacity <= position) return null;
     if (position < 0) return null;
@@ -60,6 +61,7 @@ class VectorBuffer<T extends VectorBufferItem = VectorBufferItem> {
     return <T>new VectorBufferItem(arrayBuffer);
   };
 
+  // TODO: jests
   set = (position: number, item: T): T | null => {
     if (this._itemCapacity <= position) return null;
     if (position < 0) return null;
@@ -72,20 +74,25 @@ class VectorBuffer<T extends VectorBufferItem = VectorBufferItem> {
     return item;
   };
 
+  // TODO: jests
   get byteLength(): number {
     return this._arrayBuffer.byteLength;
   }
 
+  // TODO: jests
   get size(): number {
     return this._itemCount;
   }
 
+  // TODO: jests
   get capacity(): number {
     return this._itemCapacity;
   }
 
+  // TODO: jests 50%
   each = (callback: (item: T) => void) => {
-    // TODO: ...
+    const elementCount = this._itemCount;
+    for (let i = 0; i < elementCount; i++) callback(this.get(i));
   };
 
   // double the size

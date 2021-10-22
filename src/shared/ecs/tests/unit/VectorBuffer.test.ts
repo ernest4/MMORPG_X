@@ -224,29 +224,61 @@ describe(VectorBuffer, () => {
   //   });
   // });
 
-  // describe("#stream", () => {
-  //   beforeEach(() => subject.push(vectorBufferItem3));
+  describe("#each", () => {
+    beforeEach(() => {
+      subject.push(vectorBufferItem1);
+      subject.push(vectorBufferItem2);
+      subject.push(vectorBufferItem3);
+      subject.push(vectorBufferItem1);
+    });
 
-  //   it("streams all the items", () => {
-  //     let items: any[] = [];
+    it("iterates over all the items", () => {
+      let items: any[] = [];
 
-  //     subject.stream((item: any) => items.push(item));
-  //     expect(items).toEqual([vectorBufferItem1, vectorBufferItem2, vectorBufferItem3]);
+      subject.each((item: VectorBufferItem) => items.push(item.toArrayBuffer()));
+      expect(items).toEqual([
+        vectorBufferItem1.toArrayBuffer(),
+        vectorBufferItem2.toArrayBuffer(),
+        vectorBufferItem3.toArrayBuffer(),
+        vectorBufferItem1.toArrayBuffer(),
+      ]);
 
-  //     subject.remove(vectorBufferItem2);
+      // TODO: remove case
+      // subject.remove(vectorBufferItem2);
 
-  //     items = [];
-  //     subject.stream((item: any) => items.push(item));
-  //     expect(items).toEqual([vectorBufferItem1, vectorBufferItem3]);
-  //   });
-  // });
+      // items = [];
+      // subject.each((item: any) => items.push(item));
+      // expect(items).toEqual([vectorBufferItem1, vectorBufferItem3]);
+    });
+  });
 
   describe("benckmarks", () => {
-    // TOOD: ...iteration speed...
-    // BENCHMARK
-    // const t0 = performance.now();
-    // doSomething();
-    // const t1 = performance.now();
-    // console.log(`Call to doSomething took ${t1 - t0} milliseconds.`);
+    it("runs benchmarks", () => {
+      const numbersArraySize = 1000000;
+      const numbersArray = [];
+      const vectorBuffer = new VectorBuffer(1, 4);
+      for (let i = 0; i < numbersArraySize; i++) {
+        numbersArray[i] = i;
+
+        const uint32Array = new Uint32Array(1);
+        uint32Array[0] = i;
+        vectorBuffer.push(new VectorBufferItem(uint32Array.buffer));
+      }
+
+      benchmark("Array", () => {
+        numbersArray.forEach(i => i);
+      });
+
+      benchmark("VectorBuffer", () => {
+        vectorBuffer.each(i => i);
+      });
+    });
   });
 });
+
+const benchmark = (subject: string, callback: Function) => {
+  const t0 = performance.now();
+  callback();
+  const t1 = performance.now();
+  console.log(`${subject} took ${t1 - t0} milliseconds.`);
+};
